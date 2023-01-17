@@ -1,0 +1,7 @@
+name: EthosLib
+version: '${project.version}'
+main: de.ethos.ethoslib.EthosLib
+api-version: 1.19
+load: STARTUP
+authors: [ xXTyraelXx, TheosRee ]
+description: Library for Project Ethos
