@@ -62,15 +62,6 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>local</id>
-            <name>HierLokal</name>
-            <url>C:\Users\PlaYa\IdeaProjects\Ethosskills\out\artifacts\ethosskills_jar\EthosSkills.jar</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-
     </repositories>
 
     <dependencies>
