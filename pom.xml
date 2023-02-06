@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.ethos</groupId>
-    <artifactId>EthosLib</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>ethoslib</artifactId>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>EthosLib</name>
@@ -74,8 +74,9 @@
     </dependencies>
     <distributionManagement>
         <repository>
-            <id>internal</id>
-            <url>file://${project.build.directory}/mvn-repo</url>
+            <id>github</id>
+            <name>GitHub Project-Ethos Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/projekt-ethos/ethoslib</url>
         </repository>
     </distributionManagement>
 </project>

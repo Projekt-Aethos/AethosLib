@@ -26,10 +26,10 @@ public abstract class Menu implements Listener {
     //UUID des Menus dient nur der unterscheidung zu anderen Menüs
     protected final UUID uuid;
 
-    static final ItemStack background = getNamedItem(new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1), "§0.");
-    static final ItemStack Placeholder_blue = getNamedItem(new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1), "§0.");
+    protected static final ItemStack background = getNamedItem(new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1), "§0.");
+    protected static final ItemStack Placeholder_blue = getNamedItem(new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1), "§0.");
 
-    Menu() {
+    protected Menu() {
         this.inventory = null;
         this.player = null;
         this.title = null;
