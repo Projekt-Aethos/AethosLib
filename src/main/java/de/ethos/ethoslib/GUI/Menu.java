@@ -29,14 +29,14 @@ public abstract class Menu implements Listener {
     static final ItemStack background = getNamedItem(new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1), "§0.");
     static final ItemStack Placeholder_blue = getNamedItem(new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1), "§0.");
 
-    public Menu() {
+    Menu() {
         this.inventory = null;
         this.player = null;
         this.title = null;
         this.uuid = null;
     }
 
-    Menu(@NotNull Player player, @NotNull Component title, int rows) {
+    protected Menu(@NotNull Player player, @NotNull Component title, int rows) {
         this.player = player;
         this.inventory = Bukkit.createInventory(player, rows * 9, title);
         this.title = title;
@@ -48,11 +48,11 @@ public abstract class Menu implements Listener {
         return uuid;
     }
 
-    void open() {
+    protected void open() {
         new GUIView(this);
     }
 
-    void initRahmen() {
+    protected void initRahmen() {
         int[] indexes_gray = {0, 1, 2, 3, 5, 6, 7, 9, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
         setItem(indexes_gray, background);
     }
@@ -65,7 +65,7 @@ public abstract class Menu implements Listener {
         return getGUIItem(new ItemStack(Material.BARRIER, 1), "§4Schließen", "exit");
     }
 
-    void initBeschreibung(String name, String... beschreibungstext) {
+    protected void initBeschreibung(String name, String... beschreibungstext) {
         ItemStack beschreibung = getGUIItem(new ItemStack(Material.PAPER, 1), name, "GUI");
         ItemMeta beschreibungMeta = beschreibung.getItemMeta();
         ArrayList<Component> lore = new ArrayList<>();
@@ -76,7 +76,7 @@ public abstract class Menu implements Listener {
         inventory.setItem(4, beschreibung);
     }
 
-    void initUntermenü(Material material, String name, int slot) {
+    protected void initUntermenü(Material material, String name, int slot) {
         ItemStack item = getGUIItem(new ItemStack(material, 1), name, name);
         inventory.setItem(slot, item);
     }
@@ -96,7 +96,7 @@ public abstract class Menu implements Listener {
         return itemStack;
     }
 
-    void setItem(int[] indexes, ItemStack item) {
+    protected void setItem(int[] indexes, ItemStack item) {
         for (int i : indexes)
             inventory.setItem(i, item);
     }
@@ -124,7 +124,7 @@ public abstract class Menu implements Listener {
      * Standardüberprüfung für {@link #onKlick(InventoryClickEvent)}
      * Cancelt event, wenn es der Fall ist
      */
-    boolean isInvalidClick(@NotNull InventoryClickEvent e) {
+    protected boolean isInvalidClick(@NotNull InventoryClickEvent e) {
         if (!(e.getView() instanceof GUIView gui)) {
             return true;
         }
