@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public abstract class Menu implements Listener {
-    final Inventory inventory;
-    final Player player;
-    final Component title;
+    protected final Inventory inventory;
+    protected Player player;
+    protected Component title;
     //UUID des Menus dient nur der unterscheidung zu anderen Menüs
     protected final UUID uuid;
 
@@ -48,7 +48,7 @@ public abstract class Menu implements Listener {
         return uuid;
     }
 
-    protected void open() {
+    public void open() {
         new GUIView(this);
     }
 
@@ -112,7 +112,7 @@ public abstract class Menu implements Listener {
 
         if (getClass().getSimpleName().equals(GUIListener.getProtectedGUIItemValue(e.getCurrentItem().getItemMeta()))) {
             e.setCancelled(true);
-            new GUIView(this.getClass().getDeclaredConstructor(Player.class).newInstance((Player) e.getWhoClicked()));
+            this.getClass().getDeclaredConstructor(Player.class).newInstance((Player) e.getWhoClicked()).open();
         }
     }
 
@@ -141,4 +141,7 @@ public abstract class Menu implements Listener {
         return inventory;
     }
 
+    public Component getTitle() {
+        return title;
+    }
 }
