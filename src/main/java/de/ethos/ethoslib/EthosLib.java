@@ -1,5 +1,6 @@
 package de.ethos.ethoslib;
 
+import de.ethos.ethoslib.GUI.GUIListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class EthosLib extends JavaPlugin {
@@ -12,7 +13,7 @@ public final class EthosLib extends JavaPlugin {
         INSTANCE = this;
         // Plugin startup logic
         saveDefaultConfig();
-
+        getServer().getPluginManager().registerEvents(new GUIListener(),this);
     }
 
     @Override
