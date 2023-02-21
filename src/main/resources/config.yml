@@ -1,0 +1,8 @@
+mysql:
+  enabled: false
+  host: ''
+  port: ''
+  user: ''
+  pass: ''
+  base: ''
+  prefix: ethoslib_
