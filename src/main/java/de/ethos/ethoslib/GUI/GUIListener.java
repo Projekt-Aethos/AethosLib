@@ -10,11 +10,11 @@ public class GUIListener implements org.bukkit.event.Listener {
         if(event.getView() instanceof ProtectedView){
             event.setCancelled(true);
         }
-        if(event.getView() instanceof View){
-            if(event.getCurrentItem() instanceof GUIItem item){
-                item.onKlick(event);
-            }
+        GUIItem item = GUIItem.getItem(event.getCurrentItem());
+        if(item != null){
+            item.onKlick(event);
         }
 
     }
+
 }
