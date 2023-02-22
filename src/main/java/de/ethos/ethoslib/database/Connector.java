@@ -58,7 +58,6 @@ public class Connector {
         final String sql = type.createSQL(prefix);
         connection = database.getConnection();
         final Statement stmt = connection.createStatement();
-        stmt.executeQuery(sql);
-        return stmt.getResultSet();
+        return stmt.executeQuery(sql);
     }
 }

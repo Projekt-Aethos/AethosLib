@@ -20,23 +20,24 @@ public class SQLite extends Database {
 
     @Override
     public Connection openConnection() {
-        final File rootFile = new File(plugin.getDataFolder(), "databases");
-        rootFile.mkdirs();
-        final File file = new File(rootFile, dbLocation);
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdirs();
+        }
+        final File file = new File(plugin.getDataFolder(), dbLocation);
         if (!(file.exists())) {
             try {
                 file.createNewFile();
             } catch (final IOException e) {
-                Helper.log(Level.INFO, "Unable to create database!");
+                Helper.log(Level.SEVERE, "Unable to create database!");
             }
         }
         Connection connection = null;
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager
-                    .getConnection("jdbc:sqlite:" + rootFile.toPath() + "/" + dbLocation);
+                    .getConnection("jdbc:sqlite:" + plugin.getDataFolder().toPath() + "/" + dbLocation);
         } catch (ClassNotFoundException | SQLException e) {
-            Helper.log(Level.INFO, "There was an exception with SQL");
+            Helper.log(Level.SEVERE, "There was an exception with SQL");
         }
         return connection;
     }
