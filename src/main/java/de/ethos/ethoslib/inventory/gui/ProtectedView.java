@@ -1,4 +1,4 @@
-package de.ethos.ethoslib.GUI;
+package de.ethos.ethoslib.inventory.gui;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

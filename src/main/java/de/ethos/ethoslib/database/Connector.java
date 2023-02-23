@@ -47,6 +47,7 @@ public class Connector {
     //Nach EthosSkills-Syntax
     public void write(final @NotNull Update type) throws SQLException {
         final String sql = type.createSQL(prefix);
+        System.out.println(sql);
         connection = database.getConnection();
         final Statement stmt = database.con.createStatement();
         stmt.executeUpdate(sql);
@@ -56,6 +57,7 @@ public class Connector {
     //Nach EthosSkills-Syntax
     public ResultSet search(final @NotNull Query type) throws SQLException {
         final String sql = type.createSQL(prefix);
+        System.out.println(sql);
         connection = database.getConnection();
         final Statement stmt = connection.createStatement();
         return stmt.executeQuery(sql);

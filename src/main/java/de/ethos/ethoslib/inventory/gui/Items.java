@@ -1,4 +1,4 @@
-package de.ethos.ethoslib.GUI;
+package de.ethos.ethoslib.inventory.gui;
 
 
 import net.kyori.adventure.text.Component;
@@ -24,5 +24,11 @@ public class Items {
         }
     };
 
+    public static final GUIItem BLUE_PLACEHOLDER = new GUIItem(Material.BLUE_STAINED_GLASS_PANE, Component.text(".", NamedTextColor.BLACK)) {
+        @Override
+        public void onKlick(@NotNull InventoryClickEvent event) {
+            event.setCancelled(true);
+        }
+    };
 
 }

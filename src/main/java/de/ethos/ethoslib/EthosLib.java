@@ -1,10 +1,8 @@
 package de.ethos.ethoslib;
 
-import de.ethos.ethoslib.GUI.GUIListener;
-import de.ethos.ethoslib.database.Connector;
-import de.ethos.ethoslib.database.Database;
-import de.ethos.ethoslib.database.MySQL;
-import de.ethos.ethoslib.database.SQLite;
+import de.ethos.ethoslib.inventory.gui.GUIListener;
+import de.ethos.ethoslib.inventory.item.ToolListener;
+import de.ethos.ethoslib.database.*;
 import de.ethos.ethoslib.util.Helper;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,7 +47,12 @@ public final class EthosLib extends JavaPlugin {
                 Helper.log(Level.INFO, "Using SQLite for storing data!");
             }
         }
+
+
         getServer().getPluginManager().registerEvents(new GUIListener(),this);
+        getServer().getPluginManager().registerEvents(new ToolListener(),this);
+
+        getServer().getPluginManager().registerEvents(new TestListener(),this);
 
         Helper.log("✓ EthosSkills successfully activated");
     }
@@ -68,6 +71,8 @@ public final class EthosLib extends JavaPlugin {
     }
 
 
+
+
     //////////          Getter          ////////////
     public static EthosLib getINSTANCE() {
         return INSTANCE;
@@ -77,4 +82,12 @@ public final class EthosLib extends JavaPlugin {
     public @NotNull Connector getConnector(@NotNull JavaPlugin plugin) {
         return new Connector(plugin, database);
     }
+
+
+
+    public static void error(Exception e){
+        e.printStackTrace(System.out);
+    }
+
+
 }

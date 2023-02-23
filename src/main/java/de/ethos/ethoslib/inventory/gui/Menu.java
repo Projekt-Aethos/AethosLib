@@ -1,4 +1,4 @@
-package de.ethos.ethoslib.GUI;
+package de.ethos.ethoslib.inventory.gui;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

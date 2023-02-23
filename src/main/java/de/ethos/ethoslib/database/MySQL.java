@@ -15,8 +15,7 @@ public class MySQL extends Database {
     private final String port;
     private final String hostname;
 
-    public MySQL(final JavaPlugin plugin, final String hostname, final String port,
-                 final String database, final String username, final String password) {
+    public MySQL(final JavaPlugin plugin, final String hostname, final String port, final String database, final String username, final String password) {
         super(plugin);
         this.hostname = hostname;
         this.port = port;

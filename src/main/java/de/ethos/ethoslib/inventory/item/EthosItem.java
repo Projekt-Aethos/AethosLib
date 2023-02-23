@@ -1,4 +1,4 @@
-package de.ethos.ethoslib.GUI;
+package de.ethos.ethoslib.inventory.item;
 
 import de.ethos.ethoslib.EthosLib;
 import net.kyori.adventure.text.Component;
@@ -15,14 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class GUIItem extends ItemStack {
+public abstract class EthosItem extends ItemStack {
 
-    private static final HashMap<UUID, GUIItem> map = new HashMap<>();
+    private static final HashMap<UUID, EthosItem> map = new HashMap<>();
     private static final NamespacedKey UUID_KEY = new NamespacedKey(EthosLib.getINSTANCE(), "UUID");
 
     private final UUID uuid;
 
-    public GUIItem(Material material, Component displayName, Component... lore) {
+    public EthosItem(Material material, Component displayName, Component... lore) {
         super(material);
         this.uuid = UUID.randomUUID();
         map.put(uuid, this);
@@ -34,11 +34,11 @@ public abstract class GUIItem extends ItemStack {
         this.setItemMeta(meta);
     }
 
-    public static @Nullable GUIItem getItem(@Nullable UUID uuid) {
+    public static @Nullable EthosItem getItem(@Nullable UUID uuid) {
         return map.get(uuid);
     }
 
-    public static @Nullable GUIItem getItem(@Nullable ItemStack item) {
+    public static @Nullable EthosItem getItem(@Nullable ItemStack item) {
         return getItem(getUUID(item));
     }
 
