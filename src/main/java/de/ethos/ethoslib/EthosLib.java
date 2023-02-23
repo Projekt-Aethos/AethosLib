@@ -52,7 +52,6 @@ public final class EthosLib extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GUIListener(),this);
         getServer().getPluginManager().registerEvents(new ToolListener(),this);
 
-        getServer().getPluginManager().registerEvents(new TestListener(),this);
 
         Helper.log("✓ EthosSkills successfully activated");
     }
