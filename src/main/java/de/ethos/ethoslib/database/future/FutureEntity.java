@@ -52,7 +52,7 @@ public class FutureEntity<T> {
 
     private T build() {
         try {
-            ResultSet set = connector.search(tablePrefix -> "SELECT * FROM " +tablePrefix + classT.getSimpleName().toUpperCase()  +   " WHERE uuid='" + uuid.toString() +"'");
+            ResultSet set = connector.search(tablePrefix -> "SELECT * FROM " + tablePrefix + classT.getSimpleName().toUpperCase()  +   " WHERE uuid='" + uuid.toString() +"'");
             set.next();
             return builder.build(set);
         } catch (SQLException e){

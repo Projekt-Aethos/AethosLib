@@ -51,11 +51,9 @@ public final class EthosLib extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new GUIListener(),this);
         getServer().getPluginManager().registerEvents(new ToolListener(),this);
-
-
         Helper.log("✓ EthosSkills successfully activated");
+        
     }
-
     @Override
     public void onDisable() {
         // Plugin shutdown logic
@@ -71,7 +69,6 @@ public final class EthosLib extends JavaPlugin {
 
 
 
-
     //////////          Getter          ////////////
     public static EthosLib getINSTANCE() {
         return INSTANCE;
@@ -82,7 +79,9 @@ public final class EthosLib extends JavaPlugin {
         return new Connector(plugin, database);
     }
 
-
+    public @NotNull Database getDatabase(){
+        return database;
+    }
 
     public static void error(Exception e){
         e.printStackTrace(System.out);

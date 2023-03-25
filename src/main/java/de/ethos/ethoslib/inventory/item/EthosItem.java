@@ -34,6 +34,7 @@ public abstract class EthosItem extends ItemStack {
         this.setItemMeta(meta);
     }
 
+
     public static @Nullable EthosItem getItem(@Nullable UUID uuid) {
         return map.get(uuid);
     }

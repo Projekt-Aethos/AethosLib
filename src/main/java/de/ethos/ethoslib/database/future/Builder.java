@@ -8,12 +8,11 @@ import java.sql.SQLException;
 
 
 /**
- * FunctionalInterface to build a Class from an ResultSet
+ * FunctionalInterface to build a Class from a ResultSet
  */
 @FunctionalInterface
 public interface Builder<T> {
     @Contract("_ -> new")
     T build(ResultSet resultSet) throws SQLException;
-
 
 }
