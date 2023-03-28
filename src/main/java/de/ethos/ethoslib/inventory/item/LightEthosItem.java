@@ -26,9 +26,7 @@ public class LightEthosItem extends ItemStack{
     };
 
 
-    /**
-     *      * Default Constructor
-     */
+
     public LightEthosItem(@Nullable FunctionalEventHandler<InventoryClickEvent> handler, @NotNull Material material, @NotNull Component displayName, @NotNull Component... lore) {
         this(handler,material,displayName,List.of(lore));
     }
@@ -41,65 +39,39 @@ public class LightEthosItem extends ItemStack{
         }
         final UUID uuid = UUID.randomUUID();
         MAP.put(uuid, handler);
-        UUIDtoItemStack(this,uuid);
-        ItemMeta meta = this.getItemMeta();
-        meta.displayName(displayName);
-        meta.lore(lore);
-        this.setItemMeta(meta);
-    }
 
-
-    private static @NotNull Optional<UUID> UUIDfromItemStack(@Nullable ItemStack item){
-        if(item == null){
-            return Optional.empty();
-        }
-        if(item.getItemMeta() == null){
-            return Optional.empty();
-        }
-        final String uuidString = item.getItemMeta().getPersistentDataContainer().get(UUID_KEY, PersistentDataType.STRING);
-        if(uuidString == null){
-            return Optional.empty();
-        }
-        return Optional.of(UUID.fromString(uuidString));
-    }
-    private static void UUIDtoItemStack(@NotNull ItemStack item,@NotNull UUID uuid){
-        if(item.hasItemMeta()){
-            ItemMeta meta = item.getItemMeta();
+        if(this.hasItemMeta()){
+            ItemMeta meta = this.getItemMeta();
             meta.getPersistentDataContainer().set(UUID_KEY, PersistentDataType.STRING, String.valueOf(uuid));
-            item.setItemMeta(meta);
+            meta.displayName(displayName);
+            meta.lore(lore);
+            this.setItemMeta(meta);
         }
     }
+
 
     /**
      * Will call the eventHandler if the clicked Item is associated with one
      * @param event that the eventHandler accepts
      */
     public static void onKlick(@NotNull final InventoryClickEvent event){
-        EventHandlerof(event.getCurrentItem()).ifPresentOrElse(handler -> handler.onEvent(event), () -> CANCEL.onEvent(event));
+        if(event.getCurrentItem() == null){
+            return;
+        }
+        if (event.getCurrentItem().getItemMeta() == null){
+            return;
+        }
+        String string = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(UUID_KEY,PersistentDataType.STRING);
+        if (string == null){
+            return;
+        }
+        UUID uuid = UUID.fromString(string);
+        MAP.get(uuid).onEvent(event);
     }
 
-    /**
-     * Will return an Optional of the eventHandler that is associated with the Item
-     * @return Optional of the eventHandler
-     */
-    private static @NotNull Optional<FunctionalEventHandler<InventoryClickEvent>> EventHandlerof(@Nullable ItemStack item){
-        return Optional.of(MAP.get(UUIDfromItemStack(item).get()));
-    }
 
-    /**
-     * Converts an Item to a LightEthosItem
-     * @param item that should be Converter
-     * @param handler the eventHandler that should be associated with the Item
-     */
 
-    public static void convert(@NotNull ItemStack item,@NotNull FunctionalEventHandler<InventoryClickEvent> handler){
-        UUIDfromItemStack(item).ifPresentOrElse(uuid -> MAP.put(uuid, handler),
-            () -> {
-                UUID uuid = UUID.randomUUID();
-                UUIDtoItemStack(item,uuid);
-                MAP.put(uuid, handler);
-            }
-        );
-    }
+
+
 
 }
