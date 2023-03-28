@@ -75,7 +75,7 @@ public class LightEthosItem extends ItemStack{
      * @param event that the eventHandler accepts
      */
     public static void onKlick(@NotNull final InventoryClickEvent event){
-        EventHandlerof(event.getCurrentItem()).ifPresent(c -> c.onEvent(event));
+        EventHandlerof(event.getCurrentItem()).ifPresentOrElse(handler -> handler.onEvent(event), () -> CANCEL.onEvent(event));
     }
 
     /**
