@@ -12,46 +12,44 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class HibernateConnector<T> extends Connector {
-
-    private final SessionFactory sf ;
+    private final SessionFactory sf;
 
     public HibernateConnector(@NotNull JavaPlugin plugin, @NotNull MySQL database, @NotNull Configuration config) {
         super(plugin, database);
         this.sf = config.buildSessionFactory();
     }
+
     public HibernateConnector(@NotNull JavaPlugin plugin, @NotNull MySQL database) {
-        this(plugin,database,new Configuration().configure());
+        this(plugin, database, new Configuration().configure());
     }
 
-    public <T extends Entity> void save (T  entity) {
-        Session session = sf.openSession();
+    public <T extends Entity> void save(T entity) {
         Transaction tx = null;
-        try {
+        try (Session session = sf.openSession()) {
             tx = session.beginTransaction();
             session.merge(entity.getUniqueId().toString(), entity);
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null) {
+                tx.rollback();
+            }
             throw e;
-        } finally {
-            session.close();
         }
     }
 
-    public <T> T get(Class<T> clazz ,UUID uuid) {
-
-        Session session = sf.openSession();
+    public <T> T get(Class<T> clazz, UUID uuid) {
         Transaction tx = null;
-        try {
+        try (Session session = sf.openSession()) {
             tx = session.beginTransaction();
             T t = session.get(clazz, uuid.toString());
             tx.commit();
             return t;
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null) {
+                tx.rollback();
+            }
             throw e;
-        } finally {
-            session.close();
         }
     }
+
 }

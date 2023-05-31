@@ -1,6 +1,5 @@
 package de.ethos.ethoslib.inventory.gui;
 
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.HumanEntity;
@@ -13,16 +12,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class View extends InventoryView {
-
     private final Menu menu;
+
     private final Player player;
-    public View(@NotNull Menu menu, Player player){
+
+    public View(@NotNull Menu menu, Player player) {
         this.menu = menu;
         this.player = player;
         player.openInventory(this);
     }
 
-    public UUID getMenuID(){
+    public UUID getMenuID() {
         return menu.getUUID();
     }
 
@@ -30,9 +30,10 @@ public class View extends InventoryView {
         return menu;
     }
 
-    public String getMenuName(){
+    public String getMenuName() {
         return getTitle();
     }
+
     @Override
     public @NotNull Inventory getTopInventory() {
         return menu.getInventory();

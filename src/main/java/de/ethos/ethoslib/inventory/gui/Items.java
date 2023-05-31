@@ -1,12 +1,10 @@
 package de.ethos.ethoslib.inventory.gui;
 
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
-
 
 public class Items {
 

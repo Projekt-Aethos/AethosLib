@@ -12,11 +12,10 @@ public abstract class EthosTool extends EthosItem {
 
     public abstract void onKlickBlock(Block block, Player player);
 
-    public void onKlickAir(Player player){
+    public void onKlickAir(Player player) {
     }
 
-    public void onHit(Player player){
-
+    public void onHit(Player player) {
     }
 
 }

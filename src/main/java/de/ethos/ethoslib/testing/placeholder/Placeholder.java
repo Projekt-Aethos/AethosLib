@@ -1,6 +1,5 @@
 package de.ethos.ethoslib.testing.placeholder;
 
-
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,27 +8,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
-
 public class Placeholder extends PlaceholderExpansion {
-
     private final JavaPlugin plugin;
-    private final String name;
-    private final BiFunction<OfflinePlayer,String,String> function;
 
-    public Placeholder(@NotNull JavaPlugin plugin,@NotNull String name,@NotNull BiFunction<OfflinePlayer,@NotNull String,String> function ){
+    private final String name;
+
+    private final BiFunction<OfflinePlayer, String, String> function;
+
+    public Placeholder(@NotNull JavaPlugin plugin, @NotNull String name, @NotNull BiFunction<OfflinePlayer, @NotNull String, String> function) {
         super();
         this.plugin = plugin;
         this.name = name;
         this.function = function;
     }
 
-    public JavaPlugin getProviderPlugin(){
+    public JavaPlugin getProviderPlugin() {
         return plugin;
     }
 
     @Override
     public @NotNull String getIdentifier() {
-        return plugin.getName()+":"+name;
+        return plugin.getName() + ":" + name;
     }
 
     @Override

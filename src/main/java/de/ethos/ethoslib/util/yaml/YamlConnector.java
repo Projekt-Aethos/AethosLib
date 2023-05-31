@@ -9,28 +9,27 @@ import java.io.IOException;
 
 public class YamlConnector {
     private final JavaPlugin plugin;
+
     private File file;
 
-
-
-    public YamlConnector(JavaPlugin plugin, String... dirs) throws Exception{
+    public YamlConnector(JavaPlugin plugin, String... dirs) throws Exception {
         this.plugin = plugin;
         File file = plugin.getDataFolder();
-        for(String dir : dirs){
-            if(!file.isDirectory()){
-                throw new Exception("No directory with path "+ file.toPath() + " found");
+        for (String dir : dirs) {
+            if (!file.isDirectory()) {
+                throw new Exception("No directory with path " + file.toPath() + " found");
             }
-            file =  new File(file.toPath()+System.getProperty("file.separator")+dir);
+            file = new File(file.toPath() + System.getProperty("file.separator") + dir);
         }
     }
-    public YamlConnector(JavaPlugin plugin, File file ){
+
+    public YamlConnector(JavaPlugin plugin, File file) {
         this.plugin = plugin;
-        if(file.isDirectory()){
+        if (file.isDirectory()) {
             this.file = file;
         } else {
             this.file = plugin.getDataFolder();
         }
-
     }
 
     public void save(Object object, String filename) throws IOException {
@@ -47,10 +46,10 @@ public class YamlConnector {
             input = new FileInputStream(filename + ".yaml");
             return yaml.load(input);
         } finally {
-            if(input != null){
+            if (input != null) {
                 input.close();
             }
-
         }
     }
+
 }

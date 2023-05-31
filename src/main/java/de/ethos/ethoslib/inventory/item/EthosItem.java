@@ -13,11 +13,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class EthosItem extends ItemStack {
 
-    private static final HashMap<UUID, EthosItem> map = new HashMap<>();
+    private static final Map<UUID, EthosItem> MAP = new HashMap<>();
     private static final NamespacedKey UUID_KEY = new NamespacedKey(EthosLib.getINSTANCE(), "UUID");
 
     private final UUID uuid;
@@ -25,7 +26,7 @@ public abstract class EthosItem extends ItemStack {
     public EthosItem(Material material, Component displayName, Component... lore) {
         super(material);
         this.uuid = UUID.randomUUID();
-        map.put(uuid, this);
+        MAP.put(uuid, this);
         //TODO temporäre Items  (beim schließen des Inventars löschen)
         ItemMeta meta = this.getItemMeta();
         meta.getPersistentDataContainer().set(UUID_KEY, PersistentDataType.STRING, this.uuid.toString());
@@ -34,17 +35,12 @@ public abstract class EthosItem extends ItemStack {
         this.setItemMeta(meta);
     }
 
-
     public static @Nullable EthosItem getItem(@Nullable UUID uuid) {
-        return map.get(uuid);
+        return MAP.get(uuid);
     }
 
     public static @Nullable EthosItem getItem(@Nullable ItemStack item) {
         return getItem(getUUID(item));
-    }
-
-    public @Nullable UUID getUUID() {
-        return uuid;
     }
 
     public static @Nullable UUID getUUID(@Nullable ItemStack item) {
@@ -58,9 +54,10 @@ public abstract class EthosItem extends ItemStack {
         return null;
     }
 
+    public @Nullable UUID getUUID() {
+        return uuid;
+    }
+
     public abstract void onKlick(@NotNull InventoryClickEvent event);
 
-
 }
-
-
