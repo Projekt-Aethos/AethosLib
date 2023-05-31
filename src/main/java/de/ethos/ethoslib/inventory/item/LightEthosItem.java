@@ -65,7 +65,10 @@ public class LightEthosItem extends ItemStack {
             return;
         }
         UUID uuid = UUID.fromString(string);
-        MAP.get(uuid).onEvent(event);
+        FunctionalEventHandler<InventoryClickEvent> handler = MAP.get(uuid);
+        if (handler != null) {
+            handler.onEvent(event);
+        }
     }
 
 }
