@@ -9,6 +9,7 @@ import de.ethos.ethoslib.inventory.gui.GUIListener;
 import de.ethos.ethoslib.inventory.item.ToolListener;
 import de.ethos.ethoslib.util.Helper;
 import de.ethos.ethoslib.util.WorldGuardSupport;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,8 +43,7 @@ public final class EthosLib extends JavaPlugin {
     @Override
     public void onLoad() {
         //erlaube registrieren der WorldGuard-Flags, falls WorldGuard 7.0 vorhanden ist
-        if (getServer().getPluginManager().getPlugin("WorldGuard") != null
-                && WorldGuardPlugin.inst().getDescription().getVersion().contains("7.0")) {
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null && WorldGuardPlugin.inst().getDescription().getVersion().contains("7.0")) {
             isWorldGuardEnabled = true;
         }
     }
@@ -58,12 +58,7 @@ public final class EthosLib extends JavaPlugin {
         final boolean mySQLEnabled = config.getBoolean("mysql.enabled", true);
         if (mySQLEnabled) {
             Helper.logDebug("Connecting to MySQL database");
-            this.database = new MySQL(this,
-                    config.getString("mysql.host"),
-                    config.getString("mysql.port"),
-                    config.getString("mysql.base"),
-                    config.getString("mysql.user"),
-                    config.getString("mysql.pass"));
+            this.database = new MySQL(this, config.getString("mysql.host"), config.getString("mysql.port"), config.getString("mysql.base"), config.getString("mysql.user"), config.getString("mysql.pass"));
             if (database.getConnection() != null) {
                 isMySQLUsed = true;
                 Helper.log(Level.INFO, "Successfully connected to MySQL database!");
@@ -82,18 +77,20 @@ public final class EthosLib extends JavaPlugin {
         pm.registerEvents(new ToolListener(), this);
 
         //WorldGuard-Aktivierung
-        isWorldGuardEnabled = pm.isPluginEnabled("WorldGuard");
-        if (isWorldGuardEnabled) {
-            if (WorldGuardPlugin.inst().getDescription().getVersion().contains("7.0")) {
-                worldGuardSupport = new WorldGuardSupport();
-                worldGuardSupport.loadRegions();
+        Bukkit.getScheduler().runTask(this, () -> {
+            isWorldGuardEnabled = pm.isPluginEnabled("WorldGuard");
+            if (isWorldGuardEnabled) {
+                if (WorldGuardPlugin.inst().getDescription().getVersion().contains("7.0")) {
+                    worldGuardSupport = new WorldGuardSupport();
+                    worldGuardSupport.loadRegions();
+                } else {
+                    isWorldGuardEnabled = false;
+                    Helper.log("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + WorldGuardPlugin.inst().getDescription().getVersion());
+                }
             } else {
-                isWorldGuardEnabled = false;
-                Helper.log("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + WorldGuardPlugin.inst().getDescription().getVersion());
+                Helper.log("WorldGuard-Unterstützung deaktiviert");
             }
-        } else {
-            Helper.log("WorldGuard-Unterstützung deaktiviert");
-        }
+        });
 
         Helper.log("✓ EthosSkills successfully activated");
     }

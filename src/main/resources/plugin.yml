@@ -7,3 +7,4 @@ authors: [ xXTyraelXx, TheosRee ]
 description: Library for Project Ethos
 softdepend:
   - PlaceholderAPI
+  - WorldGuard
