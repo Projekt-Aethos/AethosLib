@@ -88,24 +88,29 @@ public class WorldGuardSupport {
         return state == StateFlag.State.DENY;
     }
 
-    protected interface FlagKey {
+    public interface FlagKey {
         Map<FlagKey, StateFlag> stateFlags = new HashMap<>();
 
-        static void register(@NotNull final FlagKey flagKey, @NotNull final JavaPlugin plugin) {
+        /**
+         * Registers a {@link Flag} in the {@link WorldGuardPlugin}
+         *
+         * @param plugin to associate the flag with
+         */
+        default void register(@NotNull final JavaPlugin plugin) {
             if (!EthosLib.isWorldGuardEnabled) {
                 return;
             }
             final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
             // State flags
-            final String flagName = (plugin.getName() + "-" + flagKey.getName()).toLowerCase(Locale.ROOT).replace('_', '-');
+            final String flagName = (plugin.getName() + "-" + this.getName()).toLowerCase(Locale.ROOT).replace('_', '-');
             try {
-                final StateFlag stateFlag = new StateFlag(flagName, flagKey.getDefault());
+                final StateFlag stateFlag = new StateFlag(flagName, this.getDefault());
                 registry.register(stateFlag);
-                stateFlags.put(flagKey, stateFlag);
+                stateFlags.put(this, stateFlag);
             } catch (final FlagConflictException e) {
                 final Flag<?> existing = registry.get(flagName);
                 if (existing instanceof StateFlag) {
-                    stateFlags.put(flagKey, (StateFlag) existing);
+                    stateFlags.put(this, (StateFlag) existing);
                 } else {
                     EthosLib.getINSTANCE().getLogger().log(Level.WARNING, "Konnte folgende Flagge nicht registrieren: " + flagName, e);
                 }
