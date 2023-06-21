@@ -63,6 +63,14 @@ public class WorldGuardSupport {
         }
     }
 
+    /**
+     * Checks if a {@link FlagKey} is explicit set to false
+     *
+     * @param location the {@link Location} to check for
+     * @param player   the {@link Player} to check for the flag
+     * @param flagKey  the {@link FlagKey} to check if it is forbidden
+     * @return false if {@link WorldGuardPlugin} is disabled
+     */
     public boolean blockedByFlag(@NotNull final Location location, @NotNull final Player player, @NotNull final FlagKey flagKey) {
         if (!EthosLib.isWorldGuardEnabled) {
             return false;
@@ -88,11 +96,31 @@ public class WorldGuardSupport {
         return state == StateFlag.State.DENY;
     }
 
+    /**
+     * Use {@link #blockedByFlag(Location, Player, FlagKey)} if you want to check with a player
+     *
+     * @param location the {@link Location} to check
+     * @param flagKey  the {@link FlagKey} to check
+     * @return true if {@link WorldGuardPlugin} is disabled
+     */
+    public boolean allowedByFlag(@NotNull final Location location, @NotNull final FlagKey flagKey) {
+        if (!EthosLib.isWorldGuardEnabled) {
+            return true;
+        }
+
+        final StateFlag flag = FlagKey.stateFlags.get(flagKey);
+        if (flag == null) {
+            return false;
+        }
+
+        return container.createQuery().testState(BukkitAdapter.adapt(location), null, flag);
+    }
+
     public interface FlagKey {
         Map<FlagKey, StateFlag> stateFlags = new HashMap<>();
 
         /**
-         * Registers a {@link Flag} in the {@link WorldGuardPlugin}
+         * Registers this {@link FlagKey} in the {@link WorldGuardPlugin}
          *
          * @param plugin to associate the flag with
          */

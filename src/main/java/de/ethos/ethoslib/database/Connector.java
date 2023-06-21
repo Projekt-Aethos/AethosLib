@@ -39,7 +39,7 @@ public class Connector {
         try {
             connection.close();
         } catch (final SQLException e) {
-            Helper.log(Level.SEVERE, "There was an exception with SQL");
+            Helper.log(Level.SEVERE, "There was an exception with SQL", e);
         }
         connection = null;
     }

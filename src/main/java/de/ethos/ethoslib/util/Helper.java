@@ -25,6 +25,10 @@ public class Helper {
         LOGGER.log(level, text);
     }
 
+    public static void log(Level level, String text, Throwable thrown) {
+        LOGGER.log(level, text, thrown);
+    }
+
     public static void logDebug(String text) {
         LOGGER.log(EthosLib.isDebugEnabled ? Level.INFO : Level.CONFIG, "[Debug] " + text);
     }

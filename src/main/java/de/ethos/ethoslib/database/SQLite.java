@@ -28,7 +28,7 @@ public class SQLite extends Database {
             try {
                 file.createNewFile();
             } catch (final IOException e) {
-                Helper.log(Level.SEVERE, "Unable to create database!");
+                Helper.log(Level.SEVERE, "Unable to create database!", e);
             }
         }
         Connection connection = null;
@@ -36,7 +36,7 @@ public class SQLite extends Database {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().toPath() + "/" + dbLocation);
         } catch (ClassNotFoundException | SQLException e) {
-            Helper.log(Level.SEVERE, "There was an exception with SQL");
+            Helper.log(Level.SEVERE, "There was an exception with SQL", e);
         }
         return connection;
     }

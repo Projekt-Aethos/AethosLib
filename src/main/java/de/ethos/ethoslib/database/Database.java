@@ -25,7 +25,7 @@ public abstract class Database {
                 con = openConnection();
             }
         } catch (final SQLException e) {
-            Helper.log(Level.WARNING, "Failed opening database connection: " + e.getMessage());
+            Helper.log(Level.WARNING, "Failed opening database connection: " + e.getMessage(), e);
         }
         return con;
     }
@@ -36,7 +36,7 @@ public abstract class Database {
         try {
             con.close();
         } catch (final SQLException e) {
-            Helper.log(Level.SEVERE, "There was an exception with SQL");
+            Helper.log(Level.SEVERE, "There was an exception with SQL", e);
         }
         con = null;
     }
