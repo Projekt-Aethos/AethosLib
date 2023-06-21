@@ -4,7 +4,7 @@ import de.ethos.ethoslib.inventory.item.EthosItem;
 import de.ethos.ethoslib.inventory.item.LightEthosItem;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
+@Deprecated
 public class GUIListener implements org.bukkit.event.Listener {
 
     @EventHandler(ignoreCancelled = true)

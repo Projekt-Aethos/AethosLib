@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
-
+@Deprecated
 public abstract class GUIItem extends EthosItem {
 
     public GUIItem(Material material, Component text, Component... components) {

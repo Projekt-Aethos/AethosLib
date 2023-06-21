@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+@Deprecated
 public class LightEthosItem extends ItemStack {
     public static final FunctionalEventHandler<InventoryClickEvent> CANCEL = e -> e.setCancelled(true);
     public static final FunctionalEventHandler<InventoryClickEvent> EXIT = e -> e.getView().close();

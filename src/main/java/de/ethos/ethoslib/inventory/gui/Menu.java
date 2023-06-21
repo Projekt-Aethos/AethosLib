@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-
+@Deprecated
 public abstract class Menu implements Displayable {
     //UUID des Menus dient nur der unterscheidung zu anderen Menüs
     protected final UUID uuid;

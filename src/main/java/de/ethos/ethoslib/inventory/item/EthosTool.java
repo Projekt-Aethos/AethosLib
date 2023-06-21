@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
+@Deprecated
 public abstract class EthosTool extends EthosItem {
     public EthosTool(Material material, Component displayName, Component... lore) {
         super(material, displayName, lore);

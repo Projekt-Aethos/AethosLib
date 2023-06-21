@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+@Deprecated
 public abstract class EthosItem extends ItemStack {
 
     private static final Map<UUID, EthosItem> MAP = new HashMap<>();

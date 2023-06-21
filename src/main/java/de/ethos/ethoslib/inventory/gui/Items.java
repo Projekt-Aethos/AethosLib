@@ -5,7 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.jetbrains.annotations.NotNull;
-
+@Deprecated
 public class Items {
 
     public static final GUIItem PLACEHOLDER = new GUIItem(Material.BLACK_STAINED_GLASS_PANE, Component.text(".", NamedTextColor.BLACK)) {

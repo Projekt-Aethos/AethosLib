@@ -3,7 +3,7 @@ package de.ethos.ethoslib.inventory.item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-
+@Deprecated
 public class ToolListener implements Listener {
     @EventHandler
     public void onToolClick(PlayerInteractEvent event) {

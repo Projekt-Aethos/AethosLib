@@ -10,7 +10,7 @@ import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-
+@Deprecated
 public class View extends InventoryView {
     private final Menu menu;
 
