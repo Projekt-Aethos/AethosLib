@@ -15,6 +15,7 @@ public class Helper {
     private static final String CHAT_PREFIX = EthosLib.chatPrefix;
 
     private Helper() {
+
     }
 
     public static void log(String text) {
