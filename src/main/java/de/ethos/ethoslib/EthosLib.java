@@ -92,7 +92,7 @@ public final class EthosLib extends JavaPlugin {
             }
         });
 
-        Helper.log("✓ EthosSkills successfully activated");
+        Helper.log("✓ EthosLib successfully activated");
     }
 
     @Override
