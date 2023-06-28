@@ -105,7 +105,7 @@ public final class EthosLib extends JavaPlugin {
         super.reloadConfig();
         isDebugEnabled = getConfig().getBoolean("debug", false);
 
-        chatPrefix = getConfig().getString("chatPrefix", null);
+        chatPrefix = getConfig().getString("chatPrefix", "[EL] ");
     }
 
     @Contract("_ -> new")
