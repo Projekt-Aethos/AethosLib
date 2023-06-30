@@ -26,35 +26,17 @@ jobs:
       - name: Initialize Directories
         run: |
           mkdir target/artifacts
-          mkdir keys
           mv target/EthosLib.jar target/artifacts/EthosLib.jar    
 
-      - name: Secret Key to File
-        uses: mobiledevops/secret-to-file-action@v1
+      - name: SFTP uploader
+        uses: wangyucode/sftp-upload-action@v2.0.2
         with:
-          base64-encoded-secret: ${{ secrets.FILE_CONTENT }}
-          filename: "key.pem"
-          is-executable: false
-          working-directory: "keys"
-
-      - name: Upload File
-        run: |
-          scp -i /keys/key.pem -P ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
-
-      - name: Remove Keys
-        run: |
-          rm -r keys
-   
-
-      #- name: SFTP uploader
-      #  uses: wangyucode/sftp-upload-action@v2.0.2
-      #  with:
-      #    host: ${{ secrets.SERVER }}
-      #    username: ${{ secrets.USERNAME }}
-      #    port: ${{ secrets.PORT }}
-      #    password: ${{ secrets.PASSWORD }}
-      #    localDir: 'target/artifacts'
-      #   remoteDir: ${{ secrets.TARGET_DIR }}
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          password: ${{ secrets.PASSWORD }}
+          localDir: 'target/artifacts'
+          remoteDir: ${{ secrets.TARGET_DIR }}
 
 
       - name: Restart Server
