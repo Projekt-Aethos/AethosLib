@@ -42,7 +42,14 @@ jobs:
           localDir: 'target/artifacts'
           remoteDir: ${{ secrets.TARGET_DIR }}
 
+
+
       - name: Restart Server
-        run: |
-          bash ${{secrets.RESTARTPATH}}
-          
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            bash ${{ secrets.RESTARTPATH }}
