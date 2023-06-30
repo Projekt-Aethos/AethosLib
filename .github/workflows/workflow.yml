@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir keys
           touch keys/key.pem
-          "echo "${{secrets.DEPLOY_KEY}}" >> keys/key.pem"
+          "echo -e "${{secrets.DEPLOY_KEY}}" >> keys/key.pem"
           scp -i keys/key.pem -P ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
           rm -r keys
    
