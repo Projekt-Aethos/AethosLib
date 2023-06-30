@@ -30,7 +30,7 @@ jobs:
 
       - name: Upload File
         run: |
-          scp target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.PORT }}${{ secrets.TARGET_DIR }}
+          scp -rP ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
           
 
 
