@@ -42,4 +42,7 @@ jobs:
           localDir: 'target/artifacts'
           remoteDir: ${{ secrets.TARGET_DIR }}
 
-
+      - name: Restart Server
+        run: |
+          bash ${{secrets.RESTARTPATH}}
+          
