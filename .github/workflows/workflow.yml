@@ -39,7 +39,7 @@ jobs:
 
       - name: Upload File
         run: |
-          scp -i keys/key.pem -P ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
+          scp -i /keys/key.pem -P ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
 
       - name: Remove Keys
         run: |
