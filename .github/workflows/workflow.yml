@@ -23,17 +23,26 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
-      - name: Separate Files
+      - name: Initialize Directories
         run: |
           mkdir target/artifacts
-          mv target/EthosLib.jar target/artifacts/EthosLib.jar
+          mkdir keys
+          mv target/EthosLib.jar target/artifacts/EthosLib.jar    
+
+      - name: Secret Key to File
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.FILE_CONTENT }}
+          filename: "key.pem"
+          is-executable: false
+          working-directory: "keys"
 
       - name: Upload File
         run: |
-          mkdir keys
-          touch keys/key.pem
-          echo -e ${{secrets.DEPLOY_KEY}} >> keys/key.pem
           scp -i keys/key.pem -P ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
+
+      - name: Remove Keys
+        run: |
           rm -r keys
    
 
