@@ -28,7 +28,7 @@ jobs:
         run: |
       #    mkdir target/artifacts
       #    mv target/EthosLib.jar target/artifacts/EthosLib.jar
-          scp target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
+          scp target/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
           
 
 
