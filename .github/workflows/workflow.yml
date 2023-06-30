@@ -23,12 +23,11 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
-
       - name: Remove Non-EthosLib Files
         run: |
-      #    mkdir target/artifacts
-      #    mv target/EthosLib.jar target/artifacts/EthosLib.jar
-          scp target/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
+          mkdir target/artifacts
+          mv target/EthosLib.jar target/artifacts/EthosLib.jar
+          scp target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
           
 
 
