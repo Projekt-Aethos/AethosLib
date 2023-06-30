@@ -28,11 +28,16 @@ jobs:
           mkdir target/artifacts
           mv target/EthosLib.jar target/artifacts/EthosLib.jar
 
-      - name: Upload File
-        run: |
-          scp -rP ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
+      #- name: Upload File
+      #  run: |
+      #    mkdir keys
+      #    touch key.pem
+      #    echo "${{secrets.}}" >> myfile.txt
+      #    scp -rP ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
           
-
+      - name: Upload File via curl
+        run: |
+          curl --insecure --user ${{ secrets.USERNAME }}:${{ secrets.PASSWORD }} -T /target/artifacts/EthosLib.jar sftp://${{ secrets.SERVER }}:${{ secrets.PORT }}${{ secrets.TARGET_DIR }}
 
 
       #- name: SFTP uploader
