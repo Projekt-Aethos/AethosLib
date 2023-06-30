@@ -6,18 +6,21 @@
 
     <groupId>de.ethos</groupId>
     <artifactId>ethoslib</artifactId>
-    <version>1.4.6</version>
+    <version>1.4.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>EthosLib</name>
 
     <description>Library for Project Ethos</description>
     <properties>
-        <java.version>1.17</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
+
+        <finalName>EthosLib</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
