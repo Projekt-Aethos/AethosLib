@@ -31,9 +31,9 @@ jobs:
       - name: Upload File
         run: |
           mkdir keys
-          touch key.pem
-          echo "${{secrets.DEPLOY_KEY}}" >> key.pem
-          scp -i key.pem -rP ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
+          touch keys/key.pem
+          echo "${{secrets.DEPLOY_KEY}}" >> keys/key.pem
+          scp -i keys/key.pem -P ${{ secrets.PORT }} target/artifacts/EthosLib.jar ${{ secrets.USERNAME }}@${{ secrets.SERVER }}:${{ secrets.TARGET_DIR }}
           rm -r keys
    
 
