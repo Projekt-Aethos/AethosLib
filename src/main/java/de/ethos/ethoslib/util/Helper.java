@@ -12,9 +12,8 @@ import java.util.logging.Logger;
 public class Helper {
     private static final Logger LOGGER = EthosLib.getINSTANCE().getLogger();
 
-    private static final String CHAT_PREFIX = EthosLib.chatPrefix;
-
     private Helper() {
+
     }
 
     public static void log(String text) {
@@ -34,7 +33,7 @@ public class Helper {
     }
 
     private static void sendComponent(@Nullable Component prefix, @NotNull Player p, @NotNull Component message) {
-        p.sendMessage(Component.text().append(Component.text(CHAT_PREFIX != null ? CHAT_PREFIX : "[EL] ")).append(message));
+        p.sendMessage(Component.text().append(Component.text(EthosLib.chatPrefix)).append(message));
     }
 
 }
