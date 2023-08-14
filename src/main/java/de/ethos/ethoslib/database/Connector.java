@@ -4,10 +4,7 @@ import de.ethos.ethoslib.util.Helper;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.logging.Level;
 
 public class Connector {
@@ -15,7 +12,7 @@ public class Connector {
     private final Database database;
     private Connection connection;
 
-    public Connector(final @NotNull JavaPlugin plugin, final @NotNull Database database) {
+    public Connector(@NotNull JavaPlugin plugin, @NotNull Database database) {
         this.database = database;
         this.prefix = plugin.getName() + "_";
         connection = database.getConnection();
@@ -28,7 +25,7 @@ public class Connector {
     public final void refresh() {
         try {
             connection.prepareStatement("SELECT 1").executeQuery().close();
-        } catch (final SQLException e) {
+        } catch (SQLException e) {
             Helper.log(Level.WARNING, "Reconnecting to the database");
             closeConnection();
             connection = database.getConnection();
@@ -38,28 +35,47 @@ public class Connector {
     private void closeConnection() {
         try {
             connection.close();
-        } catch (final SQLException e) {
+        } catch (SQLException e) {
             Helper.log(Level.SEVERE, "There was an exception with SQL", e);
         }
         connection = null;
     }
 
-    //Nach EthosSkills-Syntax
-    public void write(final @NotNull Update type) throws SQLException {
-        final String sql = type.createSQL(prefix);
+    @Deprecated
+    public void write(@NotNull Update type) throws SQLException {
+        String sql = type.createSQL(prefix);
         Helper.logDebug(sql);
-        connection = database.getConnection();
-        final Statement stmt = database.con.createStatement();
+        refresh();
+        Statement stmt = connection.createStatement();
         stmt.executeUpdate(sql);
         stmt.close();
     }
 
-    //Nach EthosSkills-Syntax
-    public ResultSet search(final @NotNull Query type) throws SQLException {
-        final String sql = type.createSQL(prefix);
-        Helper.logDebug(sql);
-        connection = database.getConnection();
-        final Statement stmt = connection.createStatement();
+    @Deprecated
+    public ResultSet search(@NotNull Query type) throws SQLException {
+        String sql = type.createSQL(prefix);
+        refresh();
+        Statement stmt = connection.createStatement();
         return stmt.executeQuery(sql);
+    }
+
+    public void write(@NotNull Update type, Object @NotNull ... values) throws SQLException {
+        PreparedStatement stmt = fill(type.createSQL(prefix), values);
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public ResultSet search(@NotNull Query type, Object @NotNull ... values) throws SQLException {
+        return fill(type.createSQL(prefix), values).executeQuery();
+    }
+
+    private PreparedStatement fill(@NotNull String sql, @NotNull Object @NotNull ... values) throws SQLException {
+        Helper.logDebug(sql);
+        refresh();
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for (int i = 0; i < values.length; i++) {
+            preparedStatement.setObject(i + 1, values[i]);
+        }
+        return preparedStatement;
     }
 }
