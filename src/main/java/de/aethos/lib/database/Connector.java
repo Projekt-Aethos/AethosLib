@@ -4,7 +4,10 @@ import de.aethos.lib.util.Helper;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class Connector {
@@ -41,24 +44,6 @@ public class Connector {
         connection = null;
     }
 
-    @Deprecated
-    public void write(@NotNull Update type) throws SQLException {
-        String sql = type.createSQL(prefix);
-        Helper.logDebug(sql);
-        refresh();
-        Statement stmt = connection.createStatement();
-        stmt.executeUpdate(sql);
-        stmt.close();
-    }
-
-    @Deprecated
-    public ResultSet search(@NotNull Query type) throws SQLException {
-        String sql = type.createSQL(prefix);
-        refresh();
-        Statement stmt = connection.createStatement();
-        return stmt.executeQuery(sql);
-    }
-
     public void write(@NotNull Update type, Object @NotNull ... values) throws SQLException {
         PreparedStatement stmt = fill(type.createSQL(prefix), values);
         stmt.executeUpdate();
@@ -70,12 +55,12 @@ public class Connector {
     }
 
     private PreparedStatement fill(@NotNull String sql, @NotNull Object @NotNull ... values) throws SQLException {
-        Helper.logDebug(sql);
         refresh();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for (int i = 0; i < values.length; i++) {
             preparedStatement.setObject(i + 1, values[i]);
         }
+        Helper.logDebug(preparedStatement.toString());
         return preparedStatement;
     }
 }
