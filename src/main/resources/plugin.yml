@@ -1,6 +1,6 @@
-name: EthosLib
+name: AethosLib
 version: '${project.version}'
-main: de.ethos.ethoslib.EthosLib
+main: de.aethos.lib.AethosLib
 api-version: 1.19
 load: STARTUP
 authors: [ xXTyraelXx, TheosRee ]
