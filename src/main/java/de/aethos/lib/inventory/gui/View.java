@@ -60,6 +60,16 @@ public class View extends InventoryView {
         return LegacyComponentSerializer.legacyAmpersand().serialize(menu.title);
     }
 
+    @Override
+    public void setTitle(@NotNull String ignored) {
+
+    }
+
+    @Override
+    public @NotNull String getOriginalTitle() {
+        return getTitle();
+    }
+
     public @NotNull Component getTitleComp() {
         return menu.title;
     }
