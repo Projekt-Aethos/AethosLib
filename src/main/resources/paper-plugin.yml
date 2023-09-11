@@ -1,0 +1,13 @@
+name: AethosLib
+version: '${project.version}'
+main: de.aethos.lib.AethosLib
+api-version: '1.20'
+load: STARTUP
+authors: [ xXTyraelXx, TheosRee ]
+description: '${description}'
+dependencies:
+  server:
+    PlaceholderAPI:
+      required: false
+    WorldGuard:
+      required: false
