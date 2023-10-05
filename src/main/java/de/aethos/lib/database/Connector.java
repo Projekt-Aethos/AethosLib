@@ -63,4 +63,9 @@ public class Connector {
         Helper.logDebug(preparedStatement.toString());
         return preparedStatement;
     }
+
+    public Connection getConnection() {
+        refresh();
+        return connection;
+    }
 }
