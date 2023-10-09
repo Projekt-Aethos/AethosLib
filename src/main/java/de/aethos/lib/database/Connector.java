@@ -11,9 +11,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class Connector {
+    protected final Database database;
     private final String prefix;
-    private final Database database;
-    private Connection connection;
+    protected Connection connection;
 
     public Connector(@NotNull JavaPlugin plugin, @NotNull Database database) {
         this.database = database;
