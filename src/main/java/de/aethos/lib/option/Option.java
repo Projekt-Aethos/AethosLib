@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+@SuppressWarnings("unused")
 public sealed interface Option<T> permits Some, None {
     @ApiStatus.Internal
     None<?> GENERIC_NONE = new None<>();
