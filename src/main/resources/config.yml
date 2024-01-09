@@ -1,8 +1,11 @@
-mysql:
-  enabled: false
-  host: ''
-  port: ''
-  user: ''
-  pass: ''
-  base: ''
-  prefix: ethoslib_
+#mysql:
+#  hostname: ''
+#  port: ''
+#  user: ''
+#  password: ''
+#  database: ''
+#  poolsize: 1
+sqlite:
+  name: "db"
+  create: true
+  poolsize: 1

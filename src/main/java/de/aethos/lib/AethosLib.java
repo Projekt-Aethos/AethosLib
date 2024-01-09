@@ -1,22 +1,17 @@
 package de.aethos.lib;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import de.aethos.lib.database.Connector;
-import de.aethos.lib.database.Database;
-import de.aethos.lib.database.MySQL;
-import de.aethos.lib.database.SQLite;
+import de.aethos.lib.data.database.connector.Connector;
+import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.inventory.gui.GUIListener;
 import de.aethos.lib.inventory.item.ToolListener;
 import de.aethos.lib.util.Helper;
 import de.aethos.lib.util.WorldGuardSupport;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.logging.Level;
 
 public final class AethosLib extends JavaPlugin {
     public static String chatPrefix;
@@ -24,8 +19,7 @@ public final class AethosLib extends JavaPlugin {
     public static boolean isWorldGuardEnabled;
     private static AethosLib instance;
     private static WorldGuardSupport worldGuardSupport;
-    private Database database;
-    private boolean isMySQLUsed;
+
 
     //////////          Getter          ////////////
     public static AethosLib getInstance() {
@@ -51,27 +45,14 @@ public final class AethosLib extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        final DefaultPluginConnector connector = new DefaultPluginConnector(this);
+
+
         // Plugin startup logic
         saveDefaultConfig();
-        FileConfiguration config = getConfig();
 
-        boolean mySQLEnabled = config.getBoolean("mysql.enabled", true);
-        if (mySQLEnabled) {
-            Helper.logDebug("Connecting to MySQL database");
-            this.database = new MySQL(this, config.getString("mysql.host"), config.getString("mysql.port"), config.getString("mysql.base"), config.getString("mysql.user"), config.getString("mysql.pass"));
-            if (database.getConnection() != null) {
-                isMySQLUsed = true;
-                Helper.log(Level.INFO, "Successfully connected to MySQL database!");
-            }
-        }
-        if (!mySQLEnabled || !isMySQLUsed) {
-            this.database = new SQLite(this, "database.db");
-            if (mySQLEnabled) {
-                Helper.log(Level.WARNING, "No connection to the mySQL Database! Using SQLite for storing data as fallback!");
-            } else {
-                Helper.log(Level.INFO, "Using SQLite for storing data!");
-            }
-        }
+
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new GUIListener(), this);
         pm.registerEvents(new ToolListener(), this);
@@ -110,11 +91,13 @@ public final class AethosLib extends JavaPlugin {
 
     @Contract("_ -> new")
     public @NotNull Connector getConnector(@NotNull JavaPlugin plugin) {
-        return new Connector(plugin, database);
+        return new DefaultPluginConnector(plugin);
     }
 
-    public @NotNull Database getDatabase() {
-        return database;
+    @Contract(" -> new")
+    public @NotNull Connector getConnector() {
+        return new DefaultPluginConnector(this);
     }
+
 
 }

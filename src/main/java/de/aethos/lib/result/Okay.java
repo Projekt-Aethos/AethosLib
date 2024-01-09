@@ -5,10 +5,10 @@ import de.aethos.lib.option.Option;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public record Okay<O, E>(O okay) implements Result<O, E> {
+public record Okay<O, E>(O value) implements Result<O, E> {
     @Override
     public <C> C match(Function<? super O, ? extends C> okay, Function<? super E, ? extends C> error) {
-        return okay.apply(this.okay);
+        return okay.apply(this.value);
     }
 
     @Override
@@ -18,7 +18,7 @@ public record Okay<O, E>(O okay) implements Result<O, E> {
 
     @Override
     public Stream<O> streamOkay() {
-        return Stream.of(okay);
+        return Stream.of(value);
     }
 
     @Override
@@ -28,6 +28,6 @@ public record Okay<O, E>(O okay) implements Result<O, E> {
 
     @Override
     public Option<O> optionOkay() {
-        return Option.some(okay);
+        return Option.some(value);
     }
 }
