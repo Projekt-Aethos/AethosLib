@@ -5,6 +5,7 @@ import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.inventory.gui.GUIListener;
 import de.aethos.lib.inventory.item.ToolListener;
+import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.util.WorldGuardSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -25,6 +26,8 @@ public final class AethosLib extends JavaPlugin {
     private static AethosLib instance;
 
     private static WorldGuardSupport worldGuardSupport;
+
+    private LevelApi levelApi;
 
     @Override
     public void reloadConfig() {
@@ -56,6 +59,8 @@ public final class AethosLib extends JavaPlugin {
 
         // Plugin startup logic
         saveDefaultConfig();
+
+        levelApi = new LevelApi(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new GUIListener(), this);
@@ -105,4 +110,7 @@ public final class AethosLib extends JavaPlugin {
         return new DefaultPluginConnector(this);
     }
 
+    public @NotNull LevelApi getLevelApi() {
+        return levelApi;
+    }
 }
