@@ -17,6 +17,7 @@ import de.aethos.lib.AethosLib;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,15 +25,42 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorldGuardSupport {
-    private RegionContainer container;
+    private final boolean isEnabled;
 
-    public WorldGuardSupport() {
+    private final RegionContainer container;
+
+    public WorldGuardSupport(@NotNull Logger logger, @NotNull PluginManager pluginManager) {
+        boolean isWorldGuardEnabled = pluginManager.getPlugin("WorldGuard") != null;
+        if (!isWorldGuardEnabled) {
+            logger.info("WorldGuard nicht vorhanden - Unterstützung deaktiviert");
+            isEnabled = false;
+            container = null;
+            return;
+        }
+
+        RegionContainer tmpContainer = null;
+        try {
+            String version = WorldGuardPlugin.inst().getDescription().getVersion();
+            if (version.contains("7.0")) {
+                tmpContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                logger.log(Level.INFO, "WorldGuard-Unterstützung aktiviert!");
+            } else {
+                isWorldGuardEnabled = false;
+                logger.info("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + version);
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Fehler beim Laden, WorldGuard-Unterstützung deaktiviert!");
+            isWorldGuardEnabled = false;
+        }
+        this.isEnabled = isWorldGuardEnabled;
+        this.container = tmpContainer;
     }
 
-    public static boolean isRegionFlagBlocked(@NotNull Player player, @NotNull Location location, @NotNull StateFlag flag) {
-        if (!AethosLib.isWorldGuardEnabled) {
+    public boolean isRegionFlagBlocked(@NotNull Player player, @NotNull Location location, @NotNull StateFlag flag) {
+        if (!isEnabled) {
             return false;
         }
 
@@ -45,20 +73,11 @@ public class WorldGuardSupport {
     /**
      * @return true if PVP is blocked
      */
-    public static boolean isPVPBlocked(@NotNull Player player, @NotNull Location location) {
-        if (!AethosLib.isWorldGuardEnabled) {
+    public boolean isPVPBlocked(@NotNull Player player, @NotNull Location location) {
+        if (!isEnabled) {
             return false;
         }
         return isRegionFlagBlocked(player, location, Flags.PVP);
-    }
-
-    public boolean loadRegions() {
-        try {
-            container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     /**
@@ -70,7 +89,7 @@ public class WorldGuardSupport {
      * @return false if {@link WorldGuardPlugin} is disabled
      */
     public boolean blockedByFlag(@NotNull Location location, @NotNull Player player, @NotNull FlagKey flagKey) {
-        if (!AethosLib.isWorldGuardEnabled) {
+        if (!isEnabled) {
             return false;
         }
 
@@ -102,7 +121,7 @@ public class WorldGuardSupport {
      * @return true if {@link WorldGuardPlugin} is disabled
      */
     public boolean allowedByFlag(@NotNull Location location, @NotNull FlagKey flagKey) {
-        if (!AethosLib.isWorldGuardEnabled) {
+        if (!isEnabled) {
             return true;
         }
 
@@ -114,6 +133,10 @@ public class WorldGuardSupport {
         return container.createQuery().testState(BukkitAdapter.adapt(location), null, flag);
     }
 
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
     public interface FlagKey {
         Map<FlagKey, StateFlag> stateFlags = new HashMap<>();
 
@@ -123,7 +146,7 @@ public class WorldGuardSupport {
          * @param plugin to associate the flag with
          */
         default void register(@NotNull JavaPlugin plugin) {
-            if (!AethosLib.isWorldGuardEnabled) {
+            if (!AethosLib.getInstance().getWorldGuardSupport().isEnabled()) {
                 return;
             }
             FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();

@@ -6,7 +6,7 @@
 
     <groupId>de.aethos</groupId>
     <artifactId>lib</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
     <packaging>jar</packaging>
 
     <name>AethosLib</name>
