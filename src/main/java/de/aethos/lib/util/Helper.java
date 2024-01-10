@@ -1,12 +1,8 @@
 package de.aethos.lib.util;
 
 import de.aethos.lib.AethosLib;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,24 +12,19 @@ public class Helper {
     private Helper() {
     }
 
-    public static void log(String text) {
+    public static void log(@NotNull String text) {
         log(Level.INFO, text);
     }
 
-    public static void log(Level level, String text) {
+    public static void log(@NotNull Level level, @NotNull String text) {
         LOGGER.log(level, text);
     }
 
-    public static void log(Level level, String text, Throwable thrown) {
+    public static void log(@NotNull Level level, @NotNull String text, @NotNull Throwable thrown) {
         LOGGER.log(level, text, thrown);
     }
 
-    public static void logDebug(String text) {
+    public static void logDebug(@NotNull String text) {
         LOGGER.log(AethosLib.isDebugEnabled ? Level.INFO : Level.CONFIG, "[Debug] " + text);
     }
-
-    private static void sendComponent(@Nullable Component prefix, @NotNull Player p, @NotNull Component message) {
-        p.sendMessage(Component.text().append(Component.text(AethosLib.chatPrefix)).append(message));
-    }
-
 }

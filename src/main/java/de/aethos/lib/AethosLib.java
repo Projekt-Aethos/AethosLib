@@ -5,7 +5,6 @@ import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.inventory.gui.GUIListener;
 import de.aethos.lib.inventory.item.ToolListener;
-import de.aethos.lib.util.Helper;
 import de.aethos.lib.util.WorldGuardSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -13,67 +12,35 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public final class AethosLib extends JavaPlugin {
     public static String chatPrefix;
+
     public static boolean isDebugEnabled;
+
     public static boolean isWorldGuardEnabled;
+
     private static AethosLib instance;
+
     private static WorldGuardSupport worldGuardSupport;
 
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        isDebugEnabled = getConfig().getBoolean("debug", false);
 
-    //////////          Getter          ////////////
-    public static AethosLib getInstance() {
-        return instance;
-    }
-
-    public static void error(@NotNull Exception exception) {
-        exception.printStackTrace(System.out);
-    }
-
-    public static WorldGuardSupport getWorldGuardSupport() {
-        return worldGuardSupport;
+        chatPrefix = getConfig().getString("chatPrefix", "[ÆL] ");
     }
 
     @Override
     public void onLoad() {
         //erlaube registrieren der WorldGuard-Flags, falls WorldGuard 7.0 vorhanden ist
-        if (getServer().getPluginManager().getPlugin("WorldGuard") != null && WorldGuardPlugin.inst().getDescription().getVersion().contains("7.0")) {
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null
+                && WorldGuardPlugin.inst().getDescription().getVersion().contains("7.0")) {
             isWorldGuardEnabled = true;
         }
-    }
-
-    @Override
-    public void onEnable() {
-        instance = this;
-
-        final DefaultPluginConnector connector = new DefaultPluginConnector(this);
-
-
-        // Plugin startup logic
-        saveDefaultConfig();
-
-
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new GUIListener(), this);
-        pm.registerEvents(new ToolListener(), this);
-
-        //WorldGuard-Aktivierung
-        Bukkit.getScheduler().runTask(this, () -> {
-            isWorldGuardEnabled = pm.isPluginEnabled("WorldGuard");
-            if (isWorldGuardEnabled) {
-                if (WorldGuardPlugin.inst().getDescription().getVersion().contains("7.0")) {
-                    worldGuardSupport = new WorldGuardSupport();
-                    worldGuardSupport.loadRegions();
-                } else {
-                    isWorldGuardEnabled = false;
-                    Helper.log("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + WorldGuardPlugin.inst().getDescription().getVersion());
-                }
-            } else {
-                Helper.log("WorldGuard-Unterstützung deaktiviert");
-            }
-        });
-
-        Helper.log("✓ AethosLib successfully activated");
     }
 
     @Override
@@ -82,11 +49,42 @@ public final class AethosLib extends JavaPlugin {
     }
 
     @Override
-    public void reloadConfig() {
-        super.reloadConfig();
-        isDebugEnabled = getConfig().getBoolean("debug", false);
+    public void onEnable() {
+        instance = this;
 
-        chatPrefix = getConfig().getString("chatPrefix", "[EL] ");
+        final DefaultPluginConnector connector = new DefaultPluginConnector(this);
+
+        // Plugin startup logic
+        saveDefaultConfig();
+
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new GUIListener(), this);
+        pm.registerEvents(new ToolListener(), this);
+
+        Logger logger = getLogger();
+        //WorldGuard-Aktivierung
+        Bukkit.getScheduler().runTask(this, () -> {
+            isWorldGuardEnabled = pm.isPluginEnabled("WorldGuard");
+            if (isWorldGuardEnabled) {
+                String version = WorldGuardPlugin.inst().getDescription().getVersion();
+                if (version.contains("7.0")) {
+                    worldGuardSupport = new WorldGuardSupport();
+                    isWorldGuardEnabled = worldGuardSupport.loadRegions();
+                    if (isWorldGuardEnabled) {
+                        logger.log(Level.INFO, "WorldGuard-Unterstützung aktiviert!");
+                    } else {
+                        logger.log(Level.WARNING, "Fehler beim Laden, WorldGuard-Unterstützung deaktiviert!");
+                    }
+                } else {
+                    isWorldGuardEnabled = false;
+                    logger.info("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + version);
+                }
+            } else {
+                logger.info("WorldGuard-Unterstützung deaktiviert");
+            }
+        });
+
+        logger.info("✓ AethosLib successfully activated");
     }
 
     @Contract("_ -> new")
@@ -94,10 +92,17 @@ public final class AethosLib extends JavaPlugin {
         return new DefaultPluginConnector(plugin);
     }
 
+    public static AethosLib getInstance() {
+        return instance;
+    }
+
+    public static WorldGuardSupport getWorldGuardSupport() {
+        return worldGuardSupport;
+    }
+
     @Contract(" -> new")
     public @NotNull Connector getConnector() {
         return new DefaultPluginConnector(this);
     }
-
 
 }

@@ -25,7 +25,7 @@ public abstract class SimplePluginCommand<AePlugin extends JavaPlugin> extends C
      * @param name   the name
      * @param plugin the plugin
      */
-    public SimplePluginCommand(String name, AePlugin plugin) {
+    public SimplePluginCommand(@NotNull String name, @NotNull AePlugin plugin) {
         super(name);
         this.plugin = plugin;
     }
@@ -38,7 +38,8 @@ public abstract class SimplePluginCommand<AePlugin extends JavaPlugin> extends C
      * @return list entries matching last arg
      */
     @Contract("_, null -> null")
-    protected List<String> complete(String @NotNull [] args, @Nullable List<String> toComplete) {
+    @Nullable
+    protected List<String> complete(@NotNull String @NotNull [] args, @Nullable List<String> toComplete) {
         if (toComplete == null) {
             return null;
         }
@@ -52,8 +53,8 @@ public abstract class SimplePluginCommand<AePlugin extends JavaPlugin> extends C
         return out;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public AePlugin getPlugin() {
         return plugin;
     }

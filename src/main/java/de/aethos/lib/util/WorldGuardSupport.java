@@ -52,14 +52,12 @@ public class WorldGuardSupport {
         return isRegionFlagBlocked(player, location, Flags.PVP);
     }
 
-    public void loadRegions() {
+    public boolean loadRegions() {
         try {
             container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-            AethosLib.isWorldGuardEnabled = true;
-            Helper.log("WorldGuard-Unterstützung aktiviert!");
+            return true;
         } catch (Exception e) {
-            AethosLib.isWorldGuardEnabled = false;
-            Helper.log(Level.WARNING, "Fehler beim laden, WorldGuard-Unterstützung deaktiviert!");
+            return false;
         }
     }
 
