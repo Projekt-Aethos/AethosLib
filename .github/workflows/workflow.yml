@@ -23,28 +23,28 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
-      - name: Initialize Directories
-        run: |
-          mkdir target/artifacts
-          mv target/EthosLib.jar target/artifacts/EthosLib.jar    
+#      - name: Initialize Directories
+#        run: |
+#          mkdir target/artifacts
+#          mv target/EthosLib.jar target/artifacts/EthosLib.jar
+#
+#      - name: SFTP uploader
+#        uses: wangyucode/sftp-upload-action@v2.0.2
+#        with:
+#          host: ${{ secrets.SERVER }}
+#          username: ${{ secrets.USERNAME }}
+#          port: ${{ secrets.PORT }}
+#          password: ${{ secrets.PASSWORD }}
+#          localDir: 'target/artifacts'
+#          remoteDir: ${{ secrets.TARGET_DIR }}
+#
 
-      - name: SFTP uploader
-        uses: wangyucode/sftp-upload-action@v2.0.2
-        with:
-          host: ${{ secrets.SERVER }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
-          password: ${{ secrets.PASSWORD }}
-          localDir: 'target/artifacts'
-          remoteDir: ${{ secrets.TARGET_DIR }}
-
-
-      - name: Restart Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          script: |
-            bash ${{ secrets.RESTARTPATH }}
+#      - name: Restart Server
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.SERVER }}
+#          username: ${{ secrets.USERNAME }}
+#          password: ${{ secrets.PASSWORD }}
+#          port: ${{ secrets.PORT }}
+#          script: |
+#            bash ${{ secrets.RESTARTPATH }}
