@@ -1,4 +1,4 @@
-package de.aethos.lib.util;
+package de.aethos.lib.ui.item;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -20,9 +20,7 @@ public class ItemBuilder {
 
 
     public ItemBuilder displayName(Component component) {
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(component);
-        item.setItemMeta(meta);
+        item.editMeta(meta -> meta.displayName(component));
         return this;
     }
 
@@ -47,11 +45,15 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setPersistentData(String value, NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(key, PersistentDataType.PrimitivePersistentDataType.STRING, value);
-        item.setItemMeta(meta);
+        item.editMeta(meta -> meta.getPersistentDataContainer().set(key, PersistentDataType.PrimitivePersistentDataType.STRING, value));
         return this;
     }
+
+    public ItemBuilder setCustomModelData(int i) {
+        item.editMeta(meta -> meta.setCustomModelData(i));
+        return this;
+    }
+
 
     public ItemStack build() {
         return item;
