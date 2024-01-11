@@ -1,12 +1,17 @@
 package de.aethos.lib;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import de.aethos.lib.compatibility.worldguard.ExistingWorldGuardSupport;
+import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
+import de.aethos.lib.compatibility.worldguard.WorldGuardSupport;
 import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.level.LevelApi;
-import de.aethos.lib.util.WorldGuardSupport;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Logger;
 
 public final class AethosLib extends JavaPlugin {
     private static AethosLib instance;
@@ -17,11 +22,7 @@ public final class AethosLib extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            worldGuardSupport = new WorldGuardSupport(getLogger());
-        } else {
-            getLogger().info("WorldGuard nicht vorhanden - Unterstützung deaktiviert");
-        }
+        loadWorldGuardSupport();
     }
 
     @Override
@@ -37,6 +38,28 @@ public final class AethosLib extends JavaPlugin {
         levelApi = new LevelApi(this);
 
         getLogger().info("✓ AethosLib successfully activated");
+    }
+
+    private void loadWorldGuardSupport() {
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            Logger logger = getLogger();
+            try {
+                String version = WorldGuardPlugin.inst().getDescription().getVersion();
+                if (version.contains("7.0")) {
+                    logger.info("WorldGuard-Unterstützung aktiviert!");
+                    worldGuardSupport = new ExistingWorldGuardSupport();
+                } else {
+                    logger.info("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + version);
+                }
+            } catch (Exception e) {
+                logger.warning("Fehler beim Laden, WorldGuard-Unterstützung deaktiviert!");
+            }
+        } else {
+            getLogger().info("WorldGuard nicht vorhanden - Unterstützung deaktiviert");
+        }
+        if (worldGuardSupport == null) {
+            worldGuardSupport = new InactiveWorldGuardSupport();
+        }
     }
 
     @Contract("_ -> new")
@@ -62,6 +85,6 @@ public final class AethosLib extends JavaPlugin {
     }
 
     public boolean isWorldGuardSupportEnabled() {
-        return worldGuardSupport != null && worldGuardSupport.isEnabled();
+        return worldGuardSupport.isEnabled();
     }
 }
