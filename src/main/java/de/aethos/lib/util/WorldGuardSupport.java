@@ -17,7 +17,6 @@ import de.aethos.lib.AethosLib;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,15 +31,8 @@ public class WorldGuardSupport {
 
     private final RegionContainer container;
 
-    public WorldGuardSupport(@NotNull Logger logger, @NotNull PluginManager pluginManager) {
-        boolean isWorldGuardEnabled = pluginManager.getPlugin("WorldGuard") != null;
-        if (!isWorldGuardEnabled) {
-            logger.info("WorldGuard nicht vorhanden - Unterstützung deaktiviert");
-            isEnabled = false;
-            container = null;
-            return;
-        }
-
+    public WorldGuardSupport(@NotNull Logger logger) {
+        boolean isWorldGuardEnabled = true;
         RegionContainer tmpContainer = null;
         try {
             String version = WorldGuardPlugin.inst().getDescription().getVersion();
@@ -146,7 +138,7 @@ public class WorldGuardSupport {
          * @param plugin to associate the flag with
          */
         default void register(@NotNull JavaPlugin plugin) {
-            if (!AethosLib.getInstance().getWorldGuardSupport().isEnabled()) {
+            if (!AethosLib.getInstance().isWorldGuardSupportEnabled()) {
                 return;
             }
             FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();

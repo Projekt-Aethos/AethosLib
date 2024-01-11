@@ -2,11 +2,8 @@ package de.aethos.lib;
 
 import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
-import de.aethos.lib.inventory.gui.GUIListener;
-import de.aethos.lib.inventory.item.ToolListener;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.util.WorldGuardSupport;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +17,11 @@ public final class AethosLib extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        worldGuardSupport = new WorldGuardSupport(getLogger(), getServer().getPluginManager());
+        if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            worldGuardSupport = new WorldGuardSupport(getLogger());
+        } else {
+            getLogger().info("WorldGuard nicht vorhanden - Unterstützung deaktiviert");
+        }
     }
 
     @Override
@@ -34,10 +35,6 @@ public final class AethosLib extends JavaPlugin {
         saveDefaultConfig();
 
         levelApi = new LevelApi(this);
-
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new GUIListener(), this);
-        pm.registerEvents(new ToolListener(), this);
 
         getLogger().info("✓ AethosLib successfully activated");
     }
@@ -62,5 +59,9 @@ public final class AethosLib extends JavaPlugin {
 
     public @NotNull LevelApi getLevelApi() {
         return levelApi;
+    }
+
+    public boolean isWorldGuardSupportEnabled() {
+        return worldGuardSupport != null && worldGuardSupport.isEnabled();
     }
 }
