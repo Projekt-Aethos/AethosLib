@@ -19,19 +19,19 @@ import java.util.logging.Logger;
 
 public final class AethosLib extends JavaPlugin {
     private static AethosLib instance;
+
     private final Wiki wiki = new Wiki(this);
 
     private WorldGuardSupport worldGuardSupport;
 
     private LevelApi levelApi;
 
-    public static @NotNull AethosLib getInstance() {
-        return instance;
-    }
-
     @Override
     public void onLoad() {
+        instance = this;
         loadWorldGuardSupport();
+        levelApi = new LevelApi(this);
+        getLogger().info("✓ AethosLib successfully loaded");
     }
 
     @Override
@@ -41,10 +41,8 @@ public final class AethosLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
         saveDefaultConfig();
 
-        levelApi = new LevelApi(this);
         CallbackCommands callbackCommands = new CallbackCommands();
         callbackCommands.add("wiki", wiki);
         getServer().getCommandMap().register("aethoslib", callbackCommands);
@@ -57,8 +55,8 @@ public final class AethosLib extends JavaPlugin {
     }
 
     private void loadWorldGuardSupport() {
+        Logger logger = getLogger();
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            Logger logger = getLogger();
             try {
                 String version = WorldGuardPlugin.inst().getDescription().getVersion();
                 if (version.contains("7.0")) {
@@ -71,16 +69,21 @@ public final class AethosLib extends JavaPlugin {
                 logger.warning("Fehler beim Laden, WorldGuard-Unterstützung deaktiviert!");
             }
         } else {
-            getLogger().info("WorldGuard nicht vorhanden - Unterstützung deaktiviert");
+            logger.info("WorldGuard nicht vorhanden - Unterstützung deaktiviert");
         }
         if (worldGuardSupport == null) {
             worldGuardSupport = new InactiveWorldGuardSupport();
+            logger.info("WorldGuardSupport inactive");
         }
     }
 
     @Contract("_ -> new")
     public @NotNull Connector getConnector(@NotNull JavaPlugin plugin) {
         return new DefaultPluginConnector(plugin);
+    }
+
+    public static @NotNull AethosLib getInstance() {
+        return instance;
     }
 
     public @NotNull WorldGuardSupport getWorldGuardSupport() {
@@ -99,7 +102,6 @@ public final class AethosLib extends JavaPlugin {
     public Wiki getWiki() {
         return wiki;
     }
-
 
     public boolean isWorldGuardSupportEnabled() {
         return worldGuardSupport.isEnabled();
