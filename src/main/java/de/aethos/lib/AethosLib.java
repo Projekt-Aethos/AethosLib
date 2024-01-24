@@ -8,6 +8,7 @@ import de.aethos.lib.compatibility.worldguard.WorldGuardSupport;
 import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.level.LevelApi;
+import de.aethos.lib.level.LevelPointListener;
 import de.aethos.lib.wiki.Wiki;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,6 +52,7 @@ public final class AethosLib extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
 
         pm.registerEvents(GuiListener.getInstance(), this);
+        pm.registerEvents(new LevelPointListener(this), this);
 
         getLogger().info("✓ AethosLib successfully activated");
     }
