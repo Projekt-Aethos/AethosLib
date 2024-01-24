@@ -1,6 +1,6 @@
 package de.aethos.lib.level.events;
 
-import de.aethos.lib.level.interfaces.LevelClass;
+import de.aethos.lib.level.interfaces.Levelled;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +20,8 @@ public class AddXPEvent extends LevelEvent {
 
     private double cachedValue;
 
-    public AddXPEvent(@NotNull LevelClass levelClass, double amount) {
-        super(levelClass);
+    public AddXPEvent(@NotNull Levelled levelled, double amount) {
+        super(levelled);
         this.initialValue = amount;
         this.baseMultiplier = new LinkedList<>();
         this.wholeMultiplier = new LinkedList<>();
