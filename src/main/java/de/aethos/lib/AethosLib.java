@@ -17,6 +17,7 @@ import xyz.janboerman.guilib.api.GuiListener;
 
 import java.util.logging.Logger;
 
+@SuppressWarnings("unused")
 public final class AethosLib extends JavaPlugin {
     private static AethosLib instance;
 
