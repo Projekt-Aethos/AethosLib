@@ -38,15 +38,32 @@ public class Registry<T extends Keyed> {
     private final Logger logger;
 
     /**
+     * To write before the message.
+     */
+    private final String prefix;
+
+    /**
      * Creates a new empty holder.
      *
      * @param plugin to register listener with
      * @param logger to log new entries to
      */
     public Registry(@NotNull JavaPlugin plugin, @NotNull Logger logger) {
+        this(plugin, logger, null);
+    }
+
+    /**
+     * Creates a new empty holder.
+     *
+     * @param plugin to register listener with
+     * @param logger to log new entries to
+     * @param topic  to add after before the message
+     */
+    public Registry(@NotNull JavaPlugin plugin, @NotNull Logger logger, @Nullable String topic) {
         this.plugin = plugin;
         this.logger = logger;
         this.values = new ConcurrentHashMap<>();
+        this.prefix = "[" + getClass().getSimpleName() + (topic == null ? "" : " " + topic) + "] ";
     }
 
     /**
@@ -72,7 +89,7 @@ public class Registry<T extends Keyed> {
             if (toRegister instanceof Listener) {
                 Bukkit.getPluginManager().registerEvents((Listener) toRegister, plugin);
             }
-            logger.info(getClass().getSimpleName() + " new registration: " + key + " (" + toRegister.getClass().getName() + ")");
+            logger.info(prefix + "New registration: " + key + " (" + toRegister.getClass().getName() + ")");
             return true;
         } else {
             return false;
@@ -93,7 +110,7 @@ public class Registry<T extends Keyed> {
         if (oldValue instanceof Listener) {
             HandlerList.unregisterAll((Listener) oldValue);
         }
-        logger.info(getClass().getSimpleName() + " unregistered: " + key + " (" + oldValue.getClass().getName() + ")");
+        logger.info(prefix + "Unregistered: " + key + " (" + oldValue.getClass().getName() + ")");
         return true;
     }
 
