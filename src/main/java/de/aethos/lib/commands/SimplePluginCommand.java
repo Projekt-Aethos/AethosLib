@@ -37,7 +37,7 @@ public abstract class SimplePluginCommand<AePlugin extends JavaPlugin> extends C
      * @param toComplete which should be filtered
      * @return list entries matching last arg
      */
-    @Contract("_, null -> null")
+    @Contract("_, null -> null; _, !null -> !null")
     @Nullable
     protected List<String> complete(@NotNull String @NotNull [] args, @Nullable List<String> toComplete) {
         if (toComplete == null) {
