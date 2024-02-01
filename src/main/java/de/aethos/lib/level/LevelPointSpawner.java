@@ -58,6 +58,7 @@ public final class LevelPointSpawner {
         if (xpValues.isEmpty()) {
             return null;
         }
+
         ExperienceOrb experienceOrb = location.getWorld().spawn(location, ExperienceOrb.class, orb -> {
             PersistentDataContainer container = orb.getPersistentDataContainer();
             PersistentDataContainer xpContainer = container.getAdapterContext().newPersistentDataContainer();
@@ -70,6 +71,7 @@ public final class LevelPointSpawner {
         display.getPersistentDataContainer().set(XP_OBJECT_KEY, UUIDDataType.UUID, experienceOrb.getUniqueId());
         display.setItemStack(new ItemStack(Material.EXPERIENCE_BOTTLE));
         display.setBillboard(Display.Billboard.CENTER);
+        // TODO custom model data & more data
         new DisplayKiller(experienceOrb, display).start();
         experienceOrb.addPassenger(display);
         return experienceOrb;
@@ -100,7 +102,7 @@ public final class LevelPointSpawner {
         }
 
         public void start() {
-            display.getScheduler().runAtFixedRate(getPlugin(), scheduledTask -> {}, this, 1, 1);
+            display.getScheduler().runAtFixedRate(getPlugin(), scheduledTask -> run(), null, 1, 1);
         }
     }
 
