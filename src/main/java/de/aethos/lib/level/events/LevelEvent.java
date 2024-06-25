@@ -1,17 +1,17 @@
 package de.aethos.lib.level.events;
 
-import de.aethos.lib.level.interfaces.LevelClass;
+import de.aethos.lib.level.interfaces.Levelled;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class LevelEvent extends Event implements Cancellable {
-    private final LevelClass levelClass;
+    private final Levelled levelled;
 
     private boolean cancelled;
 
-    public LevelEvent(@NotNull LevelClass levelClass) {
-        this.levelClass = levelClass;
+    public LevelEvent(@NotNull Levelled levelled) {
+        this.levelled = levelled;
     }
 
     @Override
@@ -24,7 +24,7 @@ public abstract class LevelEvent extends Event implements Cancellable {
         this.cancelled = cancel;
     }
 
-    public @NotNull LevelClass getLevelClass() {
-        return levelClass;
+    public @NotNull Levelled getLevelClass() {
+        return levelled;
     }
 }

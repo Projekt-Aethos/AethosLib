@@ -7,9 +7,16 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+/**
+ * @deprecated in favor of {@link AethosDataType}
+ */
 @SuppressWarnings("unused")
+@Deprecated
 public class UUIDDataType implements PersistentDataType<byte[], UUID> {
-    public final static UUIDDataType UUID = new UUIDDataType();
+    /**
+     * @deprecated in favor of {@link AethosDataType#UUID}
+     */
+    public final static PersistentDataType<byte[], UUID> UUID = AethosDataType.UUID;
 
     @Override
     public @NotNull Class<byte[]> getPrimitiveType() {

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * A Holder which has an enum with standard values for easy access.
+ * A Registry which has an enum with standard values for easy access.
  *
  * @param <T> being stored
  * @param <E> storing the standard values
@@ -26,12 +26,23 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
     private final Class<E> enumClass;
 
     /**
-     * Creates a new Holder.
+     * Creates a new Registry with standard enum.
      *
      * @param enumClass to get the standard values from
      */
     public EnumRegistry(@NotNull JavaPlugin plugin, @NotNull Logger logger, @NotNull Class<E> enumClass) {
         super(plugin, logger);
+        this.enumClass = enumClass;
+    }
+
+    /**
+     * Creates a new Registry with standard enum.
+     *
+     * @param enumClass to get the standard values from
+     * @param topic     to add after before the message
+     */
+    public EnumRegistry(@NotNull JavaPlugin plugin, @NotNull Logger logger, @NotNull Class<E> enumClass, @Nullable String topic) {
+        super(plugin, logger, topic);
         this.enumClass = enumClass;
     }
 
@@ -58,12 +69,9 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
      */
     @Override
     public boolean register(@NotNull T toRegister) {
-        for (E standard : enumClass.getEnumConstants()) {
-            if (standard.get().getKey().equals(toRegister.getKey())) {
-                return false;
-            }
-        }
-        return super.register(toRegister);
+        return Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).map(Keyed::getKey)
+                .noneMatch(key -> key.equals(toRegister.getKey()))
+                && super.register(toRegister);
     }
 
     @Override
@@ -77,7 +85,7 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
     @Contract(pure = true)
     public @NotNull Set<NamespacedKey> getKeys() {
         Set<NamespacedKey> set = super.getKeys();
-        set.addAll(Arrays.stream(enumClass.getEnumConstants()).map(e -> e.get().getKey()).toList());
+        set.addAll(Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).map(Keyed::getKey).toList());
         return set;
     }
 

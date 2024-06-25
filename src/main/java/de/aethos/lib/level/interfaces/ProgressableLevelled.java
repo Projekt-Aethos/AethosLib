@@ -1,11 +1,7 @@
 package de.aethos.lib.level.interfaces;
 
-import org.bukkit.Keyed;
-
-public interface LevelClass extends Keyed {
-    int getLevel();
-
-    int getMaxLevel();
+public interface ProgressableLevelled extends Levelled {
+    void addProgress(double amount);
 
     double getProgress();
 

@@ -4,8 +4,8 @@ import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
-public interface LevelClassFactory extends Keyed {
-    @NotNull LevelClass create();
+public interface LevelledFactory extends Keyed {
+    @NotNull Levelled create(@NotNull LevelledHolder<?> holder);
 
     /**
      * Unique key to identify with LevelClass creation.

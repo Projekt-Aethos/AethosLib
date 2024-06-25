@@ -1,6 +1,6 @@
 package de.aethos.lib.level.events;
 
-import de.aethos.lib.level.interfaces.LevelClass;
+import de.aethos.lib.level.interfaces.Levelled;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +11,8 @@ public class LevelUpEvent extends LevelEvent {
 
     private final int newLevel;
 
-    public LevelUpEvent(@NotNull LevelClass levelClass, int oldLevel, int newLevel) {
-        super(levelClass);
+    public LevelUpEvent(@NotNull Levelled levelled, int oldLevel, int newLevel) {
+        super(levelled);
         this.oldLevel = oldLevel;
         this.newLevel = newLevel;
     }

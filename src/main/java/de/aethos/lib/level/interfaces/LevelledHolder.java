@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface LevelClassHolder<ID> {
+public interface LevelledHolder<ID> {
     /**
      * Gets the identifier for this holder.
      *
@@ -21,6 +21,6 @@ public interface LevelClassHolder<ID> {
      * @return the attached LevelClass
      */
     @Contract("_, true -> !null")
-    @Nullable LevelClass get(@NotNull NamespacedKey key, boolean create);
+    @Nullable Levelled get(@NotNull NamespacedKey key, boolean create);
 
 }
