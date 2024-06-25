@@ -1,8 +1,8 @@
 package de.aethos.lib.ui;
 
+import de.aethos.lib.AethosLib;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.event.ClickCallback;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +22,6 @@ public class OpenMenuCallback implements ClickCallback<Audience> {
             entity.openInventory(inv);
             return;
         }
-        Bukkit.getLogger().info("Failed to open Menu for Audience because Audience is not of Type HumanEntity");
+        AethosLib.getPlugin(AethosLib.class).getLogger().info("Failed to open Menu for Audience because Audience is not of Type HumanEntity");
     }
 }
