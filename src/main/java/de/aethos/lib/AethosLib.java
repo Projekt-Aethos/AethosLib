@@ -1,7 +1,6 @@
 package de.aethos.lib;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import de.aethos.lib.callbacks.CallbackCommands;
 import de.aethos.lib.compatibility.worldguard.ExistingWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.WorldGuardSupport;
@@ -9,7 +8,6 @@ import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
-import de.aethos.lib.wiki.Wiki;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
@@ -22,11 +20,13 @@ import java.util.logging.Logger;
 public final class AethosLib extends JavaPlugin {
     private static AethosLib instance;
 
-    private final Wiki wiki = new Wiki(this);
-
     private WorldGuardSupport worldGuardSupport;
 
     private LevelApi levelApi;
+
+    public static @NotNull AethosLib getInstance() {
+        return instance;
+    }
 
     @Override
     public void onLoad() {
@@ -45,9 +45,6 @@ public final class AethosLib extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        CallbackCommands callbackCommands = new CallbackCommands();
-        callbackCommands.add("wiki", wiki);
-        getServer().getCommandMap().register("aethoslib", callbackCommands);
 
         PluginManager pm = getServer().getPluginManager();
 
@@ -85,10 +82,6 @@ public final class AethosLib extends JavaPlugin {
         return new DefaultPluginConnector(plugin);
     }
 
-    public static @NotNull AethosLib getInstance() {
-        return instance;
-    }
-
     public @NotNull WorldGuardSupport getWorldGuardSupport() {
         return worldGuardSupport;
     }
@@ -102,9 +95,6 @@ public final class AethosLib extends JavaPlugin {
         return levelApi;
     }
 
-    public Wiki getWiki() {
-        return wiki;
-    }
 
     public boolean isWorldGuardSupportEnabled() {
         return worldGuardSupport.isEnabled();
