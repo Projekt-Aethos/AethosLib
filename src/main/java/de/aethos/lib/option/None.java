@@ -8,6 +8,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public record None<T>() implements Option<T> {
+    static final None<?> GENERIC_NONE = new None<>();
+
     @Override
     public @NotNull Option<T> filter(@NotNull Predicate<? super T> predicate) {
         return this;
