@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
+@SuppressWarnings("unused")
 public interface FlagKey {
     Map<FlagKey, StateFlag> STATE_FLAGS = new HashMap<>();
 
@@ -39,7 +40,7 @@ public interface FlagKey {
             if (existing instanceof StateFlag) {
                 STATE_FLAGS.put(this, (StateFlag) existing);
             } else {
-                AethosLib.getInstance().getLogger().log(Level.WARNING, "Konnte folgende Flagge nicht registrieren: " + flagName, e);
+                AethosLib.getInstance().getLogger().log(Level.WARNING, "Could not register the following flag: " + flagName, e);
             }
         }
 

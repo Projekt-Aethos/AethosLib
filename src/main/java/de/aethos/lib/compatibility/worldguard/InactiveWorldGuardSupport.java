@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class InactiveWorldGuardSupport implements WorldGuardSupport {
+public record InactiveWorldGuardSupport() implements WorldGuardSupport {
     @Override
     public boolean isRegionFlagBlocked(@NotNull Player player, @NotNull Location location, @NotNull StateFlag flag) {
         return false;

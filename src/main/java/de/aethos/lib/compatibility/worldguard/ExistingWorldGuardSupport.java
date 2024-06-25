@@ -15,7 +15,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ExistingWorldGuardSupport implements WorldGuardSupport {
+public final class ExistingWorldGuardSupport implements WorldGuardSupport {
     private final RegionContainer container;
 
     public ExistingWorldGuardSupport() {
