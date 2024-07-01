@@ -25,7 +25,7 @@ public interface FlagKey {
      * @param plugin to associate the flag with
      */
     default void register(@NotNull JavaPlugin plugin) {
-        if (!AethosLib.getInstance().isWorldGuardSupportEnabled()) {
+        if (!AethosLib.getPlugin(AethosLib.class).isWorldGuardSupportEnabled()) {
             return;
         }
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
@@ -40,7 +40,7 @@ public interface FlagKey {
             if (existing instanceof StateFlag) {
                 STATE_FLAGS.put(this, (StateFlag) existing);
             } else {
-                AethosLib.getInstance().getLogger().log(Level.WARNING, "Could not register the following flag: " + flagName, e);
+                AethosLib.getPlugin(AethosLib.class).getLogger().log(Level.WARNING, "Could not register the following flag: " + flagName, e);
             }
         }
 

@@ -1,14 +1,14 @@
 package de.aethos.lib.compatibility.worldguard;
 
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public record InactiveWorldGuardSupport() implements WorldGuardSupport {
-    @Override
-    public boolean isRegionFlagBlocked(@NotNull Player player, @NotNull Location location, @NotNull StateFlag flag) {
-        return false;
+public final class InactiveWorldGuardSupport implements WorldGuardSupport {
+
+    public InactiveWorldGuardSupport(Plugin plugin) {
+        plugin.getLogger().info("WorldGuardSupport inactive");
     }
 
     @Override

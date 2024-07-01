@@ -13,26 +13,30 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ExistingWorldGuardSupport implements WorldGuardSupport {
-    private final RegionContainer container;
+    private @Nullable RegionContainer container;
 
-    public ExistingWorldGuardSupport() {
-        container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+    public ExistingWorldGuardSupport(Plugin plugin) {
+        plugin.getLogger().info("WorldGuardSupport active");
     }
 
-    @Override
-    public boolean isRegionFlagBlocked(@NotNull Player player, @NotNull Location location, @NotNull StateFlag flag) {
-        LocalPlayer lp = WorldGuardPlugin.inst().wrapPlayer(player);
-        RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
-        return set.queryValue(lp, flag) == StateFlag.State.DENY;
+    private @NotNull RegionContainer getContainer() {
+        if (container == null) {
+            container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        }
+        return container;
     }
 
     @Override
     public boolean isPVPBlocked(@NotNull Player player, @NotNull Location location) {
-        return isRegionFlagBlocked(player, location, Flags.PVP);
+        LocalPlayer lp = WorldGuardPlugin.inst().wrapPlayer(player);
+        RegionQuery query = getContainer().createQuery();
+        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
+        return set.queryValue(lp, Flags.PVP) == StateFlag.State.DENY;
     }
 
     @Override
@@ -47,7 +51,7 @@ public final class ExistingWorldGuardSupport implements WorldGuardSupport {
             return false;
         }
 
-        RegionManager regions = container.get(BukkitAdapter.adapt(location.getWorld()));
+        RegionManager regions = getContainer().get(BukkitAdapter.adapt(location.getWorld()));
         if (regions == null) {
             return false;
         }
@@ -64,7 +68,7 @@ public final class ExistingWorldGuardSupport implements WorldGuardSupport {
             return false;
         }
 
-        return container.createQuery().testState(BukkitAdapter.adapt(location), null, flag);
+        return getContainer().createQuery().testState(BukkitAdapter.adapt(location), null, flag);
     }
 
     @Override

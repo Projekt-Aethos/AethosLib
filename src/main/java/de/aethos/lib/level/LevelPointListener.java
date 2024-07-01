@@ -55,7 +55,7 @@ public class LevelPointListener implements Listener {
         PersistentDataContainer xpContainer = container.get(XP_OBJECT_KEY, PersistentDataType.TAG_CONTAINER);
         assert xpContainer != null;
 
-        LevelledHolder<UUID> levelClassHolder = AethosLib.getInstance().getLevelApi()
+        LevelledHolder<UUID> levelClassHolder = AethosLib.getPlugin(AethosLib.class).getLevelApi()
                 .getLevelClassHolder(event.getPlayer().getUniqueId());
         for (NamespacedKey key : xpContainer.getKeys()) {
             Double value = xpContainer.get(key, PersistentDataType.DOUBLE);
