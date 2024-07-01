@@ -3,7 +3,7 @@ package de.aethos.lib.level;
 import com.destroystokyo.paper.event.entity.ExperienceOrbMergeEvent;
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import de.aethos.lib.AethosLib;
-import de.aethos.lib.data.UUIDDataType;
+import de.aethos.lib.data.AethosDataType;
 import de.aethos.lib.level.interfaces.LevelledHolder;
 import de.aethos.lib.level.interfaces.ProgressableLevelled;
 import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
@@ -75,8 +75,8 @@ public class LevelPointListener implements Listener {
             for (Entity entity : event.getEntities()) {
                 if (entity instanceof Display display) {
                     PersistentDataContainer container = display.getPersistentDataContainer();
-                    if (container.has(XP_OBJECT_KEY, UUIDDataType.UUID)) {
-                        UUID uuid = container.get(XP_OBJECT_KEY, UUIDDataType.UUID);
+                    if (container.has(XP_OBJECT_KEY, AethosDataType.UUID)) {
+                        UUID uuid = container.get(XP_OBJECT_KEY, AethosDataType.UUID);
                         assert uuid != null;
                         displayList.put(display, uuid);
                         if (scheduler == null) {

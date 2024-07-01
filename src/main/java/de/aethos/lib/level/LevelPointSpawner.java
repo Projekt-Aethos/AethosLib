@@ -1,7 +1,7 @@
 package de.aethos.lib.level;
 
 import de.aethos.lib.AethosLib;
-import de.aethos.lib.data.UUIDDataType;
+import de.aethos.lib.data.AethosDataType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -68,7 +68,7 @@ public final class LevelPointSpawner {
             container.set(XP_OBJECT_KEY, PersistentDataType.TAG_CONTAINER, xpContainer);
         });
         ItemDisplay display = location.getWorld().spawn(location, ItemDisplay.class);
-        display.getPersistentDataContainer().set(XP_OBJECT_KEY, UUIDDataType.UUID, experienceOrb.getUniqueId());
+        display.getPersistentDataContainer().set(XP_OBJECT_KEY, AethosDataType.UUID, experienceOrb.getUniqueId());
         display.setItemStack(new ItemStack(Material.EXPERIENCE_BOTTLE));
         display.setBillboard(Display.Billboard.CENTER);
         // TODO custom model data & more data

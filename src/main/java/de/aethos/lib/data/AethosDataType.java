@@ -11,7 +11,6 @@ import java.util.UUID;
 
 public interface AethosDataType<P, C> extends PersistentDataType<P, C> {
     PersistentDataType<byte[], UUID> UUID = new UUIDDataType();
-    PersistentDataType<byte[], UUID[]> UUID_ARRAY = new UUIDArrayDataType();
     PersistentDataType<String, NamespacedKey> NAMESPACED_KEY = new NamespacedKeyDataType();
 
     class UUIDDataType implements PersistentDataType<byte[], UUID> {
@@ -42,40 +41,6 @@ public interface AethosDataType<P, C> extends PersistentDataType<P, C> {
         }
     }
 
-    class UUIDArrayDataType implements PersistentDataType<byte[], UUID[]> {
-        @Override
-        public @NotNull Class<byte[]> getPrimitiveType() {
-            return byte[].class;
-        }
-
-        @Override
-        public @NotNull Class<UUID[]> getComplexType() {
-            return UUID[].class;
-        }
-
-        @Override
-        public byte @NotNull [] toPrimitive(UUID @NotNull [] complex, @NotNull PersistentDataAdapterContext context) {
-            ByteBuffer buffer = ByteBuffer.wrap(new byte[16 * complex.length]);
-            for (UUID uuid : complex) {
-                buffer.putLong(uuid.getMostSignificantBits());
-                buffer.putLong(uuid.getLeastSignificantBits());
-            }
-            return buffer.array();
-        }
-
-        @Override
-        public UUID @NotNull [] fromPrimitive(byte @NotNull [] primitive, @NotNull PersistentDataAdapterContext context) {
-            int length = primitive.length / 16;
-            UUID[] complex = new UUID[length];
-            ByteBuffer buffer = ByteBuffer.wrap(primitive);
-            for (int i = 0; i < length; i++) {
-                long most = buffer.getLong();
-                long least = buffer.getLong();
-                complex[i] = new UUID(most, least);
-            }
-            return complex;
-        }
-    }
 
     class NamespacedKeyDataType implements PersistentDataType<String, NamespacedKey> {
         @Override
