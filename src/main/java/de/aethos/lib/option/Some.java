@@ -3,9 +3,7 @@ package de.aethos.lib.option;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 public record Some<T>(@NotNull T value) implements Option<T> {
@@ -20,8 +18,8 @@ public record Some<T>(@NotNull T value) implements Option<T> {
     }
 
     @Override
-    public @NotNull T orElse(@NotNull T value) {
-        return value;
+    public @NotNull T orElse(@NotNull T def) {
+        return this.value;
     }
 
     @Override
@@ -31,7 +29,7 @@ public record Some<T>(@NotNull T value) implements Option<T> {
 
     @Override
     public @NotNull <U> Option<U> map(@NotNull Function<? super T, ? extends U> mapper) {
-        return new Some<>(mapper.apply(value));
+        return Option.some(mapper.apply(value));
     }
 
     @SuppressWarnings("unchecked")
@@ -43,5 +41,25 @@ public record Some<T>(@NotNull T value) implements Option<T> {
     @Override
     public @NotNull Stream<T> stream() {
         return Stream.of(value);
+    }
+
+    @Override
+    public IntOption toInt(ToIntFunction<T> function) {
+        return Option.some(function.applyAsInt(value));
+    }
+
+    @Override
+    public LongOption toLong(ToLongFunction<T> function) {
+        return Option.some(function.applyAsLong(value));
+    }
+
+    @Override
+    public BoolOption toBool(Predicate<T> predicate) {
+        return Option.some(predicate.test(value));
+    }
+
+    @Override
+    public DoubleOption toDouble(ToDoubleFunction<T> function) {
+        return Option.some(function.applyAsDouble(value));
     }
 }
