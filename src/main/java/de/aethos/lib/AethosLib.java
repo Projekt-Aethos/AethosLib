@@ -8,6 +8,7 @@ import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
+import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
@@ -24,6 +25,10 @@ public final class AethosLib extends JavaPlugin {
     public AethosLib() {
         worldGuardSupport = loadWorldGuardSupport();
         levelApi = new LevelApi(this);
+    }
+
+    public static NamespacedKey getKey(String key) {
+        return new NamespacedKey(AethosLib.getPlugin(AethosLib.class), key);
     }
 
     @Override
