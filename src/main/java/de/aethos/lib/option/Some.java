@@ -29,7 +29,7 @@ public record Some<T>(@NotNull T value) implements Option<T> {
 
     @Override
     public @NotNull <U> Option<U> map(@NotNull Function<? super T, ? extends U> mapper) {
-        return Option.some(mapper.apply(value));
+        return Option.of(mapper.apply(value));
     }
 
     @SuppressWarnings("unchecked")
