@@ -24,4 +24,8 @@ public sealed interface Result<O, E> permits Error, Okay {
     Option<E> optionError();
 
     Option<O> optionOkay();
+
+    <X extends Throwable> O okayOrThrow(Function<E, ? extends X> exception) throws X;
+
+    <X extends Throwable> E errorOrThrow(Function<O, ? extends X> exception) throws X;
 }

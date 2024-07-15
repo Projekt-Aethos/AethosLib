@@ -12,6 +12,11 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     static final None<?> GENERIC_NONE = new None<>();
 
     @Override
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
+        throw exceptionSupplier.get();
+    }
+
+    @Override
     public IntOption toInt(ToIntFunction<T> function) {
         return Option.none();
     }

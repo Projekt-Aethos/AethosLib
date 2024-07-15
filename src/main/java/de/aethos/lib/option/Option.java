@@ -8,8 +8,6 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public sealed interface Option<T> permits None, Some {
-
-
     @SuppressWarnings("unchecked")
     static <T> @NotNull None<T> none() {
         return (None<T>) None.GENERIC_NONE;
@@ -66,6 +64,8 @@ public sealed interface Option<T> permits None, Some {
     static @NotNull DoubleOption some(double value) {
         return new SomeDouble(value);
     }
+
+    <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
 
     IntOption toInt(ToIntFunction<T> function);
 

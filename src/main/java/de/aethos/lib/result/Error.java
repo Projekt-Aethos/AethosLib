@@ -30,4 +30,16 @@ public record Error<O, E>(E error) implements Result<O, E> {
     public Option<O> optionOkay() {
         return Option.none();
     }
+
+    @Override
+    public <X extends Throwable> O okayOrThrow(Function<E, ? extends X> exception) throws X {
+        throw exception.apply(error);
+    }
+
+    @Override
+    public <X extends Throwable> E errorOrThrow(Function<O, ? extends X> exception) throws X {
+        return error;
+    }
+
+
 }

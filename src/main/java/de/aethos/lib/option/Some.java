@@ -44,6 +44,11 @@ public record Some<T>(@NotNull T value) implements Option<T> {
     }
 
     @Override
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) {
+        return value;
+    }
+
+    @Override
     public IntOption toInt(ToIntFunction<T> function) {
         return Option.some(function.applyAsInt(value));
     }
