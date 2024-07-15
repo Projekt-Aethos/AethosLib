@@ -37,7 +37,7 @@ public record Error<O, E>(E error) implements Result<O, E> {
     }
 
     @Override
-    public <X extends Throwable> E errorOrThrow(Function<O, ? extends X> exception) throws X {
+    public <X extends Throwable> E errorOrThrow(Function<O, ? extends X> exception) {
         return error;
     }
 

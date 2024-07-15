@@ -32,7 +32,7 @@ public record Okay<O, E>(O value) implements Result<O, E> {
     }
 
     @Override
-    public <X extends Throwable> O okayOrThrow(Function<E, ? extends X> exception) throws X {
+    public <X extends Throwable> O okayOrThrow(Function<E, ? extends X> exception) {
         return value;
     }
 
