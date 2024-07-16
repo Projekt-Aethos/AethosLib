@@ -16,7 +16,7 @@ public record UndefinedType(Block block, NamespacedKey key, PersistentDataContai
 
 
     public String getType() {
-        return Objects.requireNonNullElse(container.get(CustomBlocks.Key.TYPE_KEY, PersistentDataType.STRING), "INVALID");
+        return Objects.requireNonNullElse(container.get(CustomBlock.Key.TYPE_KEY, PersistentDataType.STRING), "INVALID");
     }
 
 

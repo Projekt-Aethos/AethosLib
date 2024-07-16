@@ -1,6 +1,6 @@
 package de.aethos.lib.commands;
 
-import de.aethos.lib.blocks.CustomBlocks;
+import de.aethos.lib.blocks.CustomBlock;
 import de.aethos.lib.blocks.example.Furniture;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -25,7 +25,7 @@ public class FurnitureCommand extends Command {
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (sender instanceof Player player && player.isOp()) {
 
-            for (Method method : CustomBlocks.class.getMethods()) {
+            for (Method method : CustomBlock.class.getMethods()) {
                 if (method.getName().equals(args[0])) {
                     Parameter[] para = method.getParameters();
                     if (para[0].getType().equals(Block.class)) {
@@ -74,7 +74,7 @@ public class FurnitureCommand extends Command {
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         ArrayList<String> list = new ArrayList<>();
-        for (Method method : CustomBlocks.class.getMethods()) {
+        for (Method method : CustomBlock.class.getMethods()) {
             list.add(method.getName());
         }
         return list;
