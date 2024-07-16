@@ -1,6 +1,7 @@
 package de.aethos.lib;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import de.aethos.lib.blocks.BlockListener;
 import de.aethos.lib.blocks.BlockType;
 import de.aethos.lib.blocks.example.AnotherFurniture;
 import de.aethos.lib.blocks.example.Furniture;
@@ -58,6 +59,7 @@ public final class AethosLib extends JavaPlugin {
         saveDefaultConfig();
         getServer().getCommandMap().register("aehtoslib", new FurnitureCommand("furniture"));
         PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(BlockListener.INSTANCE, this);
         pm.registerEvents(GuiListener.getInstance(), this);
         pm.registerEvents(new LevelPointListener(this), this);
 

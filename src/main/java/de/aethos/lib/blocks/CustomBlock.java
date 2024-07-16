@@ -1,7 +1,6 @@
 package de.aethos.lib.blocks;
 
 import com.google.common.base.Preconditions;
-import com.sk89q.worldedit.event.platform.BlockInteractEvent;
 import de.aethos.lib.AethosLib;
 import de.aethos.lib.option.None;
 import de.aethos.lib.option.Option;
@@ -12,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -52,6 +53,20 @@ public interface CustomBlock extends PersistentDataHolder {
         chunk.getPersistentDataContainer().set(key, PersistentDataType.TAG_CONTAINER, container);
         return constructor.create(block, key, container);
     }
+
+    static void create(Block block, ItemStack item) {
+        Preconditions.checkArgument(data(block) instanceof None<?>);
+        final String type = Objects.requireNonNull(item.getItemMeta().getPersistentDataContainer().get(CustomBlock.Key.ITEM_TYPE_KEY, PersistentDataType.STRING));
+        final CustomBlockFactory<? extends CustomBlock> factory = BlockType.Register.STRING_FACTORY_MAP.get(type);
+        final Chunk chunk = block.getChunk();
+        final NamespacedKey key = Key.generate(block);
+        final PersistentDataContainer container = chunk.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer();
+        container.set(Key.TYPE_KEY, PersistentDataType.STRING, type);
+        chunk.getPersistentDataContainer().set(key, PersistentDataType.TAG_CONTAINER, container);
+        CustomBlock custom = factory.create(block, key, container, item);
+        System.out.println(custom);
+    }
+
 
     static Option<PersistentDataContainer> data(Block block) {
         final Chunk chunk = block.getChunk();
@@ -110,7 +125,7 @@ public interface CustomBlock extends PersistentDataHolder {
 
     void onCreate(BlockPlaceEvent event);
 
-    void onInteract(BlockInteractEvent event);
+    void onInteract(PlayerInteractEvent event);
 
     void onSave(ChunkUnloadEvent event);
 
@@ -131,6 +146,7 @@ public interface CustomBlock extends PersistentDataHolder {
     interface Key {
 
         NamespacedKey TYPE_KEY = new NamespacedKey(AethosLib.getPlugin(AethosLib.class), "type");
+        NamespacedKey ITEM_TYPE_KEY = new NamespacedKey(AethosLib.getPlugin(AethosLib.class), "item-type");
         Pattern KEY_REGEX = Pattern.compile("^x(\\d+)y(-?\\d+)z(\\d+)$");
         Predicate<NamespacedKey> KEY_REGEX_PREDICATE = input -> KEY_REGEX.matcher(input.getKey()).matches();
 

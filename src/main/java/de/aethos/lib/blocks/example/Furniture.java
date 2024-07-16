@@ -1,6 +1,5 @@
 package de.aethos.lib.blocks.example;
 
-import com.sk89q.worldedit.event.platform.BlockInteractEvent;
 import de.aethos.lib.AethosLib;
 import de.aethos.lib.blocks.BlockType;
 import de.aethos.lib.blocks.CustomBlock;
@@ -9,6 +8,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class Furniture implements CustomBlock {
     }
 
     @Override
-    public void onInteract(BlockInteractEvent event) {
+    public void onInteract(PlayerInteractEvent event) {
 
     }
 
