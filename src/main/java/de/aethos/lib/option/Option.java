@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public sealed interface Option<T> permits None, Some {
+
     @SuppressWarnings("unchecked")
     static <T> @NotNull None<T> none() {
         return (None<T>) None.GENERIC_NONE;
@@ -21,33 +22,41 @@ public sealed interface Option<T> permits None, Some {
         return value == null ? none() : some(value);
     }
 
-    static @NotNull Option<Integer> from(IntOption option) {
+    static @NotNull Option<Integer> from(@Nullable IntOption option) {
         if (option instanceof SomeInt some) {
             return some(Integer.valueOf(some.value()));
         }
         return none();
     }
 
-    static @NotNull Option<Double> from(DoubleOption option) {
+    static @NotNull Option<Double> from(@Nullable DoubleOption option) {
         if (option instanceof SomeDouble some) {
             return some(Double.valueOf(some.value()));
         }
         return none();
     }
 
-    static @NotNull Option<Long> from(LongOption option) {
+    static @NotNull Option<Long> from(@Nullable LongOption option) {
         if (option instanceof SomeLong some) {
             return some(Long.valueOf(some.value()));
         }
         return none();
     }
 
-    static @NotNull Option<Boolean> from(BoolOption option) {
+    static @NotNull Option<Boolean> from(@Nullable BoolOption option) {
         if (option instanceof SomeBool some) {
             return some(Boolean.valueOf(some.value()));
         }
         return none();
     }
+
+    static <T> @NotNull Stream<T> stream(@Nullable Option<T> option) {
+        if (option instanceof Some<T> some) {
+            return Stream.of(some.value());
+        }
+        return Stream.empty();
+    }
+
 
     static @NotNull IntOption some(int value) {
         return new SomeInt(value);
@@ -67,12 +76,16 @@ public sealed interface Option<T> permits None, Some {
 
     <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
 
-    IntOption toInt(ToIntFunction<T> function);
+    @NotNull
+    IntOption toInt(@NotNull ToIntFunction<T> function);
 
-    LongOption toLong(ToLongFunction<T> function);
+    @NotNull
+    LongOption toLong(@NotNull ToLongFunction<T> function);
 
-    BoolOption toBool(Predicate<T> predicate);
+    @NotNull
+    BoolOption toBool(@NotNull Predicate<T> predicate);
 
+    @NotNull
     DoubleOption toDouble(ToDoubleFunction<T> function);
 
     @NotNull
@@ -87,9 +100,6 @@ public sealed interface Option<T> permits None, Some {
     <U> @NotNull Option<U> map(@NotNull Function<? super T, ? extends U> mapper);
 
     <U> @NotNull Option<U> flatmap(@NotNull Function<? super T, ? extends Option<? extends U>> mapper);
-
-    @NotNull
-    Stream<T> stream();
 
 
 }

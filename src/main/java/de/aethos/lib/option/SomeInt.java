@@ -36,12 +36,12 @@ public record SomeInt(int value) implements IntOption {
     }
 
     @Override
-    public LongOption asLong() {
+    public @NotNull LongOption asLong() {
         return Option.some((long) value);
     }
 
     @Override
-    public DoubleOption asDouble() {
+    public @NotNull DoubleOption asDouble() {
         return Option.some((double) value);
     }
 

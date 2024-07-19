@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-
 public sealed interface BoolOption permits None, SomeBool {
 
     @NotNull
@@ -16,6 +15,10 @@ public sealed interface BoolOption permits None, SomeBool {
     <U> @NotNull Option<U> map(Supplier<U> callable);
 
     <U> @NotNull Option<U> flatmap(Supplier<Option<? extends U>> mapper);
+
+    boolean orTrue();
+
+    boolean orFalse();
 
 
 }

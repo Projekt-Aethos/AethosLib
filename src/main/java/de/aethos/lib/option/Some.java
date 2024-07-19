@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 public record Some<T>(@NotNull T value) implements Option<T> {
 
@@ -39,32 +38,27 @@ public record Some<T>(@NotNull T value) implements Option<T> {
     }
 
     @Override
-    public @NotNull Stream<T> stream() {
-        return Stream.of(value);
-    }
-
-    @Override
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) {
         return value;
     }
 
     @Override
-    public IntOption toInt(ToIntFunction<T> function) {
+    public @NotNull IntOption toInt(ToIntFunction<T> function) {
         return Option.some(function.applyAsInt(value));
     }
 
     @Override
-    public LongOption toLong(ToLongFunction<T> function) {
+    public @NotNull LongOption toLong(ToLongFunction<T> function) {
         return Option.some(function.applyAsLong(value));
     }
 
     @Override
-    public BoolOption toBool(Predicate<T> predicate) {
+    public @NotNull BoolOption toBool(Predicate<T> predicate) {
         return Option.some(predicate.test(value));
     }
 
     @Override
-    public DoubleOption toDouble(ToDoubleFunction<T> function) {
+    public @NotNull DoubleOption toDouble(ToDoubleFunction<T> function) {
         return Option.some(function.applyAsDouble(value));
     }
 }

@@ -26,4 +26,14 @@ public record SomeBool(boolean value) implements BoolOption {
     public @NotNull <U> Option<U> flatmap(Supplier<Option<? extends U>> mapper) {
         return (Option<U>) mapper.get();
     }
+
+    @Override
+    public boolean orTrue() {
+        return value;
+    }
+
+    @Override
+    public boolean orFalse() {
+        return value;
+    }
 }

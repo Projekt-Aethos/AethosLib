@@ -6,7 +6,6 @@ import java.util.function.*;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption, DoubleOption {
     static final None<?> GENERIC_NONE = new None<>();
@@ -17,22 +16,22 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     }
 
     @Override
-    public IntOption toInt(ToIntFunction<T> function) {
+    public @NotNull IntOption toInt(ToIntFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public LongOption toLong(ToLongFunction<T> function) {
+    public @NotNull LongOption toLong(ToLongFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public BoolOption toBool(Predicate<T> predicate) {
+    public @NotNull BoolOption toBool(Predicate<T> predicate) {
         return Option.none();
     }
 
     @Override
-    public DoubleOption toDouble(ToDoubleFunction<T> function) {
+    public @NotNull DoubleOption toDouble(ToDoubleFunction<T> function) {
         return Option.none();
     }
 
@@ -52,21 +51,15 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
         return (Option<T>) supplier.get();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public @NotNull <U> Option<U> map(@NotNull Function<? super T, ? extends U> mapper) {
-        return (Option<U>) this;
+        return Option.none();
     }
 
-    @SuppressWarnings("unchecked")
+
     @Override
     public @NotNull <U> Option<U> flatmap(@NotNull Function<? super T, ? extends Option<? extends U>> mapper) {
-        return (Option<U>) this;
-    }
-
-    @Override
-    public @NotNull Stream<T> stream() {
-        return Stream.empty();
+        return Option.none();
     }
 
     @Override
@@ -96,12 +89,12 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     }
 
     @Override
-    public LongOption asLong() {
+    public @NotNull LongOption asLong() {
         return Option.none();
     }
 
     @Override
-    public DoubleOption asDouble() {
+    public @NotNull DoubleOption asDouble() {
         return Option.none();
     }
 
@@ -141,6 +134,7 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
         return def;
     }
 
+
     @Override
     public @NotNull <U> Option<U> map(Supplier<U> callable) {
         return Option.none();
@@ -149,6 +143,16 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     @Override
     public @NotNull <U> Option<U> flatmap(Supplier<Option<? extends U>> mapper) {
         return Option.none();
+    }
+
+    @Override
+    public boolean orTrue() {
+        return true;
+    }
+
+    @Override
+    public boolean orFalse() {
+        return false;
     }
 
 

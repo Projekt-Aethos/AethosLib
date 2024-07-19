@@ -20,9 +20,11 @@ public sealed interface IntOption permits None, SomeInt {
 
     @NotNull
     IntStream intStream();
-    
+
+    @NotNull
     LongOption asLong();
 
+    @NotNull
     DoubleOption asDouble();
 
 }
