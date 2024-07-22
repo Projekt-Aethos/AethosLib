@@ -64,7 +64,6 @@ public interface CustomBlock extends PersistentDataHolder {
         container.set(Key.TYPE_KEY, PersistentDataType.STRING, type);
         chunk.getPersistentDataContainer().set(key, PersistentDataType.TAG_CONTAINER, container);
         CustomBlock custom = factory.create(block, key, container, item);
-        System.out.println(custom);
     }
 
 
@@ -115,7 +114,8 @@ public interface CustomBlock extends PersistentDataHolder {
     Block getBlock();
 
     @Override
-    @NotNull PersistentDataContainer getPersistentDataContainer();
+    @NotNull
+    PersistentDataContainer getPersistentDataContainer();
 
     NamespacedKey getKey();
 
