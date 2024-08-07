@@ -14,6 +14,10 @@ public interface CustomBlockFactory<T extends CustomBlock> {
         return construct(block, key, container);
     }
 
-    T construct(Block block, NamespacedKey key, PersistentDataContainer container);
+    T construct(CustomBlockData data);
+
+    default T construct(Block block, NamespacedKey key, PersistentDataContainer container) {
+        return construct(new CustomBlockData(block, key, container));
+    }
 
 }

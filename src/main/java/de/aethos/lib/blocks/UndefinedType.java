@@ -1,38 +1,27 @@
 package de.aethos.lib.blocks;
 
-import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
-public record UndefinedType(Block block, NamespacedKey key, PersistentDataContainer container) implements CustomBlock {
+public record UndefinedType(CustomBlockData data) implements CustomBlock {
 
 
     public String getType() {
-        return Objects.requireNonNullElse(container.get(CustomBlock.Key.TYPE_KEY, PersistentDataType.STRING), "INVALID");
+        return Objects.requireNonNullElse(data.container().get(CustomBlock.Key.TYPE_KEY, PersistentDataType.STRING), "INVALID");
     }
 
 
     @Override
-    public Block getBlock() {
-        return block;
-    }
-
-    @Override
-    public @NotNull PersistentDataContainer getPersistentDataContainer() {
-        return container;
-    }
-
-    @Override
-    public NamespacedKey getKey() {
-        return key;
+    public CustomBlockData getCustomBlockData() {
+        return data;
     }
 
     @Override
@@ -53,5 +42,10 @@ public record UndefinedType(Block block, NamespacedKey key, PersistentDataContai
     @Override
     public void onBreak(BlockBreakEvent event) {
 
+    }
+
+    @Override
+    public Collection<ItemStack> getDrops() {
+        return List.of();
     }
 }

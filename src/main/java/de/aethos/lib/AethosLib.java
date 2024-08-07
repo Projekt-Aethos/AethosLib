@@ -3,8 +3,7 @@ package de.aethos.lib;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.aethos.lib.blocks.BlockListener;
 import de.aethos.lib.blocks.BlockType;
-import de.aethos.lib.blocks.example.AnotherFurniture;
-import de.aethos.lib.blocks.example.Furniture;
+import de.aethos.lib.blocks.example.Example;
 import de.aethos.lib.commands.FurnitureCommand;
 import de.aethos.lib.compatibility.worldguard.ExistingWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
@@ -49,8 +48,7 @@ public final class AethosLib extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
-            BlockType.Register.register(AnotherFurniture.class);
-            BlockType.Register.register(Furniture.class);
+            BlockType.Register.register(Example.class);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

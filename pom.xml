@@ -6,7 +6,7 @@
 
     <groupId>de.aethos</groupId>
     <artifactId>lib</artifactId>
-    <version>3.5.2</version>
+    <version>3.5.3-BlockFeature</version>
     <packaging>jar</packaging>
 
     <name>AethosLib</name>
@@ -74,6 +74,10 @@
             <id>codemc-releases</id>
             <url>https://repo.codemc.io/repository/maven-releases/</url>
         </repository>
+        <repository>
+            <id>aethos-reposilite</id>
+            <url>https://reposilite.aethosserver.de/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -111,9 +115,9 @@
 
     <distributionManagement>
         <repository>
-            <id>projekt-aethos</id>
-            <name>GitHub Projekt-Aethos Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/projekt-aethos/aethoslib</url>
+            <id>aethos-reposilite</id>
+            <url>https://reposilite.aethosserver.de/snapshots</url>
         </repository>
     </distributionManagement>
+
 </project>

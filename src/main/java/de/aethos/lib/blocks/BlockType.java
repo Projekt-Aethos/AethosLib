@@ -44,7 +44,6 @@ public @interface BlockType {
                      NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
-
         }
 
         static JavaPlugin getPlugin(BlockType type) {

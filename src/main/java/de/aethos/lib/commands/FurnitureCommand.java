@@ -1,7 +1,7 @@
 package de.aethos.lib.commands;
 
 import de.aethos.lib.blocks.CustomBlock;
-import de.aethos.lib.blocks.example.Furniture;
+import de.aethos.lib.blocks.example.Example;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,14 +39,14 @@ public class FurnitureCommand extends Command {
                     if (para[0].getType().equals(Block.class)) {
                         if (para.length > 1 && para[1].getType().equals(Class.class)) {
                             try {
-                                player.sendMessage(String.valueOf(method.invoke(null, player.getLocation().getBlock(), Furniture.class)));
+                                player.sendMessage(String.valueOf(method.invoke(null, player.getLocation().getBlock(), Example.class)));
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);
                             }
                             return true;
                         } else if (para.length > 1 && para[1].getType().equals(Set.class)) {
                             try {
-                                player.sendMessage(String.valueOf(method.invoke(null, player.getLocation().getBlock(), Set.of(Furniture.class))));
+                                player.sendMessage(String.valueOf(method.invoke(null, player.getLocation().getBlock(), Set.of(Example.class))));
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);
                             }
@@ -61,7 +61,7 @@ public class FurnitureCommand extends Command {
                     if (para[0].getType().equals(Chunk.class)) {
                         if (para.length > 1 && para[1].getType().equals(Set.class)) {
                             try {
-                                player.sendMessage(String.valueOf(method.invoke(null, player.getLocation().getChunk(), Set.of(Furniture.class))));
+                                player.sendMessage(String.valueOf(method.invoke(null, player.getLocation().getChunk(), Set.of(Example.class))));
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);
                             }

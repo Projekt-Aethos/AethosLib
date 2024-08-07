@@ -15,9 +15,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -28,22 +26,36 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public interface CustomBlock extends PersistentDataHolder {
+public interface CustomBlock {
 
 
     static <T extends CustomBlock> Option<T> from(Block block, Class<T> cl) {
-        final Option<PersistentDataContainer> data = data(block);
-        if (data instanceof Some<PersistentDataContainer> some) {
-            final PersistentDataContainer container = some.value();
-            final NamespacedKey key = Key.generate(block);
-            final CustomBlockFactory<T> constructor = BlockType.Register.getFactory(cl);
-            return Option.some(constructor.construct(block, key, container));
-        }
-        return Option.none();
+        return from(block, BlockType.Register.getFactory(cl));
+    }
+
+    static <T extends CustomBlock> Option<T> from(Block block, CustomBlockFactory<T> factory) {
+        return data(block).map(factory::construct);
+    }
+
+    private static Option<CustomBlockData> data(Block block) {
+        return container(block).map(container -> new CustomBlockData(block, Key.generate(block), container));
+    }
+
+    private static Option<PersistentDataContainer> container(Block block) {
+        final Chunk chunk = block.getChunk();
+        final NamespacedKey key = Key.generate(block);
+        final PersistentDataContainer container = chunk.getPersistentDataContainer().get(key, PersistentDataType.TAG_CONTAINER);
+        return Option.of(container);
+    }
+
+    private static boolean exists(Block block) {
+        final Chunk chunk = block.getChunk();
+        final NamespacedKey key = Key.generate(block);
+        return chunk.getPersistentDataContainer().has(key, PersistentDataType.TAG_CONTAINER);
     }
 
     static <T extends CustomBlock> T create(Block block, Class<T> t) {
-        Preconditions.checkArgument(data(block) instanceof None<?>);
+        Preconditions.checkArgument(!CustomBlock.exists(block), "Cant create a CustomBlock, because some CustomBlock already exists at " + Key.generate(block).getKey());
         final BlockType type = t.getAnnotation(BlockType.class);
         final CustomBlockFactory<T> constructor = BlockType.Register.getFactory(t);
         final Chunk chunk = block.getChunk();
@@ -55,7 +67,7 @@ public interface CustomBlock extends PersistentDataHolder {
     }
 
     static void create(Block block, ItemStack item) {
-        Preconditions.checkArgument(data(block) instanceof None<?>);
+        Preconditions.checkArgument(container(block) instanceof None<?>);
         final String type = Objects.requireNonNull(item.getItemMeta().getPersistentDataContainer().get(CustomBlock.Key.ITEM_TYPE_KEY, PersistentDataType.STRING));
         final CustomBlockFactory<? extends CustomBlock> factory = BlockType.Register.STRING_FACTORY_MAP.get(type);
         final Chunk chunk = block.getChunk();
@@ -67,21 +79,12 @@ public interface CustomBlock extends PersistentDataHolder {
     }
 
 
-    static Option<PersistentDataContainer> data(Block block) {
-        final Chunk chunk = block.getChunk();
-        final NamespacedKey key = Key.generate(block);
-        final PersistentDataContainer container = chunk.getPersistentDataContainer().get(key, PersistentDataType.TAG_CONTAINER);
-        return Option.of(container);
-    }
-
     static Option<? extends CustomBlock> get(Block block) {
-        final Option<PersistentDataContainer> data = data(block);
-        if (data(block) instanceof Some<PersistentDataContainer> some) {
-            final PersistentDataContainer container = some.value();
-            final NamespacedKey key = Key.generate(block);
-            final String type = container.get(Key.TYPE_KEY, PersistentDataType.STRING);
+        if (data(block) instanceof Some<CustomBlockData> some) {
+            final CustomBlockData data = some.value();
+            final String type = data.container().get(Key.TYPE_KEY, PersistentDataType.STRING);
             final CustomBlockFactory<?> constructor = BlockType.Register.STRING_FACTORY_MAP.getOrDefault(type, UndefinedType::new);
-            return Option.some(constructor.construct(block, key, container));
+            return Option.some(constructor.construct(data));
         }
         return Option.none();
     }
@@ -111,16 +114,12 @@ public interface CustomBlock extends PersistentDataHolder {
                 .collect(Collectors.toSet());
     }
 
-    Block getBlock();
-
-    @Override
-    @NotNull
-    PersistentDataContainer getPersistentDataContainer();
-
-    NamespacedKey getKey();
+    CustomBlockData getCustomBlockData();
 
     default void remove() {
-        getBlock().getChunk().getPersistentDataContainer().remove(getKey());
+        Block block = getCustomBlockData().block();
+        NamespacedKey key = getCustomBlockData().key();
+        block.getChunk().getPersistentDataContainer().remove(key);
     }
 
     void onCreate(BlockPlaceEvent event);
@@ -131,20 +130,17 @@ public interface CustomBlock extends PersistentDataHolder {
 
     void onBreak(BlockBreakEvent event);
 
-    default Collection<ItemStack> getDrops() {
-        return getBlock().getDrops();
-    }
+    Collection<ItemStack> getDrops();
 
     default Collection<ItemStack> getDrops(ItemStack tool) {
-        return getBlock().getDrops(tool);
+        return getDrops();
     }
 
     default Collection<ItemStack> getDrops(ItemStack tool, Entity entity) {
-        return getBlock().getDrops(tool, entity);
+        return getDrops();
     }
 
     interface Key {
-
         NamespacedKey TYPE_KEY = new NamespacedKey(AethosLib.getPlugin(AethosLib.class), "type");
         NamespacedKey ITEM_TYPE_KEY = new NamespacedKey(AethosLib.getPlugin(AethosLib.class), "item-type");
         Pattern KEY_REGEX = Pattern.compile("^x(\\d+)y(-?\\d+)z(\\d+)$");
