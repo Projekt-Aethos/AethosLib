@@ -1,35 +1,33 @@
 package de.aethos.lib.option;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.DoubleFunction;
 import java.util.function.DoublePredicate;
 import java.util.stream.DoubleStream;
 
 public record SomeDouble(double value) implements DoubleOption {
     @Override
-    public @NotNull DoubleOption filter(@NotNull DoublePredicate predicate) {
+    public DoubleOption filter(final DoublePredicate predicate) {
         return predicate.test(value) ? Option.some(value) : Option.none();
     }
 
     @Override
-    public double orElse(double def) {
+    public double orElse(final double def) {
         return value;
     }
 
     @Override
-    public @NotNull <U> Option<U> map(DoubleFunction<? extends U> mapper) {
+    public <U> Option<U> map(final DoubleFunction<? extends U> mapper) {
         return Option.some(mapper.apply(value));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <U> Option<U> flatmap(DoubleFunction<? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(final DoubleFunction<? extends Option<? extends U>> mapper) {
         return (Option<U>) mapper.apply(value);
     }
 
     @Override
-    public @NotNull DoubleStream doubleStream() {
+    public DoubleStream doubleStream() {
         return DoubleStream.of(value);
     }
 }

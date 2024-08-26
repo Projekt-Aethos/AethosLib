@@ -7,7 +7,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -48,7 +47,7 @@ public class Registry<T extends Keyed> {
      * @param plugin to register listener with
      * @param logger to log new entries to
      */
-    public Registry(@NotNull JavaPlugin plugin, @NotNull Logger logger) {
+    public Registry(final JavaPlugin plugin, final Logger logger) {
         this(plugin, logger, null);
     }
 
@@ -59,7 +58,7 @@ public class Registry<T extends Keyed> {
      * @param logger to log new entries to
      * @param topic  to add after before the message
      */
-    public Registry(@NotNull JavaPlugin plugin, @NotNull Logger logger, @Nullable String topic) {
+    public Registry(final JavaPlugin plugin, final Logger logger, @Nullable final String topic) {
         this.plugin = plugin;
         this.logger = logger;
         this.values = new ConcurrentHashMap<>();
@@ -72,7 +71,8 @@ public class Registry<T extends Keyed> {
      * @param key to search for
      * @return null if no {@link T} found with that key
      */
-    public @Nullable T get(@NotNull NamespacedKey key) {
+    @Nullable
+    public T get(final NamespacedKey key) {
         return values.get(key);
     }
 
@@ -82,8 +82,8 @@ public class Registry<T extends Keyed> {
      * @param toRegister a new {@link T} with a different key from existing ones
      * @return if the newModifier could be registered successfully
      */
-    public boolean register(@NotNull T toRegister) {
-        NamespacedKey key = toRegister.getKey();
+    public boolean register(final T toRegister) {
+        final NamespacedKey key = toRegister.getKey();
         if (values.get(key) == null) {
             values.put(key, toRegister);
             if (toRegister instanceof Listener) {
@@ -102,8 +102,8 @@ public class Registry<T extends Keyed> {
      * @param key of the {@link T}
      * @return if a value is removed
      */
-    public boolean deregister(@NotNull NamespacedKey key) {
-        T oldValue = values.remove(key);
+    public boolean deregister(final NamespacedKey key) {
+        final T oldValue = values.remove(key);
         if (oldValue == null) {
             return false;
         }
@@ -120,7 +120,7 @@ public class Registry<T extends Keyed> {
      * @return stored values in a new Set
      */
     @Contract(pure = true)
-    public @NotNull Set<T> getValues() {
+    public Set<T> getValues() {
         return new HashSet<>(values.values());
     }
 
@@ -130,7 +130,7 @@ public class Registry<T extends Keyed> {
      * @return all keys to get {@link T} from
      */
     @Contract(pure = true)
-    public @NotNull Set<NamespacedKey> getKeys() {
+    public Set<NamespacedKey> getKeys() {
         return new HashSet<>(values.keySet());
     }
 }

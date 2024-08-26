@@ -5,7 +5,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -30,7 +29,7 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
      *
      * @param enumClass to get the standard values from
      */
-    public EnumRegistry(@NotNull JavaPlugin plugin, @NotNull Logger logger, @NotNull Class<E> enumClass) {
+    public EnumRegistry(final JavaPlugin plugin, final Logger logger, final Class<E> enumClass) {
         super(plugin, logger);
         this.enumClass = enumClass;
     }
@@ -41,7 +40,7 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
      * @param enumClass to get the standard values from
      * @param topic     to add after before the message
      */
-    public EnumRegistry(@NotNull JavaPlugin plugin, @NotNull Logger logger, @NotNull Class<E> enumClass, @Nullable String topic) {
+    public EnumRegistry(final JavaPlugin plugin, final Logger logger, final Class<E> enumClass, @Nullable final String topic) {
         super(plugin, logger, topic);
         this.enumClass = enumClass;
     }
@@ -53,10 +52,11 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
      * @return null if no {@link T} found
      */
     @Override
-    public @Nullable T get(@NotNull NamespacedKey key) {
+    @Nullable
+    public T get(final NamespacedKey key) {
         try {
             return Enum.valueOf(enumClass, key.getKey()).get();
-        } catch (IllegalArgumentException ignored) {
+        } catch (final IllegalArgumentException ignored) {
             return values.get(key);
         }
     }
@@ -68,23 +68,23 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
      * @return if the newModifier could be registered successfully
      */
     @Override
-    public boolean register(@NotNull T toRegister) {
+    public boolean register(final T toRegister) {
         return Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).map(Keyed::getKey)
                 .noneMatch(key -> key.equals(toRegister.getKey()))
                 && super.register(toRegister);
     }
 
     @Override
-    public @NotNull Set<T> getValues() {
-        Set<T> set = super.getValues();
+    public Set<T> getValues() {
+        final Set<T> set = super.getValues();
         set.addAll(Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).collect(Collectors.toSet()));
         return set;
     }
 
     @Override
     @Contract(pure = true)
-    public @NotNull Set<NamespacedKey> getKeys() {
-        Set<NamespacedKey> set = super.getKeys();
+    public Set<NamespacedKey> getKeys() {
+        final Set<NamespacedKey> set = super.getKeys();
         set.addAll(Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).map(Keyed::getKey).toList());
         return set;
     }
@@ -101,6 +101,6 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
          *
          * @return the {@link T} stored in the object
          */
-        @NotNull T get();
+        T get();
     }
 }

@@ -3,26 +3,24 @@ package de.aethos.lib.compatibility.worldguard;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 public final class InactiveWorldGuardSupport implements WorldGuardSupport {
-
-    public InactiveWorldGuardSupport(Plugin plugin) {
+    public InactiveWorldGuardSupport(final Plugin plugin) {
         plugin.getLogger().info("WorldGuardSupport inactive");
     }
 
     @Override
-    public boolean isPVPBlocked(@NotNull Player player, @NotNull Location location) {
+    public boolean isPVPBlocked(final Player player, final Location location) {
         return false;
     }
 
     @Override
-    public boolean blockedByFlag(@NotNull Location location, @NotNull Player player, @NotNull FlagKey flagKey) {
+    public boolean blockedByFlag(final Location location, final Player player, final FlagKey flagKey) {
         return false;
     }
 
     @Override
-    public boolean allowedByFlag(@NotNull Location location, @NotNull FlagKey flagKey) {
+    public boolean allowedByFlag(final Location location, final FlagKey flagKey) {
         return true;
     }
 

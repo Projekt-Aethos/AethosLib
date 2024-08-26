@@ -1,32 +1,33 @@
 package de.aethos.lib.data.database.pool;
 
 import de.aethos.lib.data.database.Database;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class FixedSizedConnectionPool implements ConnectionPool {
     private final Connection[] pool;
+
     private final Database database;
+
     private int pointer = 0;
 
-    public FixedSizedConnectionPool(@NotNull Database database, int size) {
+    public FixedSizedConnectionPool(final Database database, final int size) {
         this.database = database;
         this.pool = new Connection[size];
     }
 
     @Override
-    public void give(@NotNull Connection connection) {
+    public void give(final Connection connection) {
         try {
             connection.close();
-        } catch (SQLException ignore) {
-            
+        } catch (final SQLException ignore) {
+
         }
     }
 
     @Override
-    public @NotNull Connection get() {
+    public Connection get() {
         final Connection con = pool[pointer];
         pool[pointer] = database.createConnection();
         pointer = (pointer + 1) % pool.length;
@@ -37,6 +38,4 @@ public class FixedSizedConnectionPool implements ConnectionPool {
     public int size() {
         return pool.length;
     }
-
-
 }

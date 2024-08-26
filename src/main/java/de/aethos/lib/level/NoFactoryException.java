@@ -1,7 +1,6 @@
 package de.aethos.lib.level;
 
 import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serial;
 
@@ -11,12 +10,12 @@ public class NoFactoryException extends RuntimeException {
 
     private final NamespacedKey key;
 
-    public NoFactoryException(@NotNull NamespacedKey key) {
+    public NoFactoryException(final NamespacedKey key) {
         super("No factory registered with key " + key);
         this.key = key;
     }
 
-    public @NotNull NamespacedKey getKey() {
+    public NamespacedKey getKey() {
         return key;
     }
 }

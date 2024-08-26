@@ -1,7 +1,5 @@
 package de.aethos.lib.option;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.*;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -12,81 +10,80 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     static final None<?> GENERIC_NONE = new None<>();
 
     @Override
-    public IntOption toInt(ToIntFunction<T> function) {
+    public IntOption toInt(final ToIntFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public LongOption toLong(ToLongFunction<T> function) {
+    public LongOption toLong(final ToLongFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public BoolOption toBool(Predicate<T> predicate) {
+    public BoolOption toBool(final Predicate<T> predicate) {
         return Option.none();
     }
 
     @Override
-    public DoubleOption toDouble(ToDoubleFunction<T> function) {
+    public DoubleOption toDouble(final ToDoubleFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public @NotNull Option<T> filter(@NotNull Predicate<? super T> predicate) {
+    public Option<T> filter(final Predicate<? super T> predicate) {
         return this;
     }
 
     @Override
-    public @NotNull T orElse(@NotNull T def) {
+    public T orElse(final T def) {
         return def;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull Option<T> or(@NotNull Supplier<? extends Option<? extends T>> supplier) {
+    public Option<T> or(final Supplier<? extends Option<? extends T>> supplier) {
         return (Option<T>) supplier.get();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <U> Option<U> map(@NotNull Function<? super T, ? extends U> mapper) {
+    public <U> Option<U> map(final Function<? super T, ? extends U> mapper) {
         return (Option<U>) this;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <U> Option<U> flatmap(@NotNull Function<? super T, ? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(final Function<? super T, ? extends Option<? extends U>> mapper) {
         return (Option<U>) this;
     }
 
     @Override
-    public @NotNull Stream<T> stream() {
+    public Stream<T> stream() {
         return Stream.empty();
     }
 
     @Override
-    public @NotNull IntOption filter(@NotNull IntPredicate predicate) {
+    public IntOption filter(final IntPredicate predicate) {
         return Option.none();
     }
 
     @Override
-    public int orElse(int def) {
+    public int orElse(final int def) {
         return def;
     }
 
     @Override
-    public @NotNull <U> Option<U> map(IntFunction<? extends U> mapper) {
-        return Option.none();
-    }
-
-
-    @Override
-    public @NotNull <U> Option<U> flatmap(IntFunction<? extends Option<? extends U>> mapper) {
+    public <U> Option<U> map(final IntFunction<? extends U> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull IntStream intStream() {
+    public <U> Option<U> flatmap(final IntFunction<? extends Option<? extends U>> mapper) {
+        return Option.none();
+    }
+
+    @Override
+    public IntStream intStream() {
         return IntStream.empty();
     }
 
@@ -100,75 +97,73 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
         return Option.none();
     }
 
-
     @Override
-    public @NotNull DoubleOption filter(@NotNull DoublePredicate predicate) {
+    public DoubleOption filter(final DoublePredicate predicate) {
         return Option.none();
     }
 
     @Override
-    public double orElse(double def) {
+    public double orElse(final double def) {
         return def;
     }
 
     @Override
-    public @NotNull <U> Option<U> map(DoubleFunction<? extends U> mapper) {
+    public <U> Option<U> map(final DoubleFunction<? extends U> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull <U> Option<U> flatmap(DoubleFunction<? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(final DoubleFunction<? extends Option<? extends U>> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull DoubleStream doubleStream() {
+    public DoubleStream doubleStream() {
         return DoubleStream.empty();
     }
 
     @Override
-    public @NotNull BoolOption filter(boolean expected) {
+    public BoolOption filter(final boolean expected) {
         return Option.none();
     }
 
     @Override
-    public boolean orElse(boolean def) {
+    public boolean orElse(final boolean def) {
         return def;
     }
 
     @Override
-    public @NotNull <U> Option<U> map(Supplier<U> callable) {
+    public <U> Option<U> map(final Supplier<U> callable) {
         return Option.none();
     }
 
     @Override
-    public @NotNull <U> Option<U> flatmap(Supplier<Option<? extends U>> mapper) {
-        return Option.none();
-    }
-
-
-    @Override
-    public @NotNull LongOption filter(@NotNull LongPredicate predicate) {
+    public <U> Option<U> flatmap(final Supplier<Option<? extends U>> mapper) {
         return Option.none();
     }
 
     @Override
-    public long orElse(long def) {
+    public LongOption filter(final LongPredicate predicate) {
+        return Option.none();
+    }
+
+    @Override
+    public long orElse(final long def) {
         return def;
     }
 
     @Override
-    public @NotNull <U> Option<U> map(LongFunction<? extends U> mapper) {
+    public <U> Option<U> map(final LongFunction<? extends U> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull <U> Option<U> flatmap(LongFunction<? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(final LongFunction<? extends Option<? extends U>> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull LongStream LongStream() {
+    public LongStream LongStream() {
         return LongStream.empty();
     }
 }

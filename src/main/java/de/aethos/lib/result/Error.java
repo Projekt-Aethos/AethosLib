@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 public record Error<O, E>(E error) implements Result<O, E> {
     @Override
-    public <C> C match(Function<? super O, ? extends C> okay, Function<? super E, ? extends C> error) {
+    public <C> C match(final Function<? super O, ? extends C> okay, final Function<? super E, ? extends C> error) {
         return error.apply(this.error);
     }
 

@@ -7,11 +7,11 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public sealed interface Result<O, E> permits Error, Okay {
-    static <O, E> Error<O, E> err(E error) {
+    static <O, E> Error<O, E> err(final E error) {
         return new Error<>(error);
     }
 
-    static <O, E> Okay<O, E> ok(O okay) {
+    static <O, E> Okay<O, E> ok(final O okay) {
         return new Okay<>(okay);
     }
 

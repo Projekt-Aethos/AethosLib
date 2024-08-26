@@ -2,10 +2,9 @@ package de.aethos.lib.level.interfaces;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
 
 public interface LevelledFactory extends Keyed {
-    @NotNull Levelled create(@NotNull LevelledHolder<?> holder);
+    Levelled create(LevelledHolder<?> holder);
 
     /**
      * Unique key to identify with LevelClass creation.
@@ -13,5 +12,5 @@ public interface LevelledFactory extends Keyed {
      * @return the same key as the constructed LevelClass
      */
     @Override
-    @NotNull NamespacedKey getKey();
+    NamespacedKey getKey();
 }

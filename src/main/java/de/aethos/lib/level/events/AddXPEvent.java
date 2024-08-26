@@ -2,7 +2,6 @@ package de.aethos.lib.level.events;
 
 import de.aethos.lib.level.interfaces.Levelled;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +19,7 @@ public class AddXPEvent extends LevelEvent {
 
     private double cachedValue;
 
-    public AddXPEvent(@NotNull Levelled levelled, double amount) {
+    public AddXPEvent(final Levelled levelled, final double amount) {
         super(levelled);
         this.initialValue = amount;
         this.baseMultiplier = new LinkedList<>();
@@ -34,7 +33,7 @@ public class AddXPEvent extends LevelEvent {
      *
      * @param value to multiply the base value with
      */
-    public void addBaseMultiply(double value) {
+    public void addBaseMultiply(final double value) {
         cached = false;
         baseMultiplier.add(value);
     }
@@ -46,7 +45,7 @@ public class AddXPEvent extends LevelEvent {
      *
      * @param value to multiply the value with
      */
-    public void addWholeMultiply(double value) {
+    public void addWholeMultiply(final double value) {
         cached = false;
         wholeMultiplier.add(value);
     }
@@ -55,20 +54,20 @@ public class AddXPEvent extends LevelEvent {
         return initialValue;
     }
 
-    public static @NotNull HandlerList getHandlerList() {
+    public static HandlerList getHandlerList() {
         return HANDLER_LIST;
     }
 
     @Override
-    public @NotNull HandlerList getHandlers() {
+    public HandlerList getHandlers() {
         return HANDLER_LIST;
     }
 
     public double getFinalXP() {
         if (!cached) {
-            double baseM = baseMultiplier.stream().mapToDouble(a -> a).sum();
+            final double baseM = baseMultiplier.stream().mapToDouble(a -> a).sum();
             double midValue = initialValue * (1 + baseM);
-            for (double value : wholeMultiplier) {
+            for (final double value : wholeMultiplier) {
                 midValue *= value;
             }
             cachedValue = midValue;

@@ -2,7 +2,6 @@ package de.aethos.lib.level.interfaces;
 
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface LevelledHolder<ID> {
@@ -11,7 +10,7 @@ public interface LevelledHolder<ID> {
      *
      * @return unique identifier
      */
-    @NotNull ID identifier();
+    ID identifier();
 
     /**
      * Gets the LevelClass of this holder.
@@ -21,6 +20,6 @@ public interface LevelledHolder<ID> {
      * @return the attached LevelClass
      */
     @Contract("_, true -> !null")
-    @Nullable Levelled get(@NotNull NamespacedKey key, boolean create);
-
+    @Nullable
+    Levelled get(NamespacedKey key, boolean create);
 }

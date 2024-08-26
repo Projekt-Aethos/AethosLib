@@ -8,11 +8,9 @@ import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
-import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import xyz.janboerman.guilib.api.GuiListener;
 
 import java.util.logging.Logger;
@@ -20,6 +18,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("unused")
 public final class AethosLib extends JavaPlugin {
     private final LevelApi levelApi;
+
     private final WorldGuardSupport worldGuardSupport;
 
     public AethosLib() {
@@ -27,18 +26,9 @@ public final class AethosLib extends JavaPlugin {
         levelApi = new LevelApi(this);
     }
 
-    public static NamespacedKey getKey(String key) {
-        return new NamespacedKey(AethosLib.getPlugin(AethosLib.class), key);
-    }
-
     @Override
     public void onLoad() {
         getLogger().info("✓ AethosLib successfully loaded");
-    }
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
     }
 
     @Override
@@ -71,23 +61,22 @@ public final class AethosLib extends JavaPlugin {
     }
 
     @Contract("_ -> new")
-    public @NotNull Connector getConnector(@NotNull JavaPlugin plugin) {
+    public Connector getConnector(JavaPlugin plugin) {
         return new DefaultPluginConnector(plugin);
     }
 
-    public @NotNull WorldGuardSupport getWorldGuardSupport() {
+    public WorldGuardSupport getWorldGuardSupport() {
         return worldGuardSupport;
     }
 
     @Contract(" -> new")
-    public @NotNull Connector getConnector() {
+    public Connector getConnector() {
         return new DefaultPluginConnector(this);
     }
 
-    public @NotNull LevelApi getLevelApi() {
+    public LevelApi getLevelApi() {
         return levelApi;
     }
-
 
     public boolean isWorldGuardSupportEnabled() {
         return worldGuardSupport.isEnabled();

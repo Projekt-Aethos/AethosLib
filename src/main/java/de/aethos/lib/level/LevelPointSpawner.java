@@ -13,7 +13,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -28,8 +27,8 @@ public final class LevelPointSpawner {
 
     }
 
-    public static boolean checkXpObject(@NotNull ExperienceOrb mergeSource) {
-        PersistentDataContainer container = mergeSource.getPersistentDataContainer();
+    public static boolean checkXpObject(final ExperienceOrb mergeSource) {
+        final PersistentDataContainer container = mergeSource.getPersistentDataContainer();
         return !container.isEmpty() && container.has(XP_OBJECT_KEY);
     }
 
@@ -41,8 +40,8 @@ public final class LevelPointSpawner {
      * @param amount   of the orb
      * @return the orb
      */
-    public static @NotNull ExperienceOrb spawn(@NotNull Location location, @NotNull NamespacedKey key, double amount) {
-        ExperienceOrb entity = spawn(location, Map.of(key, amount));
+    public static ExperienceOrb spawn(final Location location, final NamespacedKey key, final double amount) {
+        final ExperienceOrb entity = spawn(location, Map.of(key, amount));
         assert entity != null;
         return entity;
     }
@@ -54,20 +53,21 @@ public final class LevelPointSpawner {
      * @param xpValues values of the orb
      * @return null if xpValues is empty
      */
-    public static @Nullable ExperienceOrb spawn(@NotNull Location location, @NotNull Map<NamespacedKey, Double> xpValues) {
+    @Nullable
+    public static ExperienceOrb spawn(final Location location, final Map<NamespacedKey, Double> xpValues) {
         if (xpValues.isEmpty()) {
             return null;
         }
 
-        ExperienceOrb experienceOrb = location.getWorld().spawn(location, ExperienceOrb.class, orb -> {
-            PersistentDataContainer container = orb.getPersistentDataContainer();
-            PersistentDataContainer xpContainer = container.getAdapterContext().newPersistentDataContainer();
-            for (Map.Entry<NamespacedKey, Double> entry : xpValues.entrySet()) {
+        final ExperienceOrb experienceOrb = location.getWorld().spawn(location, ExperienceOrb.class, orb -> {
+            final PersistentDataContainer container = orb.getPersistentDataContainer();
+            final PersistentDataContainer xpContainer = container.getAdapterContext().newPersistentDataContainer();
+            for (final Map.Entry<NamespacedKey, Double> entry : xpValues.entrySet()) {
                 xpContainer.set(entry.getKey(), PersistentDataType.DOUBLE, entry.getValue());
             }
             container.set(XP_OBJECT_KEY, PersistentDataType.TAG_CONTAINER, xpContainer);
         });
-        ItemDisplay display = location.getWorld().spawn(location, ItemDisplay.class);
+        final ItemDisplay display = location.getWorld().spawn(location, ItemDisplay.class);
         display.getPersistentDataContainer().set(XP_OBJECT_KEY, AethosDataType.UUID, experienceOrb.getUniqueId());
         display.setItemStack(new ItemStack(Material.EXPERIENCE_BOTTLE));
         display.setBillboard(Display.Billboard.CENTER);
@@ -77,7 +77,7 @@ public final class LevelPointSpawner {
         return experienceOrb;
     }
 
-    private static @NotNull JavaPlugin getPlugin() {
+    private static JavaPlugin getPlugin() {
         return AethosLib.getPlugin(AethosLib.class);
     }
 
@@ -89,7 +89,7 @@ public final class LevelPointSpawner {
 
         private final Display display;
 
-        public DisplayKiller(@NotNull ExperienceOrb experienceOrb, @NotNull Display display) {
+        public DisplayKiller(final ExperienceOrb experienceOrb, final Display display) {
             this.experienceOrb = experienceOrb;
             this.display = display;
         }
@@ -105,6 +105,4 @@ public final class LevelPointSpawner {
             display.getScheduler().runAtFixedRate(getPlugin(), scheduledTask -> run(), null, 1, 1);
         }
     }
-
 }
-

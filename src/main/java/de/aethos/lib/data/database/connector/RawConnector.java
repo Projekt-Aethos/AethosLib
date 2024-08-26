@@ -4,49 +4,29 @@ import de.aethos.lib.data.database.Database;
 import de.aethos.lib.data.database.action.Query;
 import de.aethos.lib.data.database.action.Update;
 import de.aethos.lib.result.Result;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-
 public class RawConnector implements Connector {
-
     private final Database database;
 
-    public RawConnector(@NotNull Database database) {
+    public RawConnector(final Database database) {
         this.database = database;
-
     }
 
-    public <T> @NotNull Result<T, SQLException> query(@NotNull Query<T> query) {
+    public <T> Result<T, SQLException> query(final Query<T> query) {
         try (Connection connection = database.createConnection()) {
             return query(query, connection);
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private <T> @NotNull Result<T, SQLException> query(@NotNull Query<T> query, @NotNull Connection connection) {
-        try {
-            try {
-                final T t = query.query(connection);
-                return Result.ok(t);
-            } catch (SQLException sql) {
-                return Result.err(sql);
-            }
-        } catch (RuntimeException e) {
-            if (e.getCause() instanceof SQLException sql) {
-                return Result.err(sql);
-            }
-            throw e;
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    public <T> @NotNull Stream<Result<T, SQLException>> query(Query<T>... queries) {
+    public <T> Stream<Result<T, SQLException>> query(final Query<T>... queries) {
         if (queries == null) {
             return Stream.empty();
         }
@@ -55,39 +35,52 @@ public class RawConnector implements Connector {
             for (int i = 0; i < queries.length; i++) {
                 results[i] = query(queries[i], connection);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
         return Arrays.stream(results);
     }
 
     @Override
-    public void update(Update... updates) {
+    public void update(final Update... updates) {
         try (Connection connection = database.createConnection()) {
-            for (Update update : updates) {
+            for (final Update update : updates) {
                 update(update, connection);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-    public void update(@NotNull Update update) {
+    public void update(final Update update) {
         try (Connection connection = database.createConnection()) {
             update(update, connection);
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void update(Update update, @NotNull Connection connection) {
+    private <T> Result<T, SQLException> query(final Query<T> query, final Connection connection) {
         try {
-            update.update(connection);
-        } catch (SQLException ignore) {
-
+            try {
+                final T t = query.query(connection);
+                return Result.ok(t);
+            } catch (final SQLException sql) {
+                return Result.err(sql);
+            }
+        } catch (final RuntimeException e) {
+            if (e.getCause() instanceof SQLException sql) {
+                return Result.err(sql);
+            }
+            throw e;
         }
     }
 
+    private void update(final Update update, final Connection connection) {
+        try {
+            update.update(connection);
+        } catch (final SQLException ignore) {
 
+        }
+    }
 }

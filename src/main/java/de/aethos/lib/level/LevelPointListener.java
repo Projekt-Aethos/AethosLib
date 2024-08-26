@@ -18,7 +18,6 @@ import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,35 +29,35 @@ import static de.aethos.lib.level.LevelPointSpawner.checkXpObject;
 public class LevelPointListener implements Listener {
     private final JavaPlugin plugin;
 
-    public LevelPointListener(@NotNull JavaPlugin plugin) {
+    public LevelPointListener(final JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onMerge(@NotNull ExperienceOrbMergeEvent event) {
+    public void onMerge(final ExperienceOrbMergeEvent event) {
         if (checkXpObject(event.getMergeSource()) || checkXpObject(event.getMergeTarget())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onXpCollect(@NotNull PlayerPickupExperienceEvent event) {
-        ExperienceOrb experienceOrb = event.getExperienceOrb();
+    public void onXpCollect(final PlayerPickupExperienceEvent event) {
+        final ExperienceOrb experienceOrb = event.getExperienceOrb();
         if (!checkXpObject(experienceOrb)) {
             return;
         }
 
-        PersistentDataContainer container = experienceOrb.getPersistentDataContainer();
+        final PersistentDataContainer container = experienceOrb.getPersistentDataContainer();
         if (!container.has(XP_OBJECT_KEY, PersistentDataType.TAG_CONTAINER)) {
             return;
         }
-        PersistentDataContainer xpContainer = container.get(XP_OBJECT_KEY, PersistentDataType.TAG_CONTAINER);
+        final PersistentDataContainer xpContainer = container.get(XP_OBJECT_KEY, PersistentDataType.TAG_CONTAINER);
         assert xpContainer != null;
 
-        LevelledHolder<UUID> levelClassHolder = AethosLib.getPlugin(AethosLib.class).getLevelApi()
+        final LevelledHolder<UUID> levelClassHolder = AethosLib.getPlugin(AethosLib.class).getLevelApi()
                 .getLevelClassHolder(event.getPlayer().getUniqueId());
-        for (NamespacedKey key : xpContainer.getKeys()) {
-            Double value = xpContainer.get(key, PersistentDataType.DOUBLE);
+        for (final NamespacedKey key : xpContainer.getKeys()) {
+            final Double value = xpContainer.get(key, PersistentDataType.DOUBLE);
             if (value != null && levelClassHolder.get(key, true) instanceof ProgressableLevelled levelled) {
                 levelled.addProgress(value);
             }
@@ -68,15 +67,15 @@ public class LevelPointListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onLoad(@NotNull EntitiesLoadEvent event) {
+    public void onLoad(final EntitiesLoadEvent event) {
         plugin.getServer().getAsyncScheduler().runNow(plugin, scheduledTaskAsync -> {
-            Map<Display, UUID> displayList = new HashMap<>();
+            final Map<Display, UUID> displayList = new HashMap<>();
             EntityScheduler scheduler = null;
-            for (Entity entity : event.getEntities()) {
+            for (final Entity entity : event.getEntities()) {
                 if (entity instanceof Display display) {
-                    PersistentDataContainer container = display.getPersistentDataContainer();
+                    final PersistentDataContainer container = display.getPersistentDataContainer();
                     if (container.has(XP_OBJECT_KEY, AethosDataType.UUID)) {
-                        UUID uuid = container.get(XP_OBJECT_KEY, AethosDataType.UUID);
+                        final UUID uuid = container.get(XP_OBJECT_KEY, AethosDataType.UUID);
                         assert uuid != null;
                         displayList.put(display, uuid);
                         if (scheduler == null) {
@@ -97,5 +96,4 @@ public class LevelPointListener implements Listener {
             }
         });
     }
-
 }

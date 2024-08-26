@@ -4,7 +4,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public abstract class SimplePluginCommand<AePlugin extends JavaPlugin> extends C
      * @param name   the name
      * @param plugin the plugin
      */
-    public SimplePluginCommand(@NotNull String name, @NotNull AePlugin plugin) {
+    public SimplePluginCommand(final String name, final AePlugin plugin) {
         super(name);
         this.plugin = plugin;
     }
@@ -39,13 +38,13 @@ public abstract class SimplePluginCommand<AePlugin extends JavaPlugin> extends C
      */
     @Contract("_, null -> null; _, !null -> !null")
     @Nullable
-    protected List<String> complete(@NotNull String @NotNull [] args, @Nullable List<String> toComplete) {
+    protected List<String> complete(final String[] args, @Nullable final List<String> toComplete) {
         if (toComplete == null) {
             return null;
         }
-        String lastArg = args[args.length - 1];
-        List<String> out = new ArrayList<>(toComplete.size());
-        for (String completion : toComplete) {
+        final String lastArg = args[args.length - 1];
+        final List<String> out = new ArrayList<>(toComplete.size());
+        for (final String completion : toComplete) {
             if (lastArg.matches(" *") || completion.toLowerCase(Locale.ROOT).startsWith(lastArg.toLowerCase(Locale.ROOT))) {
                 out.add(completion);
             }
@@ -54,7 +53,6 @@ public abstract class SimplePluginCommand<AePlugin extends JavaPlugin> extends C
     }
 
     @Override
-    @NotNull
     public AePlugin getPlugin() {
         return plugin;
     }

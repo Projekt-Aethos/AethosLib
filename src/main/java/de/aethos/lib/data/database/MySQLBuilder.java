@@ -4,43 +4,46 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLBuilder {
-
     private String user;
+
     private String database;
+
     private String password;
+
     private String port;
+
     private String hostname;
 
-    public MySQLBuilder user(String user) {
+    public MySQLBuilder user(final String user) {
         this.user = user;
         return this;
     }
 
-    public MySQLBuilder database(String database) {
+    public MySQLBuilder database(final String database) {
         this.database = database;
         return this;
     }
 
-    public MySQLBuilder password(String password) {
+    public MySQLBuilder password(final String password) {
         this.password = password;
         return this;
     }
 
-    public MySQLBuilder port(int i) {
+    public MySQLBuilder port(final int i) {
         this.port = String.valueOf(i);
         return this;
     }
 
-    public MySQLBuilder hostname(String hostname) {
+    public MySQLBuilder hostname(final String hostname) {
         this.hostname = hostname;
         return this;
     }
 
     public Database build() {
-        MySQL mysql = new MySQL(user, database, password, port, hostname);
+        final MySQL mysql = new MySQL(user, database, password, port, hostname);
         try (Connection connection = mysql.createConnection()) {
             return mysql;
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new IllegalStateException(e);
         }
     }

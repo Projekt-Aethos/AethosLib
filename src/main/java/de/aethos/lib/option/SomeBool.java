@@ -1,29 +1,26 @@
 package de.aethos.lib.option;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.Supplier;
 
 public record SomeBool(boolean value) implements BoolOption {
-
     @Override
-    public @NotNull BoolOption filter(boolean expected) {
+    public BoolOption filter(final boolean expected) {
         return Option.some(value == expected);
     }
 
     @Override
-    public boolean orElse(boolean def) {
+    public boolean orElse(final boolean def) {
         return value;
     }
 
     @Override
-    public @NotNull <U> Option<U> map(Supplier<U> callable) {
+    public <U> Option<U> map(final Supplier<U> callable) {
         return Option.some(callable.get());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <U> Option<U> flatmap(Supplier<Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(final Supplier<Option<? extends U>> mapper) {
         return (Option<U>) mapper.get();
     }
 }

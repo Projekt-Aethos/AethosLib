@@ -1,8 +1,6 @@
 package de.aethos.lib.data.database.pool;
 
 import de.aethos.lib.data.database.Database;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,16 +12,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-
 public class QueuedConnectionPool implements ConnectionPool {
     private final Queue<Future<Connection>> queue = new LinkedList<>();
-    private final Database database;
-    private final ExecutorService executorService;
-    private final int min;
-    private final Logger logger = Bukkit.getLogger();
 
-    public QueuedConnectionPool(@NotNull Database database, int min) {
+    private final Database database;
+
+    private final ExecutorService executorService;
+
+    private final int min;
+
+    private final Logger logger;
+
+    public QueuedConnectionPool(final Database database, final int min, final Logger logger) {
         this.database = database;
+        this.logger = logger;
         this.executorService = Executors.newSingleThreadExecutor();
         this.min = min;
         for (int i = 0; i < min; i++) {
@@ -31,7 +33,17 @@ public class QueuedConnectionPool implements ConnectionPool {
         }
     }
 
-    public @NotNull Connection get() {
+    public void give(final Connection connection) {
+        try {
+            if (!connection.isClosed()) {
+                queue.add(executorService.submit(() -> connection));
+            }
+        } catch (final SQLException ignore) {
+
+        }
+    }
+
+    public Connection get() {
         Future<Connection> future = queue.poll();
         while (true) {
             if (future == null) {
@@ -56,16 +68,6 @@ public class QueuedConnectionPool implements ConnectionPool {
                 logger.warning(exception.getMessage());
                 future = queue.poll();
             }
-        }
-    }
-
-    public void give(@NotNull Connection connection) {
-        try {
-            if (!connection.isClosed()) {
-                queue.add(executorService.submit(() -> connection));
-            }
-        } catch (SQLException ignore) {
-
         }
     }
 

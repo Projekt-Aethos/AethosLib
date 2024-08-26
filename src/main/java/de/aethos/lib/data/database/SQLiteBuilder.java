@@ -1,13 +1,11 @@
 package de.aethos.lib.data.database;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 
 public class SQLiteBuilder {
     private File file;
 
-    public @NotNull SQLiteBuilder file(File file) {
+    public SQLiteBuilder file(final File file) {
         if (!file.toPath().toString().endsWith(".sqlite")) {
             throw new IllegalStateException("File should end with .sqlite");
         }
@@ -18,7 +16,7 @@ public class SQLiteBuilder {
         return this;
     }
 
-    public @NotNull SQLite build() {
+    public SQLite build() {
         return new SQLite(file);
     }
 }

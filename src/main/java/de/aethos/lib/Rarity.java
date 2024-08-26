@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The rarity.
@@ -48,7 +47,7 @@ public enum Rarity {
      * @param toColor to apply the gradient on
      * @return the component with the gradient
      */
-    public @NotNull Component colorGradient(@NotNull Component toColor) {
+    public Component colorGradient(Component toColor) {
         MiniMessage mm = MiniMessage.miniMessage();
         StringBuilder gradientBuilder = new StringBuilder(COMMON.color.asHexString());
         Rarity[] rarities = Rarity.values();

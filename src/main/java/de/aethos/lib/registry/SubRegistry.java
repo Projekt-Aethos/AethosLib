@@ -3,7 +3,6 @@ package de.aethos.lib.registry;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Logger;
@@ -17,13 +16,13 @@ import java.util.logging.Logger;
 public class SubRegistry<T extends U, U extends Keyed> extends Registry<T> {
     private final Registry<U> parentRegistry;
 
-    public SubRegistry(@NotNull JavaPlugin plugin, @NotNull Logger logger, @Nullable String topic, @NotNull Registry<U> parent) {
+    public SubRegistry(final JavaPlugin plugin, final Logger logger, @Nullable final String topic, final Registry<U> parent) {
         super(plugin, logger, topic);
         this.parentRegistry = parent;
     }
 
     @Override
-    public boolean register(@NotNull T toRegister) {
+    public boolean register(final T toRegister) {
         if (parentRegistry.register(toRegister)) {
             if (super.register(toRegister)) {
                 return true;
@@ -35,7 +34,7 @@ public class SubRegistry<T extends U, U extends Keyed> extends Registry<T> {
     }
 
     @Override
-    public boolean deregister(@NotNull NamespacedKey key) {
+    public boolean deregister(final NamespacedKey key) {
         if (super.deregister(key)) {
             parentRegistry.deregister(key);
             return true;

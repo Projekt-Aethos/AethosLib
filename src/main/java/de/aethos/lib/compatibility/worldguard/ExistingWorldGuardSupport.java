@@ -14,56 +14,49 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class ExistingWorldGuardSupport implements WorldGuardSupport {
-    private @Nullable RegionContainer container;
+    @Nullable
+    private RegionContainer container;
 
-    public ExistingWorldGuardSupport(Plugin plugin) {
+    public ExistingWorldGuardSupport(final Plugin plugin) {
         plugin.getLogger().info("WorldGuardSupport active");
     }
 
-    private @NotNull RegionContainer getContainer() {
-        if (container == null) {
-            container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        }
-        return container;
-    }
-
     @Override
-    public boolean isPVPBlocked(@NotNull Player player, @NotNull Location location) {
-        LocalPlayer lp = WorldGuardPlugin.inst().wrapPlayer(player);
-        RegionQuery query = getContainer().createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
+    public boolean isPVPBlocked(final Player player, final Location location) {
+        final LocalPlayer lp = WorldGuardPlugin.inst().wrapPlayer(player);
+        final RegionQuery query = getContainer().createQuery();
+        final ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
         return set.queryValue(lp, Flags.PVP) == StateFlag.State.DENY;
     }
 
     @Override
-    public boolean blockedByFlag(@NotNull Location location, @NotNull Player player, @NotNull FlagKey flagKey) {
-        StateFlag flag = FlagKey.STATE_FLAGS.get(flagKey);
+    public boolean blockedByFlag(final Location location, final Player player, final FlagKey flagKey) {
+        final StateFlag flag = FlagKey.STATE_FLAGS.get(flagKey);
         if (flag == null) {
             return false;
         }
 
-        World world = location.getWorld();
+        final World world = location.getWorld();
         if (world == null) {
             return false;
         }
 
-        RegionManager regions = getContainer().get(BukkitAdapter.adapt(location.getWorld()));
+        final RegionManager regions = getContainer().get(BukkitAdapter.adapt(location.getWorld()));
         if (regions == null) {
             return false;
         }
-        ApplicableRegionSet set = regions.getApplicableRegions(BukkitAdapter.adapt(location).toVector().toBlockPoint());
-        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        StateFlag.State state = set.queryState(localPlayer, flag);
+        final ApplicableRegionSet set = regions.getApplicableRegions(BukkitAdapter.adapt(location).toVector().toBlockPoint());
+        final LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+        final StateFlag.State state = set.queryState(localPlayer, flag);
         return state == StateFlag.State.DENY;
     }
 
     @Override
-    public boolean allowedByFlag(@NotNull Location location, @NotNull FlagKey flagKey) {
-        StateFlag flag = FlagKey.STATE_FLAGS.get(flagKey);
+    public boolean allowedByFlag(final Location location, final FlagKey flagKey) {
+        final StateFlag flag = FlagKey.STATE_FLAGS.get(flagKey);
         if (flag == null) {
             return false;
         }
@@ -74,5 +67,12 @@ public final class ExistingWorldGuardSupport implements WorldGuardSupport {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    private RegionContainer getContainer() {
+        if (container == null) {
+            container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        }
+        return container;
     }
 }

@@ -4,7 +4,6 @@ import de.aethos.lib.level.interfaces.LevelledFactory;
 import de.aethos.lib.level.interfaces.LevelledHolder;
 import de.aethos.lib.registry.Registry;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -17,23 +16,24 @@ public class LevelApi {
 
     private final Registry<LevelledFactory> factoryRegistry;
 
-    public LevelApi(@NotNull JavaPlugin plugin) {
+    public LevelApi(final JavaPlugin plugin) {
         factoryRegistry = new Registry<>(plugin, plugin.getLogger());
     }
 
-    public @Nullable LevelledHolder<UUID> getExistingLevelClassHolder(@NotNull UUID uuid) {
+    @Nullable
+    public LevelledHolder<UUID> getExistingLevelClassHolder(final UUID uuid) {
         return HOLDER_MAP.get(uuid);
     }
 
-    public @NotNull LevelledHolder<UUID> getLevelClassHolder(@NotNull UUID uuid) {
+    public LevelledHolder<UUID> getLevelClassHolder(final UUID uuid) {
         return HOLDER_MAP.computeIfAbsent(uuid, uuid1 -> new LevelledHolderImpl<>(uuid1, factoryRegistry));
     }
 
-    public void registerFactory(@NotNull LevelledFactory factory) {
+    public void registerFactory(final LevelledFactory factory) {
         factoryRegistry.register(factory);
     }
 
-    public @NotNull Registry<LevelledFactory> getFactoryRegistry() {
+    public Registry<LevelledFactory> getFactoryRegistry() {
         return factoryRegistry;
     }
 }
