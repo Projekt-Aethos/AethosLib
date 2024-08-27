@@ -6,13 +6,16 @@ import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.WorldGuardSupport;
 import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
+import de.aethos.lib.items.DefaultItemFlagListener;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
+import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import xyz.janboerman.guilib.api.GuiListener;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
@@ -24,6 +27,16 @@ public final class AethosLib extends JavaPlugin {
     public AethosLib() {
         worldGuardSupport = loadWorldGuardSupport();
         levelApi = new LevelApi(this);
+    }
+
+    /**
+     * Gets a NamespacedKey within the plugin's namespace.
+     *
+     * @param value the {@link NamespacedKey#isValidKey(String) valid} key value, except upper cases are allowed
+     * @return a new NamespacedKey
+     */
+    public static NamespacedKey getKey(final String value) {
+        return new NamespacedKey("AethosLib".toLowerCase(Locale.ROOT), value.toLowerCase(Locale.ROOT));
     }
 
     @Override
@@ -38,6 +51,7 @@ public final class AethosLib extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(GuiListener.getInstance(), this);
         pm.registerEvents(new LevelPointListener(this), this);
+        pm.registerEvents(new DefaultItemFlagListener(), this);
 
         getLogger().info("✓ AethosLib successfully activated");
     }
