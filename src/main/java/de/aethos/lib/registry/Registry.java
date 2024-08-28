@@ -89,11 +89,10 @@ public class Registry<T extends Keyed> {
             if (toRegister instanceof Listener) {
                 Bukkit.getPluginManager().registerEvents((Listener) toRegister, plugin);
             }
-            logger.info(prefix + "New registration: " + key + " (" + toRegister.getClass().getName() + ")");
+            logger.fine(prefix + "New registration: " + key + " (" + toRegister.getClass().getName() + ")");
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -110,7 +109,7 @@ public class Registry<T extends Keyed> {
         if (oldValue instanceof Listener) {
             HandlerList.unregisterAll((Listener) oldValue);
         }
-        logger.info(prefix + "Unregistered: " + key + " (" + oldValue.getClass().getName() + ")");
+        logger.fine(prefix + "Unregistered: " + key + " (" + oldValue.getClass().getName() + ")");
         return true;
     }
 
