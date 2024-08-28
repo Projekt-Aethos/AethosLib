@@ -48,7 +48,7 @@ public final class AethosLib extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        PluginManager pm = getServer().getPluginManager();
+        final PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(GuiListener.getInstance(), this);
         pm.registerEvents(new LevelPointListener(this), this);
         pm.registerEvents(new DefaultItemFlagListener(), this);
@@ -57,16 +57,15 @@ public final class AethosLib extends JavaPlugin {
     }
 
     private WorldGuardSupport loadWorldGuardSupport() {
-        Logger logger = getLogger();
+        final Logger logger = getLogger();
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             try {
-                String version = WorldGuardPlugin.inst().getDescription().getVersion();
+                final String version = WorldGuardPlugin.inst().getDescription().getVersion();
                 if (version.contains("7.0")) {
                     return new ExistingWorldGuardSupport(this);
-                } else {
-                    logger.info("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + version);
                 }
-            } catch (Exception e) {
+                logger.info("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + version);
+            } catch (final Exception e) {
                 e.printStackTrace();
                 logger.warning("Fehler beim Laden, WorldGuard-Unterstützung deaktiviert!");
             }
@@ -75,7 +74,7 @@ public final class AethosLib extends JavaPlugin {
     }
 
     @Contract("_ -> new")
-    public Connector getConnector(JavaPlugin plugin) {
+    public Connector getConnector(final JavaPlugin plugin) {
         return new DefaultPluginConnector(plugin);
     }
 

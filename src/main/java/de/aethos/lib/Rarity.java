@@ -36,7 +36,7 @@ public enum Rarity {
      */
     public final TextColor color;
 
-    Rarity(TextColor color) {
+    Rarity(final TextColor color) {
         this.color = color;
     }
 
@@ -47,14 +47,14 @@ public enum Rarity {
      * @param toColor to apply the gradient on
      * @return the component with the gradient
      */
-    public Component colorGradient(Component toColor) {
-        MiniMessage mm = MiniMessage.miniMessage();
-        StringBuilder gradientBuilder = new StringBuilder(COMMON.color.asHexString());
-        Rarity[] rarities = Rarity.values();
+    public Component colorGradient(final Component toColor) {
+        final MiniMessage mm = MiniMessage.miniMessage();
+        final StringBuilder gradientBuilder = new StringBuilder(COMMON.color.asHexString());
+        final Rarity[] rarities = Rarity.values();
         for (int i = 1; i < this.ordinal(); i++) {
             gradientBuilder.append(':').append(rarities[i].color.asHexString());
         }
-        String toColorSerialized = mm.serialize(toColor);
+        final String toColorSerialized = mm.serialize(toColor);
         return mm.deserialize("<gradient:" + gradientBuilder + ">" + toColorSerialized + "</gradient>");
     }
 }
