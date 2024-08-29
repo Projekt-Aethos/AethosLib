@@ -72,7 +72,7 @@ public interface BlockType<C extends CustomBlock> {
     }
 
     final class Register {
-        static Map<NamespacedKey, BlockType<? extends CustomBlock>> BLOCK_TYPE_MAP = new ConcurrentHashMap<>();
+        private static final Map<NamespacedKey, BlockType<? extends CustomBlock>> BLOCK_TYPE_MAP = new ConcurrentHashMap<>();
 
 
         public static Collection<BlockType<? extends CustomBlock>> values() {
@@ -88,9 +88,6 @@ public interface BlockType<C extends CustomBlock> {
             return Option.of(from(key));
         }
 
-        public static Option<BlockType<? extends CustomBlock>> get(Class<? extends CustomBlock> cl) {
-            return Option.of(BLOCK_TYPE_MAP.values().stream().filter(c -> c.block().equals(cl)).findAny().orElse(null));
-        }
 
         public static BlockType<CustomBlock> from(NamespacedKey key) {
             return (BlockType<CustomBlock>) BLOCK_TYPE_MAP.get(key);
