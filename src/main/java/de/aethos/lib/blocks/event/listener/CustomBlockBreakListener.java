@@ -104,7 +104,7 @@ public final class CustomBlockBreakListener implements Listener {
         static float applyHelmet(Player player, float speed) {
             if (player.isUnderWater()) {
                 final ItemStack helmet = player.getInventory().getHelmet();
-                if (helmet == null || !helmet.getEnchantments().containsKey(Enchantment.WATER_WORKER)) {
+                if (helmet == null || !helmet.getEnchantments().containsKey(Enchantment.AQUA_AFFINITY)) {
                     speed /= 5;
                 }
             }
@@ -112,11 +112,11 @@ public final class CustomBlockBreakListener implements Listener {
         }
 
         static float applyPotion(Player player, float speed) {
-            if (player.hasPotionEffect(PotionEffectType.FAST_DIGGING)) {
-                speed *= 0.2 * player.getPotionEffect(PotionEffectType.FAST_DIGGING).getAmplifier() + 1;
+            if (player.hasPotionEffect(PotionEffectType.HASTE)) {
+                speed *= 0.2 * player.getPotionEffect(PotionEffectType.HASTE).getAmplifier() + 1;
             }
-            if (player.hasPotionEffect(PotionEffectType.SLOW_DIGGING)) {
-                speed *= Math.pow(0.3, Math.min(player.getPotionEffect(PotionEffectType.SLOW_DIGGING).getAmplifier() + 1, 4));
+            if (player.hasPotionEffect(PotionEffectType.MINING_FATIGUE)) {
+                speed *= Math.pow(0.3, Math.min(player.getPotionEffect(PotionEffectType.MINING_FATIGUE).getAmplifier() + 1, 4));
             }
             return speed;
         }
