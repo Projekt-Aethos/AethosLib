@@ -14,17 +14,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public interface BlockType<C extends CustomBlock> {
 
 
     default void register() {
-        plugin().getLogger().info("Registering block type " + this);
         Register.register(this);
     }
 
@@ -93,13 +89,13 @@ public interface BlockType<C extends CustomBlock> {
             return (BlockType<CustomBlock>) BLOCK_TYPE_MAP.get(key);
         }
 
-        public static Set<NamespacedKey> getKeys() {
-            return BLOCK_TYPE_MAP.keySet();
+        public static Set<BlockType<? extends CustomBlock>> getCustomBlocks() {
+            return new HashSet<>(BLOCK_TYPE_MAP.values());
         }
 
-
-        public static void register(BlockType<? extends CustomBlock> typ) {
-            BLOCK_TYPE_MAP.put(typ.key(), typ);
+        public static void register(BlockType<? extends CustomBlock> type) {
+            type.plugin().getLogger().info("Registering block type " + type);
+            BLOCK_TYPE_MAP.put(type.key(), type);
         }
     }
 
