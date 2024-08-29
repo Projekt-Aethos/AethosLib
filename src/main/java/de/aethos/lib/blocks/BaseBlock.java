@@ -1,7 +1,5 @@
 package de.aethos.lib.blocks;
 
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
@@ -20,7 +18,7 @@ public abstract class BaseBlock implements CustomBlock {
 
 
     @Override
-    public void onCreate(BlockPlaceEvent event) {
+    public void onPlace(PlayerInteractEvent event) {
 
     }
 
@@ -34,8 +32,5 @@ public abstract class BaseBlock implements CustomBlock {
 
     }
 
-    @Override
-    public void onBreak(BlockBreakEvent event) {
 
-    }
 }

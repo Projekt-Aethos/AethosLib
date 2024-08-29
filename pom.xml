@@ -44,6 +44,23 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>de.aethos</groupId>
+                <artifactId>server-maven-plugin</artifactId>
+                <version>1.4.8-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <paperVersion>1.20.4</paperVersion>
+                            <dependencies>true</dependencies>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -52,6 +69,13 @@
             </resource>
         </resources>
     </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>aethos-reposilite</id>
+            <url>https://reposilite.aethosserver.de/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <repositories>
         <repository>

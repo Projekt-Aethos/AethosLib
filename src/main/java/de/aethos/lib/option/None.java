@@ -16,54 +16,60 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     }
 
     @Override
-    public @NotNull IntOption toInt(ToIntFunction<T> function) {
+    public IntOption toInt(ToIntFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public @NotNull LongOption toLong(ToLongFunction<T> function) {
+    public LongOption toLong(ToLongFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public @NotNull BoolOption toBool(Predicate<T> predicate) {
+    public BoolOption toBool(Predicate<T> predicate) {
         return Option.none();
     }
 
     @Override
-    public @NotNull DoubleOption toDouble(ToDoubleFunction<T> function) {
+    public DoubleOption toDouble(ToDoubleFunction<T> function) {
         return Option.none();
     }
 
     @Override
-    public @NotNull Option<T> filter(@NotNull Predicate<? super T> predicate) {
+    public Option<T> filter(Predicate<? super T> predicate) {
         return this;
     }
 
     @Override
-    public @NotNull T orElse(@NotNull T def) {
+    public T orElse(T def) {
         return def;
+    }
+
+
+    @Override
+    public void ifPresent(Consumer<? super T> consumer) {
+
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull Option<T> or(@NotNull Supplier<? extends Option<? extends T>> supplier) {
+    public Option<T> or(Supplier<? extends Option<? extends T>> supplier) {
         return (Option<T>) supplier.get();
     }
 
     @Override
-    public @NotNull <U> Option<U> map(@NotNull Function<? super T, ? extends U> mapper) {
+    public <U> Option<U> map(Function<? super T, ? extends U> mapper) {
         return Option.none();
     }
 
 
     @Override
-    public @NotNull <U> Option<U> flatmap(@NotNull Function<? super T, ? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(Function<? super T, ? extends Option<? extends U>> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull IntOption filter(@NotNull IntPredicate predicate) {
+    public IntOption filter(IntPredicate predicate) {
         return Option.none();
     }
 
@@ -73,34 +79,34 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     }
 
     @Override
-    public @NotNull <U> Option<U> map(IntFunction<? extends U> mapper) {
+    public <U> Option<U> map(IntFunction<? extends U> mapper) {
         return Option.none();
     }
 
 
     @Override
-    public @NotNull <U> Option<U> flatmap(IntFunction<? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(IntFunction<? extends Option<? extends U>> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull IntStream intStream() {
+    public IntStream intStream() {
         return IntStream.empty();
     }
 
     @Override
-    public @NotNull LongOption asLong() {
+    public LongOption asLong() {
         return Option.none();
     }
 
     @Override
-    public @NotNull DoubleOption asDouble() {
+    public DoubleOption asDouble() {
         return Option.none();
     }
 
 
     @Override
-    public @NotNull DoubleOption filter(@NotNull DoublePredicate predicate) {
+    public DoubleOption filter(DoublePredicate predicate) {
         return Option.none();
     }
 
@@ -110,22 +116,22 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     }
 
     @Override
-    public @NotNull <U> Option<U> map(DoubleFunction<? extends U> mapper) {
+    public <U> Option<U> map(DoubleFunction<? extends U> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull <U> Option<U> flatmap(DoubleFunction<? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(DoubleFunction<? extends Option<? extends U>> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull DoubleStream doubleStream() {
+    public DoubleStream doubleStream() {
         return DoubleStream.empty();
     }
 
     @Override
-    public @NotNull BoolOption filter(boolean expected) {
+    public BoolOption filter(boolean expected) {
         return Option.none();
     }
 
@@ -136,7 +142,7 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
 
 
     @Override
-    public @NotNull <U> Option<U> map(Supplier<U> callable) {
+    public <U> Option<U> map(Supplier<U> callable) {
         return Option.none();
     }
 
@@ -157,7 +163,7 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
 
 
     @Override
-    public @NotNull LongOption filter(@NotNull LongPredicate predicate) {
+    public LongOption filter(LongPredicate predicate) {
         return Option.none();
     }
 
@@ -167,17 +173,17 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     }
 
     @Override
-    public @NotNull <U> Option<U> map(LongFunction<? extends U> mapper) {
+    public <U> Option<U> map(LongFunction<? extends U> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull <U> Option<U> flatmap(LongFunction<? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(LongFunction<? extends Option<? extends U>> mapper) {
         return Option.none();
     }
 
     @Override
-    public @NotNull LongStream LongStream() {
+    public LongStream LongStream() {
         return LongStream.empty();
     }
 }

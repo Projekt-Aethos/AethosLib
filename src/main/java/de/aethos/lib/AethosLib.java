@@ -1,10 +1,18 @@
 package de.aethos.lib;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import de.aethos.lib.blocks.BlockListener;
-import de.aethos.lib.blocks.BlockType;
-import de.aethos.lib.blocks.example.Example;
-import de.aethos.lib.commands.FurnitureCommand;
+import de.aethos.lib.blocks.event.listener.CustomBlockBreakListener;
+import de.aethos.lib.blocks.event.listener.CustomBlockInteractListener;
+import de.aethos.lib.blocks.event.listener.CustomBlockPlaceListener;
+import de.aethos.lib.blocks.example.Muelleimer;
+import de.aethos.lib.blocks.example.SmallDiamond;
+import de.aethos.lib.blocks.type.BlockOverwriteType;
+import de.aethos.lib.blocks.type.BlockType;
+import de.aethos.lib.blocks.type.NoBlockType;
+import de.aethos.lib.blocks.type.data.DisplayEntityData;
+import de.aethos.lib.blocks.type.data.InteractionEntityData;
+import de.aethos.lib.blocks.type.data.ItemData;
+import de.aethos.lib.commands.CustomBlockItemsCommand;
 import de.aethos.lib.compatibility.worldguard.ExistingWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.WorldGuardSupport;
@@ -12,9 +20,12 @@ import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import xyz.janboerman.guilib.api.GuiListener;
@@ -45,18 +56,30 @@ public final class AethosLib extends JavaPlugin {
         // Plugin shutdown logic
     }
 
+
     @Override
     public void onEnable() {
-        try {
-            BlockType.Register.register(Example.class);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+
+
+        new BlockOverwriteType<>(Muelleimer.class, Muelleimer::new, this, new NamespacedKey(this, "garbage_can"), new ItemData(Material.BARREL, 1, Component.text("Mülleimer"), new NamespacedKey(this, "garbage_can"), meta -> {
+        }), Material.BARREL, Material.BARREL).register();
+
+
+        NamespacedKey key = new NamespacedKey(this, "small_decoration");
+        ItemData item = new ItemData(Material.DIAMOND, 1, Component.text("Kleine Decoration"), key, meta -> {
+        });
+        DisplayEntityData display = new DisplayEntityData(Material.DIAMOND, 1, BlockType.Rotation.ONE, new Vector(), 0.5f, 0.5f, DisplayEntityData.NOTHING);
+        InteractionEntityData interaction = new InteractionEntityData(BlockType.Rotation.ONE, new Vector(), 0.5f, 0.5f, false, InteractionEntityData.NOTHING);
+        new NoBlockType<>(SmallDiamond.class, SmallDiamond::new, this, key, item, interaction, display).register();
 
         saveDefaultConfig();
-        getServer().getCommandMap().register("aehtoslib", new FurnitureCommand("furniture"));
+        getServer().getCommandMap().register("aehtoslib", new CustomBlockItemsCommand());
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(BlockListener.INSTANCE, this);
+
+        pm.registerEvents(CustomBlockPlaceListener.INSTANCE, this);
+        pm.registerEvents(CustomBlockBreakListener.INSTANCE, this);
+        pm.registerEvents(CustomBlockInteractListener.INSTANCE, this);
+
         pm.registerEvents(GuiListener.getInstance(), this);
         pm.registerEvents(new LevelPointListener(this), this);
 

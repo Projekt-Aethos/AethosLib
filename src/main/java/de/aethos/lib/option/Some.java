@@ -1,14 +1,16 @@
 package de.aethos.lib.option;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 import java.util.function.*;
 
-public record Some<T>(@NotNull T value) implements Option<T> {
+public record Some<T>(T value) implements Option<T> {
+
+    public Some {
+        Objects.requireNonNull(value);
+    }
 
     @Override
-    public @NotNull Option<T> filter(@NotNull Predicate<? super T> predicate) {
+    public Option<T> filter(Predicate<? super T> predicate) {
         if (predicate.test(value)) {
             return this;
         } else {
@@ -17,23 +19,28 @@ public record Some<T>(@NotNull T value) implements Option<T> {
     }
 
     @Override
-    public @NotNull T orElse(@NotNull T def) {
+    public T orElse(T def) {
         return this.value;
     }
 
     @Override
-    public @NotNull Option<T> or(@NotNull Supplier<? extends Option<? extends T>> supplier) {
+    public Option<T> or(Supplier<? extends Option<? extends T>> supplier) {
         return this;
     }
 
     @Override
-    public @NotNull <U> Option<U> map(@NotNull Function<? super T, ? extends U> mapper) {
+    public <U> Option<U> map(Function<? super T, ? extends U> mapper) {
         return Option.of(mapper.apply(value));
+    }
+
+    @Override
+    public void ifPresent(Consumer<? super T> consumer) {
+        consumer.accept(value);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <U> Option<U> flatmap(@NotNull Function<? super T, ? extends Option<? extends U>> mapper) {
+    public <U> Option<U> flatmap(Function<? super T, ? extends Option<? extends U>> mapper) {
         return (Option<U>) Objects.requireNonNullElse(mapper.apply(value), Option.none());
     }
 
@@ -43,22 +50,22 @@ public record Some<T>(@NotNull T value) implements Option<T> {
     }
 
     @Override
-    public @NotNull IntOption toInt(ToIntFunction<T> function) {
+    public IntOption toInt(ToIntFunction<T> function) {
         return Option.some(function.applyAsInt(value));
     }
 
     @Override
-    public @NotNull LongOption toLong(ToLongFunction<T> function) {
+    public LongOption toLong(ToLongFunction<T> function) {
         return Option.some(function.applyAsLong(value));
     }
 
     @Override
-    public @NotNull BoolOption toBool(Predicate<T> predicate) {
+    public BoolOption toBool(Predicate<T> predicate) {
         return Option.some(predicate.test(value));
     }
 
     @Override
-    public @NotNull DoubleOption toDouble(ToDoubleFunction<T> function) {
+    public DoubleOption toDouble(ToDoubleFunction<T> function) {
         return Option.some(function.applyAsDouble(value));
     }
 }
