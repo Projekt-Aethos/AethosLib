@@ -1,9 +1,6 @@
 package de.aethos.lib.tuple.pair;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public final class MutablePair<T1, T2> implements Pair<T1, T2> {
@@ -14,11 +11,6 @@ public final class MutablePair<T1, T2> implements Pair<T1, T2> {
     public MutablePair(T1 first, T2 second) {
         this.first = Objects.requireNonNull(first);
         this.second = Objects.requireNonNull(second);
-    }
-
-    @Override
-    public <U> U map(BiFunction<? super T1, ? super T2, ? extends U> function) {
-        return function.apply(first, second);
     }
 
     @Override
@@ -42,12 +34,12 @@ public final class MutablePair<T1, T2> implements Pair<T1, T2> {
     }
 
     @SuppressWarnings("unused")
-    public void setFirst(T1 first) {
+    public void first(T1 first) {
         this.first = Objects.requireNonNull(first);
     }
 
     @SuppressWarnings("unused")
-    public void setSecond(T2 second) {
+    public void second(T2 second) {
         this.second = Objects.requireNonNull(second);
     }
 
@@ -63,11 +55,6 @@ public final class MutablePair<T1, T2> implements Pair<T1, T2> {
 
 
     @Override
-    public Map.Entry<T1, T2> asEntry() {
-        return Map.entry(first, second);
-    }
-
-    @Override
     public MutablePair<T1, T2> asMutablePair() {
         return this;
     }
@@ -75,11 +62,6 @@ public final class MutablePair<T1, T2> implements Pair<T1, T2> {
     @Override
     public ImmutablePair<T1, T2> asImmutablePair() {
         return new ImmutablePair<>(first, second);
-    }
-
-    @Override
-    public boolean filter(BiPredicate<? super T1, ? super T2> predicate) {
-        return predicate.test(first, second);
     }
 
 

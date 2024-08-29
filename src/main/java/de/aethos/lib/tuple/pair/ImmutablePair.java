@@ -2,9 +2,6 @@ package de.aethos.lib.tuple.pair;
 
 import com.google.common.base.Preconditions;
 
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public record ImmutablePair<T1, T2>(T1 first, T2 second) implements Pair<T1, T2> {
@@ -13,10 +10,6 @@ public record ImmutablePair<T1, T2>(T1 first, T2 second) implements Pair<T1, T2>
         Preconditions.checkArgument(first != null && second != null);
     }
 
-    @Override
-    public <U> U map(BiFunction<? super T1, ? super T2, ? extends U> function) {
-        return function.apply(first, second);
-    }
 
     @Override
     public <U> ImmutablePair<U, T2> mapFirst(Function<? super T1, ? extends U> function) {
@@ -28,10 +21,6 @@ public record ImmutablePair<T1, T2>(T1 first, T2 second) implements Pair<T1, T2>
         return new ImmutablePair<>(first, function.apply(second));
     }
 
-    @Override
-    public Map.Entry<T1, T2> asEntry() {
-        return Map.entry(first, second);
-    }
 
     @Override
     public MutablePair<T1, T2> asMutablePair() {
@@ -41,11 +30,6 @@ public record ImmutablePair<T1, T2>(T1 first, T2 second) implements Pair<T1, T2>
     @Override
     public ImmutablePair<T1, T2> asImmutablePair() {
         return this;
-    }
-
-    @Override
-    public boolean filter(BiPredicate<? super T1, ? super T2> predicate) {
-        return predicate.test(first, second);
     }
 
 
