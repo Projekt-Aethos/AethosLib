@@ -13,7 +13,7 @@ public sealed interface Option<T> permits None, Some {
         return (None<T>) None.GENERIC_NONE;
     }
 
-    static <T> Option<T> some(T value) {
+    static <T> Some<T> some(T value) {
         return new Some<>(value);
     }
 

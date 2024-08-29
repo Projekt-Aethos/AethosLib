@@ -1,14 +1,28 @@
 package de.aethos.lib.result;
 
+import de.aethos.lib.option.None;
 import de.aethos.lib.option.Option;
+import de.aethos.lib.option.Some;
 
+import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 public record Error<O, E>(E error) implements Result<O, E> {
+
+    public Error {
+        Objects.requireNonNull(error);
+    }
+
     @Override
     public <C> C match(Function<? super O, ? extends C> okay, Function<? super E, ? extends C> error) {
         return error.apply(this.error);
+    }
+
+    @Override
+    public void match(Consumer<? super O> okay, Consumer<? super E> error) {
+        error.accept(this.error);
     }
 
     @Override
@@ -22,12 +36,12 @@ public record Error<O, E>(E error) implements Result<O, E> {
     }
 
     @Override
-    public Option<E> optionError() {
-        return Option.some(error);
+    public Some<E> optionError() {
+        return new Some<>(error);
     }
 
     @Override
-    public Option<O> optionOkay() {
+    public None<O> optionOkay() {
         return Option.none();
     }
 

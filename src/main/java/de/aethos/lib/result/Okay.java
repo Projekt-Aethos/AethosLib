@@ -1,14 +1,28 @@
 package de.aethos.lib.result;
 
+import de.aethos.lib.option.None;
 import de.aethos.lib.option.Option;
+import de.aethos.lib.option.Some;
 
+import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 public record Okay<O, E>(O value) implements Result<O, E> {
+
+    public Okay {
+        Objects.requireNonNull(value);
+    }
+
     @Override
     public <C> C match(Function<? super O, ? extends C> okay, Function<? super E, ? extends C> error) {
         return okay.apply(this.value);
+    }
+
+    @Override
+    public void match(Consumer<? super O> okay, Consumer<? super E> error) {
+        okay.accept(value);
     }
 
     @Override
@@ -22,12 +36,12 @@ public record Okay<O, E>(O value) implements Result<O, E> {
     }
 
     @Override
-    public Option<E> optionError() {
+    public None<E> optionError() {
         return Option.none();
     }
 
     @Override
-    public Option<O> optionOkay() {
+    public Some<O> optionOkay() {
         return Option.some(value);
     }
 

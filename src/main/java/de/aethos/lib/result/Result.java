@@ -2,6 +2,7 @@ package de.aethos.lib.result;
 
 import de.aethos.lib.option.Option;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -16,6 +17,8 @@ public sealed interface Result<O, E> permits Error, Okay {
     }
 
     <C> C match(Function<? super O, ? extends C> okay, Function<? super E, ? extends C> error);
+
+    void match(Consumer<? super O> okay, Consumer<? super E> error);
 
     Stream<E> streamError();
 
