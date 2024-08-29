@@ -6,7 +6,7 @@
 
     <groupId>de.aethos</groupId>
     <artifactId>lib</artifactId>
-    <version>3.5.6-BlockFeature</version>
+    <version>3.5.7-BlockFeature</version>
     <packaging>jar</packaging>
 
     <name>AethosLib</name>
