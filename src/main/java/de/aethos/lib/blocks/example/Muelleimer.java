@@ -2,6 +2,7 @@ package de.aethos.lib.blocks.example;
 
 import de.aethos.lib.blocks.CustomBlock;
 import de.aethos.lib.blocks.CustomBlockData;
+import de.aethos.lib.blocks.type.BlockType;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -15,9 +16,11 @@ import java.util.List;
 
 public class Muelleimer implements CustomBlock {
     private final CustomBlockData data;
+    private final BlockType<Muelleimer> type;
 
-    public Muelleimer(CustomBlockData data) {
+    public Muelleimer(BlockType<Muelleimer> type, CustomBlockData data) {
         this.data = data;
+        this.type = type;
     }
 
     @Override
@@ -53,6 +56,11 @@ public class Muelleimer implements CustomBlock {
     @Override
     public Collection<ItemStack> getDrops() {
         return List.of();
+    }
+
+    @Override
+    public BlockType<? extends CustomBlock> getBlockType() {
+        return type;
     }
 
 

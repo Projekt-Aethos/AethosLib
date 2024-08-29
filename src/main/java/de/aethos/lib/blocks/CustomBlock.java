@@ -40,12 +40,8 @@ public interface CustomBlock {
     PersistentDataType<byte[], Interaction> INTERACTION_DATA_TYPE = new AethosDataType.EntityReferenceDataType<>();
     NamespacedKey BLOCK_KEY = new NamespacedKey(AethosLib.getPlugin(AethosLib.class), "block");
 
-    static <T extends CustomBlock> Option<T> from(Block block, BlockType<T> blockType) {
-        return from(block, blockType.factory());
-    }
-
-    static <T extends CustomBlock> Option<T> from(Block block, CustomBlockFactory<T> factory) {
-        return data(block).map(factory::construct);
+    static <T extends CustomBlock> Option<T> from(Block block, BlockType<T> type) {
+        return data(block).map(data -> type.factory().construct(type, data));
     }
 
     private static Option<CustomBlockData> data(Block block) {
@@ -79,7 +75,7 @@ public interface CustomBlock {
         final PersistentDataContainer container = chunk.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer();
         container.set(BlockType.Key.TYPE_KEY, AethosDataType.NAMESPACED_KEY, type.key());
         chunk.getPersistentDataContainer().set(key, PersistentDataType.TAG_CONTAINER, container);
-        return type.factory().create(new CustomBlockData(block, key, container));
+        return type.factory().create(type, new CustomBlockData(block, key, container));
     }
 
     static Option<? extends CustomBlock> get(Block block) {
@@ -87,8 +83,8 @@ public interface CustomBlock {
             final CustomBlockData data = some.value();
             final NamespacedKey key = Objects.requireNonNull(data.container().get(BlockType.Key.TYPE_KEY, AethosDataType.NAMESPACED_KEY));
             final BlockType<CustomBlock> type = BlockType.Register.from(key);
-            final CustomBlockFactory<?> constructor = type.factory();
-            return Option.some(constructor.construct(data));
+            final CustomBlockFactory<CustomBlock> constructor = type.factory();
+            return Option.some(constructor.construct(type, data));
         }
         return Option.none();
     }
@@ -202,9 +198,7 @@ public interface CustomBlock {
         return getDrops();
     }
 
-    default BlockType<? extends CustomBlock> getBlockType() {
-        return BlockType.Register.get(this.getClass()).orElseThrow(IllegalStateException::new);
-    }
+    BlockType<? extends CustomBlock> getBlockType();
 
     final class Key {
 

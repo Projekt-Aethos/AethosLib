@@ -1,7 +1,8 @@
 package de.aethos.lib.blocks.example;
 
-import de.aethos.lib.blocks.CustomBlock;
+import de.aethos.lib.blocks.AbstractCustomBlock;
 import de.aethos.lib.blocks.CustomBlockData;
+import de.aethos.lib.blocks.type.BlockType;
 import org.bukkit.entity.Interaction;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -11,18 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collection;
 import java.util.List;
 
-public class Chair implements CustomBlock {
+public class Chair extends AbstractCustomBlock {
 
-    private final CustomBlockData data;
 
-    public Chair(CustomBlockData data) {
-        this.data = data;
+    public Chair(CustomBlockData data, BlockType<Chair> type) {
+        super(type, data);
     }
 
-    @Override
-    public CustomBlockData getCustomBlockData() {
-        return data;
-    }
 
     @Override
     public void onPlace(PlayerInteractEvent event) {

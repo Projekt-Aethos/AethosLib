@@ -2,7 +2,7 @@ package de.aethos.lib.blocks.example;
 
 import de.aethos.lib.blocks.CustomBlock;
 import de.aethos.lib.blocks.CustomBlockData;
-import de.aethos.lib.blocks.CustomBlockFactory;
+import de.aethos.lib.blocks.type.BlockType;
 import de.aethos.lib.option.Option;
 import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
@@ -17,8 +17,12 @@ import java.util.List;
 public class SmallDiamond implements CustomBlock {
     private final CustomBlockData data;
 
-    public SmallDiamond(CustomBlockData data) {
+    private final BlockType<SmallDiamond> type;
+
+    public SmallDiamond(BlockType<SmallDiamond> type, CustomBlockData data) {
         this.data = data;
+        this.type = type;
+
     }
 
     @Override
@@ -57,12 +61,10 @@ public class SmallDiamond implements CustomBlock {
         return List.of();
     }
 
-
-    public static final class SmallDecorationFactory implements CustomBlockFactory<SmallDiamond> {
-
-        @Override
-        public SmallDiamond construct(CustomBlockData data) {
-            return new SmallDiamond(data);
-        }
+    @Override
+    public BlockType<? extends CustomBlock> getBlockType() {
+        return type;
     }
+
+
 }
