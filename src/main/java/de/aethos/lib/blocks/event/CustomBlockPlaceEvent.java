@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public class CustomBlockPlaceEvent extends BlockPlaceEvent {
     private final @NotNull CustomBlock customBlock;
 
-    public CustomBlockPlaceEvent(CustomBlock customBlock, @NotNull Block placedBlock, @NotNull BlockState replacedBlockState, @NotNull Block placedAgainst, @NotNull ItemStack itemInHand, @NotNull Player thePlayer, boolean canBuild, @NotNull EquipmentSlot hand) {
-        super(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild, hand);
+    public CustomBlockPlaceEvent(CustomBlock customBlock, @NotNull BlockState replacedBlockState, @NotNull Block placedAgainst, @NotNull ItemStack itemInHand, @NotNull Player thePlayer, boolean canBuild, @NotNull EquipmentSlot hand) {
+        super(customBlock.getCustomBlockData().block(), replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild, hand);
         this.customBlock = customBlock;
     }
 

@@ -1,5 +1,6 @@
 package de.aethos.lib.blocks.type;
 
+import com.google.common.base.Preconditions;
 import de.aethos.lib.AethosLib;
 import de.aethos.lib.blocks.CustomBlock;
 import de.aethos.lib.blocks.CustomBlockFactory;
@@ -25,6 +26,10 @@ public interface BlockType<C extends CustomBlock> {
     }
 
     Class<C> block();
+
+    /*default ImmutablePair<BlockVector, BlockVector> dimensions() {
+        return new ImmutablePair<>(new BlockVector(), new BlockVector());
+    }*/
 
     CustomBlockFactory<C> factory();
 
@@ -94,6 +99,7 @@ public interface BlockType<C extends CustomBlock> {
         }
 
         public static void register(BlockType<? extends CustomBlock> type) {
+            Preconditions.checkArgument(type.vanillaDisplayMaterial().isBlock());
             type.plugin().getLogger().info("Registering block type " + type);
             BLOCK_TYPE_MAP.put(type.key(), type);
         }

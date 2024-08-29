@@ -3,9 +3,12 @@ package de.aethos.lib;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.aethos.lib.blocks.event.listener.CustomBlockBreakListener;
 import de.aethos.lib.blocks.event.listener.CustomBlockInteractListener;
+import de.aethos.lib.blocks.event.listener.CustomBlockListener;
 import de.aethos.lib.blocks.event.listener.CustomBlockPlaceListener;
+import de.aethos.lib.blocks.example.Crop;
 import de.aethos.lib.blocks.example.Muelleimer;
 import de.aethos.lib.blocks.example.SmallDiamond;
+import de.aethos.lib.blocks.example.Table;
 import de.aethos.lib.blocks.type.BlockOverwriteType;
 import de.aethos.lib.blocks.type.BlockType;
 import de.aethos.lib.blocks.type.NoBlockType;
@@ -72,6 +75,10 @@ public final class AethosLib extends JavaPlugin {
         InteractionEntityData interaction = new InteractionEntityData(BlockType.Rotation.ONE, new Vector(), 0.5f, 0.5f, false, InteractionEntityData.NOTHING);
         new NoBlockType<>(SmallDiamond.class, SmallDiamond::new, this, key, item, interaction, display).register();
 
+        new Table.TableType().register();
+
+        new Crop.TestCrop().register();
+
         saveDefaultConfig();
         getServer().getCommandMap().register("aehtoslib", new CustomBlockItemsCommand());
         PluginManager pm = getServer().getPluginManager();
@@ -79,6 +86,7 @@ public final class AethosLib extends JavaPlugin {
         pm.registerEvents(CustomBlockPlaceListener.INSTANCE, this);
         pm.registerEvents(CustomBlockBreakListener.INSTANCE, this);
         pm.registerEvents(CustomBlockInteractListener.INSTANCE, this);
+        pm.registerEvents(CustomBlockListener.INSTANCE, this);
 
         pm.registerEvents(GuiListener.getInstance(), this);
         pm.registerEvents(new LevelPointListener(this), this);

@@ -4,6 +4,7 @@ import de.aethos.lib.AethosLib;
 import de.aethos.lib.blocks.CustomBlock;
 import de.aethos.lib.blocks.event.CustomBlockBreakEvent;
 import de.aethos.lib.option.Some;
+import io.papermc.paper.event.block.BlockBreakProgressUpdateEvent;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -21,15 +22,17 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class CustomBlockBreakListener implements Listener {
     public static final CustomBlockBreakListener INSTANCE = new CustomBlockBreakListener();
-    private final Map<Block, ScheduledTask> data = new ConcurrentHashMap<>();
+    private final Map<Block, ScheduledTask> DATA = new ConcurrentHashMap<>();
+    private final Map<Block, ScheduledTask> DISPLAY = new ConcurrentHashMap<>();
 
     @EventHandler
     public void onBlockDamage(final BlockDamageEvent event) {
         if (CustomBlock.get(event.getBlock()) instanceof Some<? extends CustomBlock> some) {
-            if (data.containsKey(event.getBlock())) {
+            if (DATA.containsKey(event.getBlock())) {
                 //TODO CHECK IF BLOCK IS INSTA BREAKING
                 AethosLib.getPlugin(AethosLib.class).getLogger().info("CustomBlockBreakListener onBlockDamage may be insta-breaking or run into an error");
                 return;
@@ -43,19 +46,28 @@ public final class CustomBlockBreakListener implements Listener {
                     CustomBlock.remove(some.value());
                 }
             }, ticks);
-            data.put(event.getBlock(), task);
+            DATA.put(event.getBlock(), task);
+            AtomicInteger i = new AtomicInteger(1);
+            ScheduledTask display_task = Bukkit.getRegionScheduler().runAtFixedRate(AethosLib.getPlugin(AethosLib.class), event.getBlock().getLocation(), scheduledTask -> {
+                        i.getAndIncrement();
+                        new BlockBreakProgressUpdateEvent(event.getBlock(), (float) i.get() / ticks, event.getPlayer()).callEvent();
+                    }
+                    , 1, 5);
+            DISPLAY.put(event.getBlock(), display_task);
         }
     }
 
     @EventHandler
     public void onBreakEnd(final BlockDamageAbortEvent event) {
-        ScheduledTask task = data.remove(event.getBlock());
+        ScheduledTask task = DATA.remove(event.getBlock());
+        ScheduledTask display_task = DISPLAY.remove(event.getBlock());
         if (task == null) {
             return;
         }
         if (task.isCancelled()) {
             return;
         }
+        display_task.cancel();
         task.cancel();
     }
 

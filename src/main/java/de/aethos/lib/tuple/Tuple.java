@@ -20,4 +20,5 @@ public interface Tuple {
     static <T1, T2, T3> Triple<T1, T2, T3> of(T1 t1, T2 t2, T3 t3) {
         return new ImmutableTriple<>(t1, t2, t3);
     }
+    
 }

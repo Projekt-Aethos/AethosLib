@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Chair extends AbstractCustomBlock {
 
 
-    public Chair(CustomBlockData data, BlockType<Chair> type) {
+    public Chair(BlockType<Chair> type, CustomBlockData data) {
         super(type, data);
     }
 

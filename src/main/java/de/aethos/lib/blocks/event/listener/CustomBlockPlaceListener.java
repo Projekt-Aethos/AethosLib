@@ -5,6 +5,8 @@ import de.aethos.lib.blocks.CustomBlock;
 import de.aethos.lib.blocks.event.CustomBlockPlaceEvent;
 import de.aethos.lib.blocks.type.BlockType;
 import de.aethos.lib.option.Some;
+import de.aethos.lib.result.Error;
+import de.aethos.lib.result.Okay;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public final class CustomBlockPlaceListener implements Listener {
@@ -55,10 +56,6 @@ public final class CustomBlockPlaceListener implements Listener {
         if (!block.getType().equals(Material.AIR)) {
             return;
         }
-
-        if (CustomBlock.exists(block)) {
-            return;
-        }
         if (!handItem.hasItemMeta()) {
             return;
         }
@@ -67,20 +64,19 @@ public final class CustomBlockPlaceListener implements Listener {
         }
         if (BlockType.Register.from(handItem) instanceof Some<BlockType<CustomBlock>> some) {
             BlockType<CustomBlock> type = some.value();
-            final CustomBlock custom = CustomBlock.create(block, type);
-            AethosLib.getPlugin(AethosLib.class).getLogger().info("CustomBlock " + custom.getCustomBlockData().key());
-            final CustomBlockPlaceEvent simulated = new CustomBlockPlaceEvent(custom, block, block.getState(), clickedBlock, handItem, player, true, EquipmentSlot.HAND);
-            //TODO Create a better way to check if a Block can be placed
-            block.setType(type.vanillaDisplayMaterial());
-            custom.onPlace(event);
-            if (simulated.callEvent()) {
+
+
+            var res = CustomBlock.place(block, type, event);
+            if (res instanceof Okay<CustomBlock, Exception> okay) {
+                AethosLib.getPlugin(AethosLib.class).getLogger().info("CustomBlock " + okay.value().getCustomBlockData().key());
                 if (!player.getGameMode().equals(GameMode.CREATIVE)) {
                     handItem.setAmount(handItem.getAmount() - 1);
                 }
-                return;
+            } else if (res instanceof Error<CustomBlock, Exception> error) {
+                AethosLib.getPlugin(AethosLib.class).getLogger().info(error.toString());
             }
-            custom.onRemove();
-            CustomBlock.remove(custom);
+
+
         }
 
 

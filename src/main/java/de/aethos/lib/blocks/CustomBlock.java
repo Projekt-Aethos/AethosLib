@@ -2,11 +2,13 @@ package de.aethos.lib.blocks;
 
 import com.google.common.base.Preconditions;
 import de.aethos.lib.AethosLib;
+import de.aethos.lib.blocks.event.CustomBlockCanBuildEvent;
 import de.aethos.lib.blocks.type.BlockType;
 import de.aethos.lib.blocks.type.data.DisplayEntityData;
 import de.aethos.lib.data.AethosDataType;
 import de.aethos.lib.option.Option;
 import de.aethos.lib.option.Some;
+import de.aethos.lib.result.Result;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +20,7 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -76,6 +79,33 @@ public interface CustomBlock {
         container.set(BlockType.Key.TYPE_KEY, AethosDataType.NAMESPACED_KEY, type.key());
         chunk.getPersistentDataContainer().set(key, PersistentDataType.TAG_CONTAINER, container);
         return type.factory().create(type, new CustomBlockData(block, key, container));
+    }
+
+    static <T extends CustomBlock> Result<T, Exception> place(Block block, BlockType<T> type, PlayerInteractEvent event) {
+        if (CustomBlock.exists(block)) {
+            return Result.err(new IllegalStateException("Cant create a CustomBlock, because some CustomBlock already exists at " + Key.generate(block).getKey()));
+        }
+
+        final Chunk chunk = block.getChunk();
+        final NamespacedKey key = Key.generate(block);
+        final PersistentDataContainer container = chunk.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer();
+        final CustomBlockData data = new CustomBlockData(block, key, container);
+        container.set(BlockType.Key.TYPE_KEY, AethosDataType.NAMESPACED_KEY, type.key());
+
+        //TODO TEST
+
+        final T custom = type.factory().place(type, block, data, event);
+
+        //TODO Check if Events
+        //final CustomBlockPlaceEvent simulated = new CustomBlockPlaceEvent(custom, block.getState(), event.getClickedBlock(), event.getItem(), event.getPlayer(), true, EquipmentSlot.HAND);
+        final CustomBlockCanBuildEvent simulated = new CustomBlockCanBuildEvent(custom, event.getPlayer(), block.getBlockData(), true, EquipmentSlot.HAND);
+        if (simulated.callEvent()) {
+            chunk.getPersistentDataContainer().set(key, PersistentDataType.TAG_CONTAINER, container);
+            return Result.ok(custom);
+        }
+        custom.onRemove();
+        block.setType(Material.AIR);
+        return Result.err(new IllegalStateException("Cant create a CustomBlock"));
     }
 
     static Option<? extends CustomBlock> get(Block block) {
@@ -199,6 +229,7 @@ public interface CustomBlock {
     }
 
     BlockType<? extends CustomBlock> getBlockType();
+
 
     final class Key {
 
