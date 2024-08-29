@@ -15,13 +15,10 @@ public enum Wood {
     MAPLE(Material.WARPED_STEM);
 
 
-    private final Material log;
+    public final Material log;
 
     Wood(Material log) {
         this.log = log;
     }
 
-    public Material getLog() {
-        return log;
-    }
 }

@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class Chair extends AbstractCustomBlock {
 
@@ -42,7 +43,7 @@ public class Chair extends AbstractCustomBlock {
     @Override
     public void onEntityInteract(PlayerInteractEntityEvent event) {
         if (event.getRightClicked().equals(getCustomBlockData().getPersistentDataContainer().get(INTERACTION_KEY, INTERACTION_DATA_TYPE))) {
-            Interaction interaction = getCustomBlockData().getPersistentDataContainer().get(INTERACTION_KEY, INTERACTION_DATA_TYPE);
+            Interaction interaction = Objects.requireNonNull(getCustomBlockData().getPersistentDataContainer().get(INTERACTION_KEY, INTERACTION_DATA_TYPE));
             event.getPlayer().sendMessage("Du hast einen Stuhl angeklickt");
             interaction.addPassenger(event.getPlayer());
         }
