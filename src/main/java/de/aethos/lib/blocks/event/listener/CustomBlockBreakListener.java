@@ -3,7 +3,6 @@ package de.aethos.lib.blocks.event.listener;
 import de.aethos.lib.AethosLib;
 import de.aethos.lib.blocks.CustomBlock;
 import de.aethos.lib.blocks.event.CustomBlockBreakEvent;
-import de.aethos.lib.option.Option;
 import de.aethos.lib.option.Some;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
@@ -63,9 +62,7 @@ public final class CustomBlockBreakListener implements Listener {
 
     @EventHandler
     public void onEntityAttack(EntityDamageByEntityEvent event) {
-        Block block = event.getEntity().getLocation().getBlock();
-        Option<? extends CustomBlock> opt = CustomBlock.get(block);
-        if (opt instanceof Some<? extends CustomBlock> some) {
+        if (CustomBlock.get(event.getEntity()) instanceof Some<? extends CustomBlock> some) {
             CustomBlock custom = some.value();
             custom.onRemove();
             CustomBlock.remove(custom);
