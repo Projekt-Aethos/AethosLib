@@ -116,7 +116,7 @@
             <groupId>com.github.Jannyboy11.GuiLib</groupId>
             <artifactId>GuiLib-API</artifactId>
             <version>v1.12.4</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

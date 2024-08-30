@@ -11,3 +11,5 @@ dependencies:
       required: false
     WorldGuard:
       required: false
+    GuiLib:
+      required: true
