@@ -1,14 +1,19 @@
 package de.aethos.lib.option;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.*;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption, DoubleOption {
+public final class None<T> implements Option<T>, IntOption, LongOption, BoolOption, DoubleOption {
     static final None<?> GENERIC_NONE = new None<>();
+
+    private None() {
+
+    }
 
     @Override
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
@@ -44,7 +49,6 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     public T orElse(T def) {
         return def;
     }
-
 
     @Override
     public void ifPresent(Consumer<? super T> consumer) {
@@ -186,4 +190,11 @@ public record None<T>() implements Option<T>, IntOption, LongOption, BoolOption,
     public LongStream LongStream() {
         return LongStream.empty();
     }
+
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return this == obj;
+    }
+
 }

@@ -56,6 +56,9 @@ public sealed interface Option<T> permits None, Some {
         return Stream.empty();
     }
 
+    static boolean isNone(Option<?> option) {
+        return option == None.GENERIC_NONE;
+    }
 
     static IntOption some(int value) {
         return new SomeInt(value);
@@ -86,9 +89,7 @@ public sealed interface Option<T> permits None, Some {
 
     Option<T> filter(Predicate<? super T> predicate);
 
-
     T orElse(T def);
-
 
     void ifPresent(Consumer<? super T> consumer);
 
