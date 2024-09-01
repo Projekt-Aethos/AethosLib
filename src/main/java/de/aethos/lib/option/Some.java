@@ -68,4 +68,10 @@ public record Some<T>(T value) implements Option<T> {
     public DoubleOption toDouble(ToDoubleFunction<T> function) {
         return Option.some(function.applyAsDouble(value));
     }
+    
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
+    }
 }
