@@ -6,7 +6,7 @@ import de.aethos.lib.data.database.MySQLBuilder;
 import de.aethos.lib.data.database.SQLiteBuilder;
 import de.aethos.lib.data.database.pool.ConnectionPool;
 import de.aethos.lib.data.database.pool.QueuedConnectionPool;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,7 @@ public class DefaultPluginConnector extends PoolConnector {
     }
 
     private static ConnectionPool parseConfig(JavaPlugin plugin) {
-        final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
+        final FileConfiguration configuration = plugin.getConfig();
         if (configuration.isSet("mysql")) {
             Database database = new MySQLBuilder()
                     .hostname(configuration.getString("mysql.hostname"))
