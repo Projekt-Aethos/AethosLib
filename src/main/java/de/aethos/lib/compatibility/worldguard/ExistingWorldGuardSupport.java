@@ -5,23 +5,56 @@ import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public final class ExistingWorldGuardSupport implements WorldGuardSupport {
+    private static final Map<FlagKey, StateFlag> STATE_FLAGS = new HashMap<>();
+
+    private final Logger logger;
+
     @Nullable
     private RegionContainer container;
 
-    public ExistingWorldGuardSupport(final Plugin plugin) {
-        plugin.getLogger().info("WorldGuardSupport active");
+    public ExistingWorldGuardSupport(final Logger logger) {
+        this.logger = logger;
+        logger.info("WorldGuardSupport active");
+    }
+
+    @Override
+    public void register(final FlagKey flagKey, final JavaPlugin plugin) {
+        final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+        final String flagName = (plugin.getName() + "-" + flagKey.getName()).toLowerCase(Locale.ROOT).replace('_', '-');
+        try {
+            final StateFlag stateFlag = new StateFlag(flagName, flagKey.getDefault());
+            registry.register(stateFlag);
+            logger.fine("Registered state flag " + flagName);
+            STATE_FLAGS.put(flagKey, stateFlag);
+        } catch (final FlagConflictException e) {
+            final Flag<?> existing = registry.get(flagName);
+            if (existing instanceof StateFlag) {
+                STATE_FLAGS.put(flagKey, (StateFlag) existing);
+            } else {
+                logger.log(Level.WARNING, "Could not register the following flag: " + flagName, e);
+            }
+        }
     }
 
     @Override
@@ -34,7 +67,7 @@ public final class ExistingWorldGuardSupport implements WorldGuardSupport {
 
     @Override
     public boolean blockedByFlag(final Location location, final Player player, final FlagKey flagKey) {
-        final StateFlag flag = FlagKey.STATE_FLAGS.get(flagKey);
+        final StateFlag flag = STATE_FLAGS.get(flagKey);
         if (flag == null) {
             return false;
         }
@@ -56,7 +89,7 @@ public final class ExistingWorldGuardSupport implements WorldGuardSupport {
 
     @Override
     public boolean allowedByFlag(final Location location, final FlagKey flagKey) {
-        final StateFlag flag = FlagKey.STATE_FLAGS.get(flagKey);
+        final StateFlag flag = STATE_FLAGS.get(flagKey);
         if (flag == null) {
             return false;
         }

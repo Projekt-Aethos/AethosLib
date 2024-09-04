@@ -62,7 +62,7 @@ public final class AethosLib extends JavaPlugin {
             try {
                 final String version = WorldGuardPlugin.inst().getDescription().getVersion();
                 if (version.contains("7.0")) {
-                    return new ExistingWorldGuardSupport(this);
+                    return new ExistingWorldGuardSupport(getLogger());
                 }
                 logger.info("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + version);
             } catch (final Exception e) {

@@ -1,51 +1,31 @@
 package de.aethos.lib.compatibility.worldguard;
 
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.Flag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
-import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import de.aethos.lib.AethosLib;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Level;
-
 @SuppressWarnings("unused")
 public interface FlagKey {
-    Map<FlagKey, StateFlag> STATE_FLAGS = new HashMap<>();
-
     /**
      * Registers this {@link FlagKey} in the {@link WorldGuardPlugin}.
      *
      * @param plugin to associate the flag with
      */
     default void register(final JavaPlugin plugin) {
-        if (!AethosLib.getPlugin(AethosLib.class).isWorldGuardSupportEnabled()) {
-            return;
-        }
-        final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-        // State flags
-        final String flagName = (plugin.getName() + "-" + this.getName()).toLowerCase(Locale.ROOT).replace('_', '-');
-        try {
-            final StateFlag stateFlag = new StateFlag(flagName, this.getDefault());
-            registry.register(stateFlag);
-            STATE_FLAGS.put(this, stateFlag);
-        } catch (final FlagConflictException e) {
-            final Flag<?> existing = registry.get(flagName);
-            if (existing instanceof StateFlag) {
-                STATE_FLAGS.put(this, (StateFlag) existing);
-            } else {
-                AethosLib.getPlugin(AethosLib.class).getLogger()
-                        .log(Level.WARNING, "Could not register the following flag: " + flagName, e);
-            }
-        }
+        AethosLib.getPlugin(AethosLib.class).getWorldGuardSupport().register(this, plugin);
     }
 
+    /**
+     * Gets the default (unassigned) value of this flag.
+     *
+     * @return the value if not specified
+     */
     boolean getDefault();
 
+    /**
+     * Gets the name of this flag to register.
+     *
+     * @return the name without special characters (expect '-' and '_')
+     */
     String getName();
 }

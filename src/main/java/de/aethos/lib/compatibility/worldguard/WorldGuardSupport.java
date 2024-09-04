@@ -3,8 +3,16 @@ package de.aethos.lib.compatibility.worldguard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public sealed interface WorldGuardSupport permits InactiveWorldGuardSupport, ExistingWorldGuardSupport {
+    /**
+     * Registers a new {@link FlagKey}.
+     *
+     * @param flagKey to register
+     * @param plugin  to associate the flag with
+     */
+    void register(FlagKey flagKey, JavaPlugin plugin);
 
     /**
      * Checks if PVP is explicit blocked.

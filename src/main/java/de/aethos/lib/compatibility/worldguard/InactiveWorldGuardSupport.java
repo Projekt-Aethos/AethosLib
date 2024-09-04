@@ -3,10 +3,16 @@ package de.aethos.lib.compatibility.worldguard;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class InactiveWorldGuardSupport implements WorldGuardSupport {
     public InactiveWorldGuardSupport(final Plugin plugin) {
         plugin.getLogger().info("WorldGuardSupport inactive");
+    }
+
+    @Override
+    public void register(final FlagKey flagKey, final JavaPlugin plugin) {
+        // Empty
     }
 
     @Override
