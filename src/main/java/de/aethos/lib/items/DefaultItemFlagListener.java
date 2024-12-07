@@ -29,6 +29,9 @@ import java.util.UUID;
 
 import static de.aethos.lib.items.DefaultItemFlags.*;
 
+/**
+ * Handles interaction with {@link DefaultItemFlags}.
+ */
 public class DefaultItemFlagListener implements Listener {
     /**
      * Handles {@link DefaultItemFlags#NO_PLAYER_DROP_ALIVE}.

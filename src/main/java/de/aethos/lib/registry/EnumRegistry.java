@@ -27,6 +27,8 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
     /**
      * Creates a new Registry with standard enum.
      *
+     * @param plugin    to register listener with
+     * @param logger    to log entry modifications to
      * @param enumClass to get the standard values from
      */
     public EnumRegistry(final JavaPlugin plugin, final Logger logger, final Class<E> enumClass) {
@@ -37,6 +39,8 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
     /**
      * Creates a new Registry with standard enum.
      *
+     * @param plugin    to register listener with
+     * @param logger    to log entry modifications to
      * @param enumClass to get the standard values from
      * @param topic     to add after before the message
      */

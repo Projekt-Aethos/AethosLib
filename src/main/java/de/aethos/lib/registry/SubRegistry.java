@@ -14,8 +14,21 @@ import java.util.logging.Logger;
  * @param <U> to which T is more specific
  */
 public class SubRegistry<T extends U, U extends Keyed> extends Registry<T> {
+    /**
+     * Registry where all modification will be reflected and mirrored.
+     */
     private final Registry<U> parentRegistry;
 
+    /**
+     * Creates a new sub registry.
+     * <p>
+     * De-/Registration of entries will reflect in the parent registry.
+     *
+     * @param plugin to register listener with
+     * @param logger to log entry modifications to
+     * @param topic  to add after before the message
+     * @param parent to also store entries to
+     */
     public SubRegistry(final JavaPlugin plugin, final Logger logger, @Nullable final String topic, final Registry<U> parent) {
         super(plugin, logger, topic);
         this.parentRegistry = parent;

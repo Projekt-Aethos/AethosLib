@@ -71,6 +71,9 @@ public enum DefaultItemFlags implements ItemFlag {
      */
     NO_PLACE;
 
+    /**
+     * Key representing this flag.
+     */
     private final NamespacedKey key = AethosLib.getKey(name());
 
     @Override

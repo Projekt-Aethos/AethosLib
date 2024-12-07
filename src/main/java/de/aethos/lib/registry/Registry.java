@@ -42,20 +42,20 @@ public class Registry<T extends Keyed> {
     private final String prefix;
 
     /**
-     * Creates a new empty holder.
+     * Creates a new empty registry.
      *
      * @param plugin to register listener with
-     * @param logger to log new entries to
+     * @param logger to log entry modifications to
      */
     public Registry(final JavaPlugin plugin, final Logger logger) {
         this(plugin, logger, null);
     }
 
     /**
-     * Creates a new empty holder.
+     * Creates a new empty registry.
      *
      * @param plugin to register listener with
-     * @param logger to log new entries to
+     * @param logger to log entry modifications to
      * @param topic  to add after before the message
      */
     public Registry(final JavaPlugin plugin, final Logger logger, @Nullable final String topic) {

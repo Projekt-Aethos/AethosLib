@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Contract;
 import xyz.janboerman.guilib.api.GuiListener;
 
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
@@ -66,8 +67,7 @@ public final class AethosLib extends JavaPlugin {
                 }
                 logger.info("WorldGuard Version 7.0.X erforderlich, vorhanden ist " + version);
             } catch (final Exception e) {
-                e.printStackTrace();
-                logger.warning("Fehler beim Laden, WorldGuard-Unterstützung deaktiviert!");
+                logger.log(Level.WARNING, "Fehler beim Laden, WorldGuard-Unterstützung deaktiviert!", e);
             }
         }
         return new InactiveWorldGuardSupport(this);

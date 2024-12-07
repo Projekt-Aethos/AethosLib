@@ -8,10 +8,25 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Commonly used data types.
+ *
+ * @param <P> the primitive representation
+ * @param <C> the complex object to store
+ */
 public interface AethosDataType<P, C> extends PersistentDataType<P, C> {
+    /**
+     * Serializes UUIDs as bytes.
+     */
     PersistentDataType<byte[], UUID> UUID = new UUIDDataType();
+    /**
+     * Serializes NamespacedKeys as minimal Strings.
+     */
     PersistentDataType<String, NamespacedKey> NAMESPACED_KEY = new NamespacedKeyDataType();
 
+    /**
+     * Serializes UUIDs as bytes.
+     */
     class UUIDDataType implements PersistentDataType<byte[], UUID> {
         @Override
         public Class<byte[]> getPrimitiveType() {
@@ -40,6 +55,9 @@ public interface AethosDataType<P, C> extends PersistentDataType<P, C> {
         }
     }
 
+    /**
+     * Serializes NamespacedKeys as minimal Strings.
+     */
     class NamespacedKeyDataType implements PersistentDataType<String, NamespacedKey> {
         @Override
         public Class<String> getPrimitiveType() {
