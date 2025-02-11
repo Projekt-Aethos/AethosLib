@@ -29,11 +29,7 @@ public record SQLite(File file) implements Database {
     }
 
     @Override
-    public Connection createConnection() {
-        try {
-            return DriverManager.getConnection("jdbc:sqlite:" + file.toPath());
-        } catch (final SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public Connection createConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:sqlite:" + file.toPath());
     }
 }

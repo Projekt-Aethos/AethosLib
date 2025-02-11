@@ -29,7 +29,11 @@ public class FixedSizedConnectionPool implements ConnectionPool {
     @Override
     public Connection get() {
         final Connection con = pool[pointer];
-        pool[pointer] = database.createConnection();
+        try {
+            pool[pointer] = database.createConnection();
+        } catch (final SQLException e) {
+            throw new RuntimeException(e);
+        }
         pointer = (pointer + 1) % pool.length;
         return con;
     }

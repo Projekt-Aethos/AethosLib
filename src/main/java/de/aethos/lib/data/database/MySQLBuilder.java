@@ -44,7 +44,7 @@ public class MySQLBuilder {
         try (Connection ignored = mysql.createConnection()) {
             return mysql;
         } catch (final SQLException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 }

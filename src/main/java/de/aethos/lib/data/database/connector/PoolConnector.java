@@ -17,6 +17,7 @@ public class PoolConnector implements Connector {
         this.pool = pool;
     }
 
+    @Override
     public <T> Result<T, SQLException> query(final Query<T> query) {
         final Connection connection = pool.get();
         final Result<T, SQLException> value = query(query, connection);
@@ -24,6 +25,7 @@ public class PoolConnector implements Connector {
         return value;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> Stream<Result<T, SQLException>> query(final Query<T>... queries) {
         if (queries.length == 0) {
@@ -38,6 +40,7 @@ public class PoolConnector implements Connector {
         return Arrays.stream(results);
     }
 
+    @Override
     public void update(final Update... update) {
         for (final Update value : update) {
             final Connection connection = pool.get();
@@ -46,6 +49,7 @@ public class PoolConnector implements Connector {
         }
     }
 
+    @Override
     public void update(final Update update) {
         final Connection connection = pool.get();
         update(update, connection);
@@ -53,17 +57,15 @@ public class PoolConnector implements Connector {
 
     private <T> Result<T, SQLException> query(final Query<T> query, final Connection connection) {
         try {
-            try {
-                final T t = query.query(connection);
-                return Result.ok(t);
-            } catch (final SQLException sql) {
-                return Result.err(sql);
-            }
+            final T t = query.query(connection);
+            return Result.ok(t);
+        } catch (final SQLException sql) {
+            return Result.err(sql);
         } catch (final RuntimeException e) {
             if (e.getCause() instanceof SQLException sql) {
                 return Result.err(sql);
             }
-            throw e;
+            return Result.err(new SQLException(e));
         }
     }
 

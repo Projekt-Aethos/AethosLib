@@ -17,17 +17,19 @@ public class RawConnector implements Connector {
         this.database = database;
     }
 
+    @Override
     public <T> Result<T, SQLException> query(final Query<T> query) {
         try (Connection connection = database.createConnection()) {
             return query(query, connection);
         } catch (final SQLException e) {
-            throw new RuntimeException(e);
+            return Result.err(e);
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> Stream<Result<T, SQLException>> query(final Query<T>... queries) {
-        if (queries == null) {
+        if (queries.length == 0) {
             return Stream.empty();
         }
         final Result<T, SQLException>[] results = new Result[queries.length];
@@ -36,7 +38,7 @@ public class RawConnector implements Connector {
                 results[i] = query(queries[i], connection);
             }
         } catch (final SQLException e) {
-            throw new RuntimeException(e);
+            return Stream.of(Result.err(e));
         }
         return Arrays.stream(results);
     }
@@ -45,16 +47,17 @@ public class RawConnector implements Connector {
     public void update(final Update... updates) {
         try (Connection connection = database.createConnection()) {
             for (final Update update : updates) {
-                update(update, connection);
+                update.update(connection);
             }
         } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
     public void update(final Update update) {
         try (Connection connection = database.createConnection()) {
-            update(update, connection);
+            update.update(connection);
         } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
@@ -62,25 +65,15 @@ public class RawConnector implements Connector {
 
     private <T> Result<T, SQLException> query(final Query<T> query, final Connection connection) {
         try {
-            try {
-                final T t = query.query(connection);
-                return Result.ok(t);
-            } catch (final SQLException sql) {
-                return Result.err(sql);
-            }
+            final T t = query.query(connection);
+            return Result.ok(t);
+        } catch (final SQLException sql) {
+            return Result.err(sql);
         } catch (final RuntimeException e) {
             if (e.getCause() instanceof SQLException sql) {
                 return Result.err(sql);
             }
-            throw e;
-        }
-    }
-
-    private void update(final Update update, final Connection connection) {
-        try {
-            update.update(connection);
-        } catch (final SQLException ignore) {
-
+            return Result.err(new SQLException(e));
         }
     }
 }

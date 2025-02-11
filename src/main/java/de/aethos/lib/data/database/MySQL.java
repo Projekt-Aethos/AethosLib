@@ -14,12 +14,8 @@ public record MySQL(String hostname, String port, String database, String user, 
     }
 
     @Override
-    public Connection createConnection() {
-        try {
-            return DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database + "?&useSSL=false",
-                    this.user, this.password);
-        } catch (final SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public Connection createConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:mysql://" + this.hostname + ":" + this.port + "/" + this.database + "?&useSSL=false",
+                this.user, this.password);
     }
 }
