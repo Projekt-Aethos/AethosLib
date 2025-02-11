@@ -40,8 +40,8 @@ public class MySQLBuilder {
     }
 
     public Database build() {
-        final MySQL mysql = new MySQL(user, database, password, port, hostname);
-        try (Connection connection = mysql.createConnection()) {
+        final MySQL mysql = new MySQL(hostname, port, database, user, password);
+        try (Connection ignored = mysql.createConnection()) {
             return mysql;
         } catch (final SQLException e) {
             throw new IllegalStateException(e);

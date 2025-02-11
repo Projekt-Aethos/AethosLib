@@ -5,7 +5,7 @@ import de.aethos.lib.data.database.MySQLBuilder;
 import de.aethos.lib.data.database.SQLiteBuilder;
 import de.aethos.lib.data.database.pool.ConnectionPool;
 import de.aethos.lib.data.database.pool.QueuedConnectionPool;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -21,8 +21,8 @@ public class DefaultPluginConnector extends PoolConnector {
     }
 
     private static ConnectionPool parseConfig(final JavaPlugin plugin) {
-        final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml"));
-        if (configuration.isSet("mysql")) {
+        final FileConfiguration configuration = plugin.getConfig();
+        if (configuration.isSet("mysql") && configuration.getBoolean("mysql.enabled", false)) {
             final Database database = new MySQLBuilder()
                     .hostname(configuration.getString("mysql.hostname"))
                     .port(configuration.getInt("mysql.port"))
@@ -32,7 +32,7 @@ public class DefaultPluginConnector extends PoolConnector {
                     .build();
             return new QueuedConnectionPool(database, Math.max(configuration.getInt("mysql.poolsize"), 1), plugin.getLogger());
         }
-        if (configuration.isSet("sqlite")) {
+        if (configuration.isSet("sqlite") && configuration.getBoolean("sqlite.enabled", false)) {
             final File file = new File(plugin.getDataFolder(), Objects.requireNonNull(configuration.getString("sqlite.name")) + ".sqlite");
             if (!file.exists()) {
                 if (configuration.isSet("sqlite.create") && configuration.getBoolean("sqlite.create")) {

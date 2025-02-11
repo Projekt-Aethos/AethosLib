@@ -1,11 +1,13 @@
-#mysql:
-#  hostname: ''
-#  port: ''
-#  user: ''
-#  password: ''
-#  database: ''
-#  poolsize: 1
+mysql:
+  enabled: false
+  hostname: ''
+  port: ''
+  user: ''
+  password: ''
+  database: ''
+  poolsize: 1
 sqlite:
+  enabled: true
   name: "db"
   create: true
   poolsize: 1
