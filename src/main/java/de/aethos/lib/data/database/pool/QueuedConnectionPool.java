@@ -24,15 +24,20 @@ public class QueuedConnectionPool implements ConnectionPool {
     private final Logger logger;
 
     public QueuedConnectionPool(final Database database, final int min, final Logger logger) {
+        this(database, min, logger, Executors.newCachedThreadPool());
+    }
+
+    public QueuedConnectionPool(final Database database, final int min, final Logger logger, final ExecutorService service) {
         this.database = database;
         this.logger = logger;
-        this.executorService = Executors.newSingleThreadExecutor();
+        this.executorService = service;
         this.min = min;
         for (int i = 0; i < min; i++) {
             queue.add(executorService.submit(database::createConnection));
         }
     }
 
+    @Override
     public void give(final Connection connection) {
         try {
             if (!connection.isClosed()) {
@@ -43,6 +48,7 @@ public class QueuedConnectionPool implements ConnectionPool {
         }
     }
 
+    @Override
     public Connection get() {
         Future<Connection> future = queue.poll();
         while (true) {
