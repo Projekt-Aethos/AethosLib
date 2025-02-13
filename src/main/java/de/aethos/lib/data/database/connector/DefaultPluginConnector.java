@@ -4,7 +4,7 @@ import de.aethos.lib.data.database.Database;
 import de.aethos.lib.data.database.MySQLBuilder;
 import de.aethos.lib.data.database.SQLiteBuilder;
 import de.aethos.lib.data.database.pool.ConnectionPool;
-import de.aethos.lib.data.database.pool.QueuedConnectionPool;
+import de.aethos.lib.data.database.pool.ConnectionPoolImpl;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,7 +30,7 @@ public class DefaultPluginConnector extends PoolConnector {
                     .password(configuration.getString("mysql.password"))
                     .database(configuration.getString("mysql.database"))
                     .build();
-            return new QueuedConnectionPool(database, Math.max(configuration.getInt("mysql.poolsize"), 1), plugin.getLogger());
+            return ConnectionPoolImpl.newConnectionPool(database, Math.max(configuration.getInt("mysql.poolsize"), 1));
         }
         if (configuration.isSet("sqlite") && configuration.getBoolean("sqlite.enabled", false)) {
             final File file = new File(plugin.getDataFolder(), Objects.requireNonNull(configuration.getString("sqlite.name")) + ".sqlite");
@@ -46,7 +46,7 @@ public class DefaultPluginConnector extends PoolConnector {
             final Database database = new SQLiteBuilder()
                     .file(file)
                     .build();
-            return new QueuedConnectionPool(database, Math.max(configuration.getInt("sqlite.poolsize"), 1), plugin.getLogger());
+            return ConnectionPoolImpl.newConnectionPool(database, Math.max(configuration.getInt("sqlite.poolsize"), 1));
         }
         throw new IllegalStateException("Has to set up db information in config.yml");
     }

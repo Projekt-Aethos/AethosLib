@@ -8,6 +8,7 @@ import de.aethos.lib.result.Result;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class PoolConnector implements Connector {
@@ -41,18 +42,15 @@ public class PoolConnector implements Connector {
     }
 
     @Override
-    public void update(final Update... update) {
-        for (final Update value : update) {
-            final Connection connection = pool.get();
-            update(value, connection);
-            pool.give(connection);
+    public void update(final Update... updates) {
+        for (final Update update : updates) {
+            pool.acquireConnection().thenAccept(new ClosingUpdate(update));
         }
     }
 
     @Override
     public void update(final Update update) {
-        final Connection connection = pool.get();
-        update(update, connection);
+        pool.acquireConnection().thenAccept(new ClosingUpdate(update));
     }
 
     private <T> Result<T, SQLException> query(final Query<T> query, final Connection connection) {
@@ -69,11 +67,22 @@ public class PoolConnector implements Connector {
         }
     }
 
-    private void update(final Update update, final Connection connection) {
-        try {
-            update.update(connection);
-        } catch (final SQLException e) {
-            throw new RuntimeException(e);
+    private final class ClosingUpdate implements Consumer<Connection> {
+        private final Update update;
+
+        private ClosingUpdate(Update update) {
+            this.update = update;
+        }
+
+        @Override
+        public void accept(Connection connection) {
+            try {
+                update.update(connection);
+            } catch (final SQLException e) {
+                throw new RuntimeException(e);
+            } finally {
+                pool.releaseConnection(connection);
+            }
         }
     }
 }
