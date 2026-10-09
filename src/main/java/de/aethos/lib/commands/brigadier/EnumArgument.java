@@ -21,12 +21,7 @@ import java.util.concurrent.CompletableFuture;
 public record EnumArgument<E extends Enum<E>>(Class<E> clazz) implements CustomArgumentType<E, String> {
     @Override
     public E parse(final StringReader reader) throws CommandSyntaxException {
-        return Enum.valueOf(clazz, StringArgumentType.string().parse(reader));
-    }
-
-    @Override
-    public ArgumentType<String> getNativeType() {
-        return StringArgumentType.string();
+        return Enum.valueOf(clazz, StringArgumentType.word().parse(reader));
     }
 
     @Override
@@ -35,5 +30,10 @@ public record EnumArgument<E extends Enum<E>>(Class<E> clazz) implements CustomA
             builder.suggest(value.name());
         }
         return builder.buildFuture();
+    }
+
+    @Override
+    public ArgumentType<String> getNativeType() {
+        return StringArgumentType.word();
     }
 }

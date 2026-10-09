@@ -33,15 +33,15 @@ public record RegistryArgument<T extends Keyed>(Registry<T> registry) implements
     }
 
     @Override
-    public ArgumentType<NamespacedKey> getNativeType() {
-        return ArgumentTypes.namespacedKey();
-    }
-
-    @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
         for (final NamespacedKey key : registry.getKeys()) {
             builder.suggest(key.toString());
         }
         return builder.buildFuture();
+    }
+
+    @Override
+    public ArgumentType<NamespacedKey> getNativeType() {
+        return ArgumentTypes.namespacedKey();
     }
 }

@@ -1,16 +1,12 @@
 package de.aethos.lib.registry;
 
 import org.bukkit.Keyed;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * A Registry which has an enum with standard values for easy access.
@@ -32,8 +28,7 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
      * @param enumClass to get the standard values from
      */
     public EnumRegistry(final JavaPlugin plugin, final Logger logger, final Class<E> enumClass) {
-        super(plugin, logger);
-        this.enumClass = enumClass;
+        this(plugin, logger, enumClass, null);
     }
 
     /**
@@ -47,21 +42,11 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
     public EnumRegistry(final JavaPlugin plugin, final Logger logger, final Class<E> enumClass, @Nullable final String topic) {
         super(plugin, logger, topic);
         this.enumClass = enumClass;
-    }
-
-    /**
-     * Gets a {@link T} with the given key.
-     *
-     * @param key to search for
-     * @return null if no {@link T} found
-     */
-    @Override
-    @Nullable
-    public T get(final NamespacedKey key) {
-        try {
-            return Enum.valueOf(enumClass, key.getKey()).get();
-        } catch (final IllegalArgumentException ignored) {
-            return values.get(key);
+        for (final E value : enumClass.getEnumConstants()) {
+            if (!super.register(value.get())) {
+                throw new RuntimeException("Can't use enum (%s) that contains same key (%s) for multiple values!"
+                        .formatted(value, value.get().getKey()));
+            }
         }
     }
 
@@ -76,21 +61,6 @@ public class EnumRegistry<T extends Keyed, E extends Enum<E> & EnumRegistry.Enum
         return Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).map(Keyed::getKey)
                 .noneMatch(key -> key.equals(toRegister.getKey()))
                 && super.register(toRegister);
-    }
-
-    @Override
-    public Set<T> getValues() {
-        final Set<T> set = super.getValues();
-        set.addAll(Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).collect(Collectors.toSet()));
-        return set;
-    }
-
-    @Override
-    @Contract(pure = true)
-    public Set<NamespacedKey> getKeys() {
-        final Set<NamespacedKey> set = super.getKeys();
-        set.addAll(Arrays.stream(enumClass.getEnumConstants()).map(EnumHolderEnum::get).map(Keyed::getKey).toList());
-        return set;
     }
 
     /**
