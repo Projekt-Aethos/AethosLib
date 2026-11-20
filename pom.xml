@@ -6,7 +6,7 @@
 
     <groupId>de.aethos</groupId>
     <artifactId>lib</artifactId>
-    <version>3.8.4</version>
+    <version>3.9.0</version>
     <packaging>jar</packaging>
 
     <name>AethosLib</name>
@@ -27,6 +27,40 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>com.jeff-media</include>
+                        </includes>
+                    </artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <relocations>
+                        <relocation>
+                            <pattern>com.jeff_media.customblockdata</pattern>
+                            <shadedPattern>${groupId}.dependencies.customblockdata</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
         </plugins>
@@ -90,6 +124,12 @@
             <groupId>com.github.Jannyboy11.GuiLib</groupId>
             <artifactId>GuiLib-API</artifactId>
             <version>v1.12.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jeff-media</groupId>
+            <artifactId>custom-block-data</artifactId>
+            <version>2.2.8</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

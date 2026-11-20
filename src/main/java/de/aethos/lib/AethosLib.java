@@ -1,5 +1,6 @@
 package de.aethos.lib;
 
+import com.jeff_media.customblockdata.CustomBlockData;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.aethos.lib.compatibility.worldguard.ExistingWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 public final class AethosLib extends JavaPlugin {
+
     private final LevelApi levelApi;
 
     private final WorldGuardSupport worldGuardSupport;
@@ -53,6 +55,8 @@ public final class AethosLib extends JavaPlugin {
         pm.registerEvents(GuiListener.getInstance(), this);
         pm.registerEvents(new LevelPointListener(this), this);
         pm.registerEvents(new DefaultItemFlagListener(), this);
+
+        CustomBlockData.registerListener(this);
 
         getLogger().info("✓ AethosLib successfully activated");
     }
