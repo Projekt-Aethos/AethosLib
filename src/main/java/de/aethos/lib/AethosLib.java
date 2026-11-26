@@ -2,6 +2,7 @@ package de.aethos.lib;
 
 import com.jeff_media.customblockdata.CustomBlockData;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import de.aethos.lib.commands.GiveCommand;
 import de.aethos.lib.compatibility.worldguard.ExistingWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.WorldGuardSupport;
@@ -10,6 +11,7 @@ import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.items.DefaultItemFlagListener;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,6 +28,8 @@ public final class AethosLib extends JavaPlugin {
     private final LevelApi levelApi;
 
     private final WorldGuardSupport worldGuardSupport;
+
+    private ItemRegistry itemRegistry;
 
     public AethosLib() {
         worldGuardSupport = loadWorldGuardSupport();
@@ -57,6 +61,11 @@ public final class AethosLib extends JavaPlugin {
         pm.registerEvents(new DefaultItemFlagListener(), this);
 
         CustomBlockData.registerListener(this);
+
+        itemRegistry = new ItemRegistry(this, getLogger());
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            GiveCommand.register(event.registrar().getDispatcher(), itemRegistry);
+        });
 
         getLogger().info("✓ AethosLib successfully activated");
     }
@@ -93,6 +102,10 @@ public final class AethosLib extends JavaPlugin {
 
     public LevelApi getLevelApi() {
         return levelApi;
+    }
+
+    public ItemRegistry getItemRegistry() {
+        return itemRegistry;
     }
 
     public boolean isWorldGuardSupportEnabled() {
