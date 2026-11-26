@@ -1,7 +1,7 @@
 name: AethosLib
 version: '${project.version}'
 main: de.aethos.lib.AethosLib
-api-version: '1.20'
+api-version: '26.3'
 load: STARTUP
 authors: [ xXTyraelXx, TheosRee ]
 description: '${description}'

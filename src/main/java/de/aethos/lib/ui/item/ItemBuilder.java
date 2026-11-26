@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -303,8 +304,18 @@ public class ItemBuilder {
      * @param customModelData an integer that may be associated client side with a custom item model
      * @return a new ItemBuilder
      */
+
+    @SuppressWarnings("UnstableApiUsage")
     public ItemBuilder customModelData(final Integer customModelData) {
-        return changeMeta(meta -> meta.setCustomModelData(customModelData));
+        return changeMeta(meta -> {
+            if (customModelData == null) {
+                meta.setCustomModelDataComponent(null);
+                return;
+            }
+            final CustomModelDataComponent component = meta.getCustomModelDataComponent();
+            component.setFloats(List.of(customModelData.floatValue()));
+            meta.setCustomModelDataComponent(component);
+        });
     }
 
     /**

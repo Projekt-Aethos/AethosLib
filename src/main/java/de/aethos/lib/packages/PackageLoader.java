@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ public class PackageLoader<P extends JavaPlugin, T extends Package> extends URLC
         for (File file : Objects.requireNonNull(dir.listFiles())) {
             if (file.toPath().endsWith(".jar")) {
                 try {
-                    addURL(file.toURL());
+                    addURL(file.toURI().toURL());
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
@@ -45,7 +46,7 @@ public class PackageLoader<P extends JavaPlugin, T extends Package> extends URLC
 
     public T load(URL url) {
         try {
-            JarFile jar = new JarFile(new File(url.getFile()));
+            JarFile jar = new JarFile(new File(url.toURI()));
             InputStream in = jar.getInputStream(jar.getEntry("package.yml"));
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new InputStreamReader(in));
             Class<T> clazz = (Class<T>) loadClass(config.getString("main"));
@@ -54,7 +55,7 @@ public class PackageLoader<P extends JavaPlugin, T extends Package> extends URLC
             assert name != null;
             pack.init(plugin, name);
             return pack;
-        } catch (IOException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+        } catch (IOException | URISyntaxException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                  InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

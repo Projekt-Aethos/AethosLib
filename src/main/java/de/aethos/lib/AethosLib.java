@@ -74,7 +74,7 @@ public final class AethosLib extends JavaPlugin {
         final Logger logger = getLogger();
         if (getServer().getPluginManager().getPlugin("WorldGuard") != null) {
             try {
-                final String version = WorldGuardPlugin.inst().getDescription().getVersion();
+                final String version = WorldGuardPlugin.inst().getPluginMeta().getVersion();
                 if (version.contains("7.0")) {
                     return new ExistingWorldGuardSupport(getLogger());
                 }

@@ -20,9 +20,9 @@ public class PoolConnector implements Connector {
 
     @Override
     public <T> Result<T, SQLException> query(final Query<T> query) {
-        final Connection connection = pool.get();
+        final Connection connection = pool.acquireConnection().join();
         final Result<T, SQLException> value = query(query, connection);
-        pool.give(connection);
+        pool.releaseConnection(connection);
         return value;
     }
 
@@ -34,9 +34,9 @@ public class PoolConnector implements Connector {
         }
         final Result<T, SQLException>[] results = new Result[queries.length];
         for (int i = 0; i < queries.length; i++) {
-            final Connection connection = pool.get();
+            final Connection connection = pool.acquireConnection().join();
             results[i] = query(queries[i], connection);
-            pool.give(connection);
+            pool.releaseConnection(connection);
         }
         return Arrays.stream(results);
     }
