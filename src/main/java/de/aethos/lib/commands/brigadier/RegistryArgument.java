@@ -35,7 +35,10 @@ public record RegistryArgument<T extends Keyed>(Registry<T> registry) implements
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
         for (final NamespacedKey key : registry.getKeys()) {
-            builder.suggest(key.toString());
+            final String keyString = key.toString();
+            if (keyString.contains(builder.getRemainingLowerCase())) {
+                builder.suggest(keyString);
+            }
         }
         return builder.buildFuture();
     }

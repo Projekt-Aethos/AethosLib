@@ -9,6 +9,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -27,7 +28,9 @@ public record EnumArgument<E extends Enum<E>>(Class<E> clazz) implements CustomA
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
         for (final E value : clazz.getEnumConstants()) {
-            builder.suggest(value.name());
+            if (value.name().toLowerCase(Locale.ROOT).contains(builder.getRemainingLowerCase())) {
+                builder.suggest(value.name());
+            }
         }
         return builder.buildFuture();
     }
