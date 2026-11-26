@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
+@Deprecated
 public class LevelApi {
     private final Map<UUID, LevelledHolder<UUID>> HOLDER_MAP = new HashMap<>();
 

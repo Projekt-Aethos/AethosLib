@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class LevelledHolderImpl<ID> implements LevelledHolder<ID> {
     private final Map<NamespacedKey, Levelled> map = new HashMap<>();
 

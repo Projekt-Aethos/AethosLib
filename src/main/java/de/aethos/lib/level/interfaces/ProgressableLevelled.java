@@ -1,5 +1,6 @@
 package de.aethos.lib.level.interfaces;
 
+@Deprecated
 public interface ProgressableLevelled extends Levelled {
     void addProgress(double amount);
 

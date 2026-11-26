@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList;
 import java.util.LinkedList;
 import java.util.List;
 
+@Deprecated
 public class AddXPEvent extends LevelEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 

@@ -11,3 +11,30 @@ sqlite:
   name: "db"
   create: true
   poolsize: 1
+xp:
+  types:
+    vanilla:
+      marker: 5
+      item: slime_ball
+      item-model: ""
+    fighting:
+      marker: 100
+      item: red_dye
+      item-model: ""
+    crafting:
+      marker: 1500
+      item: blue_dye
+      item-model: ""
+  display:
+    enabled: true
+    scale: 0.3
+    y-offset: -0.325
+  merge:
+    enabled: true
+    interval-ticks: 20
+    radius: 1.5
+    max-amount: 0
+  pack:
+    description: "AethosXP - farbige XP-Kugeln"
+    format: auto
+    opacity: 0.5

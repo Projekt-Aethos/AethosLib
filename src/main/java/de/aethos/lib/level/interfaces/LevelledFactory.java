@@ -3,6 +3,7 @@ package de.aethos.lib.level.interfaces;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 
+@Deprecated
 public interface LevelledFactory extends Keyed {
     Levelled create(LevelledHolder<?> holder);
 

@@ -20,6 +20,7 @@ import java.util.Map;
 /**
  * The class to spawn experience with.
  */
+@Deprecated
 public final class LevelPointSpawner {
     public static final NamespacedKey XP_OBJECT_KEY = new NamespacedKey(getPlugin(), "xp_object_key");
 

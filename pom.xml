@@ -6,7 +6,7 @@
 
     <groupId>de.aethos</groupId>
     <artifactId>lib</artifactId>
-    <version>3.11.0</version>
+    <version>3.12.0</version>
     <packaging>jar</packaging>
 
     <name>AethosLib</name>
@@ -68,6 +68,16 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.png</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.png</include>
+                </includes>
             </resource>
         </resources>
     </build>

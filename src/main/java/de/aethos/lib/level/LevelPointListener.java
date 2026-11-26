@@ -26,6 +26,7 @@ import java.util.UUID;
 import static de.aethos.lib.level.LevelPointSpawner.XP_OBJECT_KEY;
 import static de.aethos.lib.level.LevelPointSpawner.checkXpObject;
 
+@Deprecated
 public class LevelPointListener implements Listener {
     private final JavaPlugin plugin;
 

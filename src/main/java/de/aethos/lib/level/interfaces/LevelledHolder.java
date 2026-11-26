@@ -4,6 +4,7 @@ import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated
 public interface LevelledHolder<ID> {
     /**
      * Gets the identifier for this holder.

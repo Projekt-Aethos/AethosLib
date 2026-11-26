@@ -3,6 +3,7 @@ package de.aethos.lib.level.events;
 import de.aethos.lib.level.interfaces.Levelled;
 import org.bukkit.event.HandlerList;
 
+@Deprecated
 public class LevelUpEvent extends LevelEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 

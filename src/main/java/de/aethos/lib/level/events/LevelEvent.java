@@ -4,6 +4,7 @@ import de.aethos.lib.level.interfaces.Levelled;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
+@Deprecated
 public abstract class LevelEvent extends Event implements Cancellable {
     private final Levelled levelled;
 

@@ -4,6 +4,7 @@ import org.bukkit.NamespacedKey;
 
 import java.io.Serial;
 
+@Deprecated
 public class NoFactoryException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 6303748422662901957L;
