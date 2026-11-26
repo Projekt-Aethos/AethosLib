@@ -11,6 +11,7 @@ import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.items.DefaultItemFlagListener;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
+import de.aethos.lib.web.WebServerManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.PluginManager;
@@ -29,11 +30,14 @@ public final class AethosLib extends JavaPlugin {
 
     private final WorldGuardSupport worldGuardSupport;
 
+    private final WebServerManager webServerManager;
+
     private ItemRegistry itemRegistry;
 
     public AethosLib() {
         worldGuardSupport = loadWorldGuardSupport();
         levelApi = new LevelApi(this);
+        webServerManager = new WebServerManager();
     }
 
     /**
@@ -106,6 +110,10 @@ public final class AethosLib extends JavaPlugin {
 
     public ItemRegistry getItemRegistry() {
         return itemRegistry;
+    }
+
+    public WebServerManager getWebServerManager() {
+        return webServerManager;
     }
 
     public boolean isWorldGuardSupportEnabled() {
