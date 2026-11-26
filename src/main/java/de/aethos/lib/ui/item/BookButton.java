@@ -9,6 +9,7 @@ import xyz.janboerman.guilib.api.menu.ItemButton;
 import xyz.janboerman.guilib.api.menu.MenuHolder;
 
 public class BookButton<MH extends MenuHolder<?>> extends ItemButton<MH> {
+
     public final Book book;
 
     public BookButton(final ItemStack item, final Book book) {
@@ -19,12 +20,13 @@ public class BookButton<MH extends MenuHolder<?>> extends ItemButton<MH> {
     public BookButton(final ItemStack item) {
         if (item.getItemMeta() instanceof BookMeta meta) {
             this.stack = item.clone();
-            this.book = meta;
+            this.book = meta.asBook();
             return;
         }
         throw new IllegalStateException("Item should be a book");
     }
 
+    @Override
     public void onClick(final MH holder, final InventoryClickEvent event) {
         holder.getPlugin().getServer().getScheduler().runTask(holder.getPlugin(), () -> {
             event.getView().close();

@@ -18,8 +18,8 @@ import java.util.concurrent.CompletableFuture;
  * @param clazz the enum class
  * @param <E>   the enum type
  */
-@SuppressWarnings("UnstableApiUsage")
 public record EnumArgument<E extends Enum<E>>(Class<E> clazz) implements CustomArgumentType<E, String> {
+
     @Override
     public E parse(final StringReader reader) throws CommandSyntaxException {
         return Enum.valueOf(clazz, StringArgumentType.word().parse(reader));

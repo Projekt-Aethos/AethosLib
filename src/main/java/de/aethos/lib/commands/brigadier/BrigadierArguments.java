@@ -8,6 +8,7 @@ import org.bukkit.Keyed;
  */
 @SuppressWarnings("unused")
 public interface BrigadierArguments {
+
     static <E extends Enum<E>> EnumArgument<E> ofEnum(final Class<E> clazz) {
         return new EnumArgument<>(clazz);
     }

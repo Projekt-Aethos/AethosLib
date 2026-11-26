@@ -20,8 +20,8 @@ import java.util.concurrent.CompletableFuture;
  * @param registry the registry providing {@link T}s.
  * @param <T>      the type stored in the registry
  */
-@SuppressWarnings("UnstableApiUsage")
 public record RegistryArgument<T extends Keyed>(Registry<T> registry) implements CustomArgumentType<T, NamespacedKey> {
+
     @Override
     public T parse(final StringReader reader) throws CommandSyntaxException {
         final NamespacedKey key = ArgumentTypes.namespacedKey().parse(reader);
