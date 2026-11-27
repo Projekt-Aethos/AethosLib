@@ -132,13 +132,19 @@ async function refresh(){
   layers.forEach((l,i)=>{
     const li=document.createElement('li');
     const badge = l.present ? (l.enabled?'<span class="pill on">aktiv</span>':'<span class="pill off">inaktiv</span>') : '<span class="pill" style="color:var(--err);border-color:var(--err)">fehlt</span>';
-    li.innerHTML='<span><b>'+(i+1)+'.</b> '+esc(l.name)+' '+badge+'<br><small style="color:var(--muted)">'+esc(l.type)+': '+esc(l.ref)+'</small></span>';
+    li.innerHTML='<span><b>'+(i+1)+'.</b> '+esc(l.name)+' '+badge+(l.optional?(l.defaultOn?' <span class="pill" title="geht an alle, die es nicht per /pack ausschalten; zählt für die Karte">optional · Standard an</span>':' <span class="pill" title="nur für Spieler, die es per /pack einschalten">optional</span>'):'')+'<br><small style="color:var(--muted)">'+esc(l.type)+': '+esc(l.ref)+'</small></span>';
     const box=document.createElement('span'); box.style.whiteSpace='nowrap';
     const mk=(t,act,dis)=>{ const b=document.createElement('button'); b.className='lbtn'; b.textContent=t; b.disabled=!!dis;
       b.onclick=async()=>{ await fetch('/layer?action='+act+'&ref='+encodeURIComponent(l.ref),{method:'POST'}); refresh(); }; return b; };
     box.appendChild(mk('▲','up',i===0));
     box.appendChild(mk('▼','down',i===layers.length-1));
     box.appendChild(mk(l.enabled?'aus':'ein','toggle',false));
+    const ob=mk(l.optional?'→ Pflicht':'→ optional','optional',false);
+    ob.title=l.optional?'wieder an alle Spieler senden':'nur an Spieler senden, die es per /pack einschalten';
+    box.appendChild(ob);
+    if(l.optional){ const db=mk(l.defaultOn?'Standard: an':'Standard: aus','default',false);
+      db.title=l.defaultOn?'Klick: nur noch für Spieler, die es per /pack einschalten':'Klick: für alle an, bis sie es per /pack ausschalten';
+      box.appendChild(db); }
     li.appendChild(box); ll.appendChild(li);
   });
   document.getElementById('log').textContent = (s.log||[]).join('\n') || '—';

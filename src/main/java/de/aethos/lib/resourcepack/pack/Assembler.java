@@ -409,8 +409,9 @@ public final class Assembler {
             if (relative.equals(META)) {
                 continue;
             }
-            if (JUNK.contains(name) || JUNK_EXTENSIONS.stream().anyMatch(name::endsWith)
-                    || name.endsWith(".txt") && !relative.startsWith("assets/")) {
+            final boolean credit = name.startsWith("credits") || name.startsWith("license") || name.startsWith("licence");
+            if (!credit && (JUNK.contains(name) || JUNK_EXTENSIONS.stream().anyMatch(name::endsWith)
+                    || name.endsWith(".txt") && !relative.startsWith("assets/"))) {
                 Files.delete(file);
                 junk++;
                 continue;

@@ -168,6 +168,8 @@ public final class Web {
             entry.addProperty("type", layer.type());
             entry.addProperty("ref", layer.ref());
             entry.addProperty("enabled", layer.enabled());
+            entry.addProperty("optional", layer.optional());
+            entry.addProperty("defaultOn", layer.onByDefault());
             entry.addProperty("present", manager.layerPresent(layer));
             layers.add(entry);
         }
@@ -242,6 +244,8 @@ public final class Web {
             case "up" -> manager.moveLayer(ref, -1);
             case "down" -> manager.moveLayer(ref, 1);
             case "toggle" -> manager.toggleLayer(ref);
+            case "optional" -> manager.toggleOptional(ref);
+            case "default" -> manager.toggleDefaultOn(ref);
             default -> false;
         });
         return result(changed ? 200 : 400, changed);

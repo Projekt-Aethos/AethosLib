@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -68,6 +69,8 @@ public final class ResourcePackManager {
     private volatile List<Layer> layers = List.of();
 
     private volatile List<Artifact> artifacts = List.of();
+
+    private volatile Map<String, Layer> artifactLayers = Map.of();
 
     @Nullable
     private volatile Artifact combined;
@@ -143,12 +146,15 @@ public final class ResourcePackManager {
         packsDir = data.resolve("output").resolve("packs");
         combinedPack = data.resolve("output").resolve("server-pack.zip");
         plugin.getServer().getPluginManager().registerEvents(sender, plugin);
+        sender.start(data.resolve("player-packs.yml"));
         apply();
         final int delay = settings.startDelay();
         if (settings.enabled() && delay > 0) {
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 rebuild();
             }, delay * 20L);
+        } else {
+            sender.ready();
         }
     }
 
@@ -203,6 +209,7 @@ public final class ResourcePackManager {
                     plugin.getLogger().log(Level.WARNING, "Pack-Build fehlgeschlagen", e);
                 } finally {
                     building.set(false);
+                    sender.ready();
                 }
             });
             return true;
@@ -325,11 +332,50 @@ public final class ResourcePackManager {
             return false;
         }
         if (layer.enabled() != enabled) {
-            final List<Layer> updated = new ArrayList<>(layers);
-            updated.set(updated.indexOf(layer), layer.withEnabled(enabled));
-            saveLayers(updated);
+            replaceLayer(layer, layer.withEnabled(enabled));
         }
         return true;
+    }
+
+    public boolean toggleOptional(final String ref) {
+        final Layer layer = findLayer(ref);
+        if (layer == null) {
+            return false;
+        }
+        replaceLayer(layer, layer.withOptional(!layer.optional()));
+        return true;
+    }
+
+    public boolean toggleDefaultOn(final String ref) {
+        final Layer layer = findLayer(ref);
+        if (layer == null) {
+            return false;
+        }
+        replaceLayer(layer, layer.withDefaultOn(!layer.defaultOn()));
+        return true;
+    }
+
+    @Nullable
+    public Layer layerOf(final Artifact artifact) {
+        final Layer built = artifactLayers.get(artifact.id());
+        if (built == null) {
+            return null;
+        }
+        return layers.stream().filter(built::same).findFirst().orElse(built);
+    }
+
+    @Nullable
+    public Layer leaderOf(final Layer layer) {
+        final String follows = layer.follows();
+        if (follows == null) {
+            return null;
+        }
+        for (final Layer other : layers) {
+            if (!other.same(layer) && (follows.equalsIgnoreCase(other.ref()) || follows.equalsIgnoreCase(other.name()))) {
+                return other;
+            }
+        }
+        return null;
     }
 
     public boolean toggleLayer(final String ref) {
@@ -383,7 +429,7 @@ public final class ResourcePackManager {
         updated.removeIf(layer -> layer.isUpload() && !Files.exists(sourcesDir.resolve(layer.ref())));
         for (final String file : uploads()) {
             if (updated.stream().noneMatch(layer -> layer.isUpload() && layer.ref().equals(file))) {
-                final Layer layer = new Layer(file.replaceFirst("(?i)\\.zip$", ""), Layer.UPLOAD, file, true);
+                final Layer layer = Layer.of(file.replaceFirst("(?i)\\.zip$", ""), Layer.UPLOAD, file, true);
                 if (settings.newUploadOnTop()) {
                     updated.addFirst(layer);
                 } else {
@@ -393,12 +439,31 @@ public final class ResourcePackManager {
         }
         for (final String ref : new TreeSet<>(providers.keySet())) {
             if (updated.stream().noneMatch(layer -> layer.isProvider() && layer.ref().equals(ref))) {
-                updated.add(new Layer(ref.substring(ref.indexOf(':') + 1), Layer.PROVIDER, ref, true));
+                updated.add(Layer.of(ref.substring(ref.indexOf(':') + 1), Layer.PROVIDER, ref, true));
             }
         }
         if (!updated.equals(layers)) {
             saveLayers(updated);
         }
+    }
+
+    private void replaceLayer(final Layer old, final Layer replacement) {
+        final List<Layer> updated = new ArrayList<>(layers);
+        updated.set(updated.indexOf(old), replacement);
+        saveLayers(updated);
+    }
+
+    private boolean inCombined(final Layer layer, final List<Layer> all) {
+        if (!layer.enabled() || layer.optional() && !layer.defaultOn()) {
+            return false;
+        }
+        final String follows = layer.follows();
+        if (follows == null) {
+            return true;
+        }
+        return all.stream().anyMatch(other -> !other.same(layer)
+                && (follows.equalsIgnoreCase(other.ref()) || follows.equalsIgnoreCase(other.name()))
+                && other.enabled() && (!other.optional() || other.defaultOn()));
     }
 
     private void apply() {
@@ -464,9 +529,22 @@ public final class ResourcePackManager {
             final Object name = entry.get("name");
             final Object type = entry.get("type");
             final Object enabled = entry.get("enabled");
+            final Object follows = entry.get("follows");
+            final Object effect = entry.get("post-effect");
+            final Map<String, List<String>> biomes = new LinkedHashMap<>();
+            if (entry.get("post-effect-biomes") instanceof final Map<?, ?> map) {
+                map.forEach((key, value) -> biomes.put(String.valueOf(key).trim(), value instanceof final Collection<?> list
+                        ? list.stream().map(pattern -> String.valueOf(pattern).trim()).toList()
+                        : List.of(String.valueOf(value).trim())));
+            }
             read.add(new Layer(String.valueOf(name == null ? ref : name),
                     String.valueOf(type == null ? Layer.PATH : type), String.valueOf(ref),
-                    enabled == null || Boolean.parseBoolean(String.valueOf(enabled))));
+                    enabled == null || Boolean.parseBoolean(String.valueOf(enabled)),
+                    Boolean.parseBoolean(String.valueOf(entry.get("optional"))),
+                    Boolean.parseBoolean(String.valueOf(entry.get("default-on"))),
+                    follows == null || String.valueOf(follows).isBlank() ? null : String.valueOf(follows).trim(),
+                    effect == null || String.valueOf(effect).isBlank() ? null : String.valueOf(effect).trim(),
+                    biomes));
         }
         return List.copyOf(read);
     }
@@ -480,6 +558,21 @@ public final class ResourcePackManager {
             entry.put("type", layer.type());
             entry.put("ref", layer.ref());
             entry.put("enabled", layer.enabled());
+            if (layer.optional()) {
+                entry.put("optional", true);
+            }
+            if (layer.defaultOn()) {
+                entry.put("default-on", true);
+            }
+            if (layer.follows() != null) {
+                entry.put("follows", layer.follows());
+            }
+            if (layer.postEffect() != null) {
+                entry.put("post-effect", layer.postEffect());
+            }
+            if (!layer.biomeEffects().isEmpty()) {
+                entry.put("post-effect-biomes", layer.biomeEffects());
+            }
             out.add(entry);
         }
         plugin.getConfig().set(LAYERS_PATH, out);
@@ -510,9 +603,12 @@ public final class ResourcePackManager {
         final List<Artifact> built = new ArrayList<>();
         final List<Assembler.Source> sources = new ArrayList<>();
         final Set<String> ids = new HashSet<>();
+        final Map<String, Layer> byId = new HashMap<>();
         for (final Layer layer : snapshot) {
             if (layer.enabled()) {
-                built.add(buildLayer(assembler, current, layer, uniqueId(layer.name(), ids), sources));
+                final String id = uniqueId(layer.name(), ids);
+                byId.put(id, layer);
+                built.add(buildLayer(assembler, current, layer, id, inCombined(layer, snapshot) ? sources : new ArrayList<>()));
             }
         }
         removeOrphans(ids);
@@ -522,6 +618,7 @@ public final class ResourcePackManager {
             Assembler.deleteRecursive(workDir);
         } catch (final IOException ignored) {
         }
+        artifactLayers = Map.copyOf(byId);
         artifacts = List.copyOf(built);
         combined = result;
         lastBuildTime = LocalTime.now().format(TIME);
@@ -603,7 +700,8 @@ public final class ResourcePackManager {
                 + (result.ok() ? result.sizeHuman() + ", SHA1 " + result.sha1Short() : "Fehler – " + result.message())));
     }
 
-    public record Layer(String name, String type, String ref, boolean enabled) {
+    public record Layer(String name, String type, String ref, boolean enabled, boolean optional, boolean defaultOn,
+                        @Nullable String follows, @Nullable String postEffect, Map<String, List<String>> biomeEffects) {
 
         static final String UPLOAD = "upload";
 
@@ -619,12 +717,33 @@ public final class ResourcePackManager {
             return PROVIDER.equalsIgnoreCase(type);
         }
 
+        public boolean same(final Layer other) {
+            return type.equalsIgnoreCase(other.type) && ref.equals(other.ref);
+        }
+
+        static Layer of(final String name, final String type, final String ref, final boolean enabled) {
+            return new Layer(name, type, ref, enabled, false, false, null, null, Map.of());
+        }
+
+        public boolean onByDefault() {
+            return optional && defaultOn;
+        }
+
         Layer withEnabled(final boolean value) {
-            return new Layer(name, type, ref, value);
+            return new Layer(name, type, ref, value, optional, defaultOn, follows, postEffect, biomeEffects);
+        }
+
+        Layer withOptional(final boolean value) {
+            return new Layer(name, type, ref, enabled, value, defaultOn, follows, postEffect, biomeEffects);
+        }
+
+        Layer withDefaultOn(final boolean value) {
+            return new Layer(name, type, ref, enabled, optional, value, follows, postEffect, biomeEffects);
         }
     }
 
     public record Settings(boolean enabled, int port, String bind, String password, String publicUrl, boolean applyOnJoin,
+                    boolean waitForPack, int waitSeconds,
                     boolean required, String prompt, String description, int startDelay, boolean compression,
                     boolean validate, boolean validateRequired, long maxBytes, boolean newUploadOnTop) {
 
@@ -640,6 +759,8 @@ public final class ResourcePackManager {
                     config.getString(CONFIG_PATH + "web.password", ""),
                     config.getString(CONFIG_PATH + "public-url", ""),
                     config.getBoolean(CONFIG_PATH + "apply-on-join", true),
+                    config.getBoolean(CONFIG_PATH + "wait-for-pack-on-join", true),
+                    Math.clamp(config.getInt(CONFIG_PATH + "wait-for-pack-seconds", 25), 0, 25),
                     config.getBoolean(CONFIG_PATH + "required", false),
                     config.getString(CONFIG_PATH + "prompt", "Server-Ressourcepack von Aethos"),
                     config.getString(CONFIG_PATH + "description", "Aethos Server Pack"),

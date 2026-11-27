@@ -5,7 +5,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import de.aethos.lib.resourcepack.ResourcePackManager.Layer;
 import de.aethos.lib.resourcepack.pack.Artifact;
+import de.aethos.lib.resourcepack.pack.Sender;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
@@ -20,6 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class ResourcePackCommand {
@@ -43,19 +46,27 @@ public final class ResourcePackCommand {
                 .then(layer("down", manager))
                 .then(layer("enable", manager))
                 .then(layer("disable", manager))
+                .then(layer("optional", manager))
+                .then(layer("default", manager))
                 .then(Commands.literal("info").executes(context -> info(context, manager)))
                 .then(Commands.literal("list").executes(context -> list(context, manager)))
                 .then(Commands.literal("link").executes(context -> link(context, manager)))
                 .then(Commands.literal("token").executes(context -> token(context, manager)))
                 .then(Commands.literal("reload").executes(context -> reload(context, manager)))
                 .build(), "Server-Ressourcepack verwalten");
+        registrar.register(Commands.literal("pack")
+                .executes(context -> choose(context, manager, false))
+                .then(Commands.literal("liste").executes(context -> choose(context, manager, true)))
+                .then(toggle("an", manager, true))
+                .then(toggle("aus", manager, false))
+                .build(), "Optionale Ressourcepacks ein- und ausschalten", List.of("ressourcepack"));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> layer(final String action, final ResourcePackManager manager) {
         return Commands.literal(action)
                 .then(Commands.argument("ref", StringArgumentType.greedyString())
                         .suggests((context, builder) -> {
-                            for (final ResourcePackManager.Layer layer : manager.layers()) {
+                            for (final Layer layer : manager.layers()) {
                                 if (layer.ref().toLowerCase(Locale.ROOT).startsWith(builder.getRemainingLowerCase())) {
                                     builder.suggest(layer.ref());
                                 }
@@ -126,15 +137,17 @@ public final class ResourcePackCommand {
             return 0;
         }
         manager.syncLayers();
-        final List<ResourcePackManager.Layer> layers = manager.layers();
+        final List<Layer> layers = manager.layers();
         message(sender, PREFIX + "Pack-Priorität (oben = höchste, überschreibt darunter):");
         if (layers.isEmpty()) {
             message(sender, "  (leer – Packs hochladen oder in der config.yml eintragen)");
         }
         for (int i = 0; i < layers.size(); i++) {
-            final ResourcePackManager.Layer layer = layers.get(i);
+            final Layer layer = layers.get(i);
             message(sender, "  " + (i + 1) + ". " + (layer.enabled() ? "■" : "□") + " " + layer.name()
-                    + " [" + layer.type() + ": " + layer.ref() + "]" + (manager.layerPresent(layer) ? "" : " (fehlt)"));
+                    + " [" + layer.type() + ": " + layer.ref() + "]"
+                    + (layer.optional() ? layer.defaultOn() ? " (optional, Standard an)" : " (optional)" : "")
+                    + (layer.follows() == null ? "" : " (folgt " + layer.follows() + ")") + (manager.layerPresent(layer) ? "" : " (fehlt)"));
         }
         return layers.size();
     }
@@ -146,7 +159,7 @@ public final class ResourcePackCommand {
             return 0;
         }
         final String ref = StringArgumentType.getString(context, "ref");
-        final ResourcePackManager.Layer layer = manager.findLayer(ref);
+        final Layer layer = manager.findLayer(ref);
         if (layer == null) {
             message(sender, PREFIX + "Layer nicht gefunden: " + ref);
             return 0;
@@ -156,6 +169,21 @@ public final class ResourcePackCommand {
                     ? "'" + layer.name() + "' höher priorisiert." : "'" + layer.name() + "' ist bereits ganz oben."));
             case "down" -> message(sender, PREFIX + (manager.moveLayer(layer.ref(), 1)
                     ? "'" + layer.name() + "' niedriger priorisiert." : "'" + layer.name() + "' ist bereits ganz unten."));
+            case "optional" -> {
+                manager.toggleOptional(layer.ref());
+                message(sender, PREFIX + "Layer '" + layer.name() + "' ist jetzt "
+                        + (layer.optional() ? "Pflicht (geht an alle)" : "optional (Spieler wählen per /pack)")
+                        + ". Danach /aethosrp build und /aethosrp send.");
+            }
+            case "default" -> {
+                if (!layer.optional()) {
+                    message(sender, PREFIX + "Layer '" + layer.name() + "' ist Pflicht – erst /aethosrp optional " + layer.ref() + ".");
+                    return 0;
+                }
+                manager.toggleDefaultOn(layer.ref());
+                message(sender, PREFIX + "Optionales Pack '" + layer.name() + "' ist jetzt standardmäßig "
+                        + (layer.defaultOn() ? "aus" : "an") + ". Danach /aethosrp build und /aethosrp send.");
+            }
             default -> {
                 final boolean enable = action.equals("enable");
                 manager.setLayerEnabled(layer.ref(), enable);
@@ -186,7 +214,7 @@ public final class ResourcePackCommand {
             final String detail = !artifact.ok() ? artifact.message()
                     : artifact.sizeHuman() + ", Format " + artifact.packFormat() + ", SHA1 " + artifact.sha1Short()
                     + " – " + (validation == null ? "ungeprüft" : validation.summary());
-            message(sender, "  " + (artifact.sendable() ? "✓" : "✗") + " " + artifact.name() + ": " + detail);
+            message(sender, "  " + (artifact.sendable() ? "✓" : "✗") + (manager.sender().isOptional(artifact) ? " (optional) " : " ") + artifact.name() + ": " + detail);
         }
         final Artifact combined = manager.combined();
         message(sender, PREFIX + "Kombiniert (nur intern): " + (combined != null && combined.ok()
@@ -229,6 +257,70 @@ public final class ResourcePackCommand {
         sender.sendMessage(Component.text("Einmal-Login für die Resourcepack-Verwaltung (5 Minuten gültig): ", NamedTextColor.GOLD)
                 .append(Component.text("[öffnen]", NamedTextColor.AQUA).clickEvent(ClickEvent.openUrl(url))));
         return Command.SINGLE_SUCCESS;
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> toggle(final String name, final ResourcePackManager manager,
+                                                                    final boolean on) {
+        return Commands.literal(name)
+                .then(Commands.argument("pack", StringArgumentType.greedyString())
+                        .suggests((context, builder) -> {
+                            for (final Artifact artifact : manager.sender().optional()) {
+                                if (artifact.id().startsWith(builder.getRemainingLowerCase())) {
+                                    builder.suggest(artifact.id());
+                                }
+                            }
+                            return builder.buildFuture();
+                        })
+                        .executes(context -> toggle(context, manager, on)));
+    }
+
+    private static int choose(final CommandContext<CommandSourceStack> context, final ResourcePackManager manager,
+                              final boolean asText) {
+        if (!(context.getSource().getSender() instanceof final Player player)) {
+            message(context.getSource().getSender(), PREFIX + "/pack geht nur als Spieler.");
+            return 0;
+        }
+        final Sender packs = manager.sender();
+        packs.markDecided(player);
+        final List<Artifact> optional = packs.optional();
+        if (optional.isEmpty()) {
+            player.sendMessage(Component.text("Zurzeit gibt es keine optionalen Ressourcepacks.", NamedTextColor.GRAY));
+            return 0;
+        }
+        if (!asText) {
+            packs.openMenu(player);
+            return Command.SINGLE_SUCCESS;
+        }
+        player.sendMessage(Component.text("Optionale Ressourcepacks (Klick schaltet um):", NamedTextColor.GOLD));
+        for (final Artifact artifact : optional) {
+            final boolean on = packs.wants(player.getUniqueId(), artifact);
+            player.sendMessage(Component.text("  ")
+                    .append(Component.text(on ? "[an] " : "[aus] ", on ? NamedTextColor.GREEN : NamedTextColor.RED))
+                    .append(Component.text(artifact.name(), NamedTextColor.WHITE))
+                    .append(Component.text(" (" + artifact.sizeHuman() + ")", NamedTextColor.GRAY))
+                    .clickEvent(ClickEvent.runCommand("/pack " + (on ? "aus " : "an ") + artifact.id())));
+        }
+        return optional.size();
+    }
+
+    private static int toggle(final CommandContext<CommandSourceStack> context, final ResourcePackManager manager,
+                              final boolean on) {
+        if (!(context.getSource().getSender() instanceof final Player player)) {
+            message(context.getSource().getSender(), PREFIX + "/pack geht nur als Spieler.");
+            return 0;
+        }
+        final Sender packs = manager.sender();
+        packs.markDecided(player);
+        final String wanted = StringArgumentType.getString(context, "pack");
+        final Artifact artifact = packs.optional().stream()
+                .filter(candidate -> candidate.id().equalsIgnoreCase(wanted) || candidate.name().equalsIgnoreCase(wanted))
+                .findFirst().orElse(null);
+        if (artifact == null) {
+            player.sendMessage(Component.text("Kein optionales Pack mit dem Namen '" + wanted + "' – siehe /pack.",
+                    NamedTextColor.RED));
+            return 0;
+        }
+        return packs.choose(player, Map.of(artifact.id(), on));
     }
 
     private static int reload(final CommandContext<CommandSourceStack> context, final ResourcePackManager manager) {

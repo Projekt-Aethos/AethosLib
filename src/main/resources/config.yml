@@ -46,6 +46,8 @@ resourcepack:
     password: ""
   public-url: ""
   apply-on-join: true
+  wait-for-pack-on-join: true
+  wait-for-pack-seconds: 25
   required: false
   prompt: "Server-Ressourcepack von Aethos"
   description: "Aethos Server Pack"
