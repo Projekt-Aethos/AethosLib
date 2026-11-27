@@ -6,7 +6,7 @@
 
     <groupId>de.aethos</groupId>
     <artifactId>lib</artifactId>
-    <version>3.13.1</version>
+    <version>3.13.2</version>
     <packaging>jar</packaging>
 
     <name>AethosLib</name>
@@ -103,6 +103,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>lumine</id>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -129,6 +133,12 @@
                     <artifactId>bstats-bukkit</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>Mythic-Dist</artifactId>
+            <version>5.6.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.Jannyboy11.GuiLib</groupId>

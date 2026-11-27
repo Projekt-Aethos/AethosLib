@@ -11,5 +11,7 @@ dependencies:
       required: false
     WorldGuard:
       required: false
+    MythicMobs:
+      required: false
     GuiLib:
       required: true

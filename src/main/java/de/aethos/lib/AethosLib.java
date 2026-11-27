@@ -10,6 +10,7 @@ import de.aethos.lib.compatibility.worldguard.InactiveWorldGuardSupport;
 import de.aethos.lib.compatibility.worldguard.WorldGuardSupport;
 import de.aethos.lib.data.database.connector.Connector;
 import de.aethos.lib.data.database.connector.DefaultPluginConnector;
+import de.aethos.lib.entity.SummonCommand;
 import de.aethos.lib.items.DefaultItemFlagListener;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
@@ -87,6 +88,7 @@ public final class AethosLib extends JavaPlugin {
             XPCommand.register(event.registrar(), xpmanager);
             PackCommand.register(event.registrar(), xpmanager);
             ResourcePackCommand.register(event.registrar(), resourcePackManager);
+            SummonCommand.register(event.registrar(), xpmanager);
         });
 
         xpmanager.load(getConfig());
