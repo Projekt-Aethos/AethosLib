@@ -38,3 +38,22 @@ xp:
     description: "AethosXP - farbige XP-Kugeln"
     format: auto
     opacity: 0.5
+resourcepack:
+  enabled: false
+  web:
+    port: 8124
+    bind: "0.0.0.0"
+    password: ""
+  public-url: ""
+  apply-on-join: true
+  required: false
+  prompt: "Server-Ressourcepack von Aethos"
+  description: "Aethos Server Pack"
+  build-on-start-delay: 8
+  compression: true
+  validate:
+    enabled: true
+    required: true
+    max-bytes: 104857600
+  new-upload-on-top: true
+  layers: []

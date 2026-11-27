@@ -13,6 +13,8 @@ import de.aethos.lib.data.database.connector.DefaultPluginConnector;
 import de.aethos.lib.items.DefaultItemFlagListener;
 import de.aethos.lib.level.LevelApi;
 import de.aethos.lib.level.LevelPointListener;
+import de.aethos.lib.resourcepack.ResourcePackCommand;
+import de.aethos.lib.resourcepack.ResourcePackManager;
 import de.aethos.lib.web.WebServerManager;
 import de.aethos.lib.xp.api.XPManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -37,6 +39,8 @@ public final class AethosLib extends JavaPlugin {
 
     private final XPManager xpmanager;
 
+    private final ResourcePackManager resourcePackManager;
+
     private ItemRegistry itemRegistry;
 
     public AethosLib() {
@@ -44,6 +48,7 @@ public final class AethosLib extends JavaPlugin {
         levelApi = new LevelApi(this);
         xpmanager = new XPManager(this);
         webServerManager = new WebServerManager();
+        resourcePackManager = new ResourcePackManager(this, webServerManager);
     }
 
     public XPManager getXPmanager() {
@@ -81,10 +86,14 @@ public final class AethosLib extends JavaPlugin {
             GiveCommand.register(event.registrar().getDispatcher(), itemRegistry);
             XPCommand.register(event.registrar(), xpmanager);
             PackCommand.register(event.registrar(), xpmanager);
+            ResourcePackCommand.register(event.registrar(), resourcePackManager);
         });
 
         xpmanager.load(getConfig());
         xpmanager.registerListeners();
+
+        resourcePackManager.enable();
+        resourcePackManager.register(this, "AethosXP", xpmanager::buildPack);
 
         getLogger().info("✓ AethosLib successfully activated");
     }
@@ -135,6 +144,10 @@ public final class AethosLib extends JavaPlugin {
 
     public WebServerManager getWebServerManager() {
         return webServerManager;
+    }
+
+    public ResourcePackManager getResourcePackManager() {
+        return resourcePackManager;
     }
 
     public boolean isWorldGuardSupportEnabled() {

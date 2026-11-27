@@ -57,13 +57,18 @@ public final class WebRequest {
 
     public String body(final int maxBytes) throws IOException {
         if (body == null) {
-            final byte[] data = exchange.getRequestBody().readNBytes(maxBytes + 1);
-            if (data.length > maxBytes) {
-                throw new IOException("Request body larger than " + maxBytes + " bytes");
-            }
-            body = new String(data, StandardCharsets.UTF_8);
+            body = new String(bytes(maxBytes), StandardCharsets.UTF_8);
         }
         return body;
+    }
+
+    public byte[] bytes(final int maxBytes) throws IOException {
+        final int limit = Math.min(maxBytes, Integer.MAX_VALUE - 1);
+        final byte[] data = exchange.getRequestBody().readNBytes(limit + 1);
+        if (data.length > limit) {
+            throw new IOException("Request body larger than " + limit + " bytes");
+        }
+        return data;
     }
 
     @Nullable

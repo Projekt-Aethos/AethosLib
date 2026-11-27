@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aethos Resource Pack</title>
+<style>
+  body{font-family:"Segoe UI",system-ui,sans-serif;background:#0e1116;color:#d7dde5;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+  form{background:#161b22;border:1px solid #272e3a;padding:32px;border-radius:12px;min-width:280px}
+  h1{font-size:18px;margin:0 0 16px}
+  .star{color:#c89b3c}
+  input{width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #272e3a;background:#0e1116;color:#d7dde5;margin-bottom:12px}
+  button{width:100%;padding:10px;border:none;border-radius:8px;background:#c89b3c;color:#1a1206;font-weight:600;cursor:pointer}
+  .err{color:#c0392b;font-size:13px;margin-bottom:10px}
+  .err:empty{display:none}
+</style>
+</head>
+<body>
+<form method="post" action="/login">
+  <h1><span class="star">✦</span> Aethos Resource Pack</h1>
+  <div class="err">{error}</div>
+  <input type="password" name="password" placeholder="Passwort" autofocus>
+  <button type="submit">Anmelden</button>
+</form>
+</body>
+</html>

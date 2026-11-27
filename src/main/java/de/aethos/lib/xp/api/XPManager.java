@@ -1,7 +1,6 @@
 package de.aethos.lib.xp.api;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import de.aethos.lib.resourcepack.pack.Format;
 import de.aethos.lib.xp.OrbService;
 import de.aethos.lib.xp.OrbSprite;
 import de.aethos.lib.xp.PackBuilder;
@@ -24,7 +23,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -142,20 +140,9 @@ public class XPManager {
                 plugin.getLogger().warning("xp.pack.format \"" + configured + "\" ungültig – wird automatisch ermittelt.");
             }
         }
-        try (InputStream in = plugin.getServer().getClass().getClassLoader().getResourceAsStream("version.json")) {
-            if (in != null) {
-                JsonObject pack = JsonParser.parseString(new String(in.readAllBytes(), StandardCharsets.UTF_8))
-                        .getAsJsonObject().getAsJsonObject("pack_version");
-                if (pack.has("resource_major")) {
-                    return new int[]{pack.get("resource_major").getAsInt(),
-                            pack.has("resource_minor") ? pack.get("resource_minor").getAsInt() : 0};
-                }
-                if (pack.has("resource")) {
-                    return new int[]{pack.get("resource").getAsInt(), 0};
-                }
-            }
-        } catch (IOException | RuntimeException e) {
-            plugin.getLogger().warning("version.json nicht lesbar: " + e.getMessage());
+        Format detected = Format.ofServer(plugin.getServer());
+        if (detected != null) {
+            return new int[]{detected.major(), detected.minor()};
         }
         plugin.getLogger().warning("Resource-Pack-Format unbekannt – bitte xp.pack.format in der config.yml setzen.");
         return new int[]{FALLBACK_PACK_FORMAT, 0};

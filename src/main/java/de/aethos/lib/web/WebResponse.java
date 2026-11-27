@@ -3,6 +3,7 @@ package de.aethos.lib.web;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,18 +18,26 @@ public final class WebResponse {
 
     private final byte[] body;
 
+    @Nullable
+    private final Path file;
+
     private final List<Map.Entry<String, String>> headers;
 
     private WebResponse(final int status, @Nullable final String contentType, final byte[] body,
-                        final List<Map.Entry<String, String>> headers) {
+                        @Nullable final Path file, final List<Map.Entry<String, String>> headers) {
         this.status = status;
         this.contentType = contentType;
         this.body = body;
+        this.file = file;
         this.headers = headers;
     }
 
     public static WebResponse of(final int status, final String contentType, final byte[] body) {
-        return new WebResponse(status, contentType, body.clone(), List.of());
+        return new WebResponse(status, contentType, body.clone(), null, List.of());
+    }
+
+    public static WebResponse file(final Path file, final String contentType) {
+        return new WebResponse(200, contentType, EMPTY, file, List.of());
     }
 
     public static WebResponse json(final int status, final String json) {
@@ -44,17 +53,17 @@ public final class WebResponse {
     }
 
     public static WebResponse redirect(final String location) {
-        return new WebResponse(303, null, EMPTY, List.of()).header("Location", location);
+        return new WebResponse(303, null, EMPTY, null, List.of()).header("Location", location);
     }
 
     public static WebResponse status(final int status) {
-        return new WebResponse(status, null, EMPTY, List.of());
+        return new WebResponse(status, null, EMPTY, null, List.of());
     }
 
     public WebResponse header(final String name, final String value) {
         final List<Map.Entry<String, String>> extended = new ArrayList<>(headers);
         extended.add(Map.entry(name, value));
-        return new WebResponse(status, contentType, body, List.copyOf(extended));
+        return new WebResponse(status, contentType, body, file, List.copyOf(extended));
     }
 
     public WebResponse cookie(final String cookie) {
@@ -74,11 +83,16 @@ public final class WebResponse {
         return body.clone();
     }
 
+    @Nullable
+    public Path file() {
+        return file;
+    }
+
     public List<Map.Entry<String, String>> headers() {
         return headers;
     }
 
     private static WebResponse text(final int status, final String contentType, final String text) {
-        return new WebResponse(status, contentType, text.getBytes(StandardCharsets.UTF_8), List.of());
+        return new WebResponse(status, contentType, text.getBytes(StandardCharsets.UTF_8), null, List.of());
     }
 }

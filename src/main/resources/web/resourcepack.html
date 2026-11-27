@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aethos Resource Pack</title>
+<style>
+  :root{--bg:#0e1116;--panel:#161b22;--line:#272e3a;--text:#d7dde5;--muted:#8b96a5;
+    --accent:#c89b3c;--ok:#6fa046;--err:#c0392b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 18px}
+  h1{font-size:22px;margin:0 0 2px}.star{color:var(--accent)}
+  .sub{color:var(--muted);margin:0 0 22px;font-size:13px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 12px}
+  .row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .row:last-child{border-bottom:none}.row .k{color:var(--muted)}.row .v{font-family:ui-monospace,monospace;text-align:right;word-break:break-all}
+  .pill{display:inline-block;padding:1px 9px;border-radius:9px;font-size:12px;border:1px solid var(--line)}
+  .pill.on{color:var(--ok);border-color:var(--ok)}.pill.off{color:var(--muted)}
+  .drop{border:2px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);
+    cursor:pointer;transition:.15s}
+  .drop:hover,.drop.hot{border-color:var(--accent);color:var(--text)}
+  ul{list-style:none;margin:8px 0 0;padding:0}
+  li{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:6px 0;border-bottom:1px solid var(--line)}
+  li:last-child{border-bottom:none}
+  button{background:var(--accent);color:#1a1206;border:none;border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer}
+  button:hover{filter:brightness(1.08)}button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  button.del{background:transparent;color:var(--err);border:1px solid var(--line);padding:4px 9px;font-size:12px}
+  button.lbtn{background:transparent;color:var(--text);border:1px solid var(--line);padding:3px 8px;font-size:12px;margin-left:4px;border-radius:6px;cursor:pointer}
+  button.lbtn:hover{border-color:var(--accent)}button.lbtn:disabled{opacity:.35;cursor:default}
+  #layers li{align-items:flex-start}
+  .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  code{background:#0e1116;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px}
+  #log{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);max-height:150px;overflow:auto;white-space:pre-wrap}
+  a.plink{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)}
+  a.plink:hover{color:var(--accent);border-bottom-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><span class="star">✦</span> Aethos Resource Pack</h1>
+  <p class="sub">Packs hochladen, einzeln hosten, vor dem Senden testen und beim Beitreten gestapelt an die Spieler senden.</p>
+
+  <div class="card">
+    <h2>Status</h2>
+    <div class="row"><span class="k">Gebaut</span><span class="v" id="built">—</span></div>
+    <div class="row"><span class="k">Basis-URL</span><span class="v" id="url">—</span></div>
+    <div class="row"><span class="k">Kompression / Testlauf</span><span class="v"><span class="pill" id="comp">?</span> <span class="pill" id="val">?</span></span></div>
+    <div class="actions">
+      <button id="build">Bauen + Testlauf</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Öffentliche URL <small style="text-transform:none;letter-spacing:0">(Adresse, unter der Spieler den Server erreichen)</small></h2>
+    <p class="sub" style="margin:0 0 10px">Netzwerkadresse des Servers eingeben – das Pack wird über <b>denselben Webserver-Port</b> ausgeliefert. Bei <code>http://…</code> ohne Port wird der Port automatisch ergänzt, also genügt z. B. <code>http://1.2.3.4</code>. Mit Reverse-Proxy: <code>https://pack.meinserver.de</code>. Leer = automatisch (nur LAN). Daraus wird <code>…/pack/&lt;id&gt;.zip</code> gebildet.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="text" id="purl" placeholder="http://1.2.3.4  oder  https://pack.meinserver.de" style="flex:1;min-width:220px;background:#0e1116;border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--text);font-family:ui-monospace,monospace;font-size:13px">
+      <button id="saveurl">Speichern</button>
+    </div>
+    <div class="row" style="margin-top:10px"><span class="k">Aktiv aufgelöst</span><span class="v" id="resolved">—</span></div>
+    <small id="urlmsg" style="color:var(--muted)"></small>
+  </div>
+
+  <div class="card">
+    <h2>Einzel-Packs &amp; Testlauf <small style="text-transform:none;letter-spacing:0">(was an die Clients gesendet wird – Name anklicken lädt das Pack herunter)</small></h2>
+    <ul id="packs"></ul>
+  </div>
+
+  <div class="card">
+    <h2>Pack hochladen</h2>
+    <div class="drop" id="drop">ZIP-Resourcepack hierher ziehen oder klicken<br><small>wird im Ordner <code>sources/</code> abgelegt &amp; oben in die Priorität eingefügt</small></div>
+    <input type="file" id="file" accept=".zip" hidden>
+    <ul id="uploads"></ul>
+  </div>
+
+  <div class="card">
+    <h2>Priorität <small style="text-transform:none;letter-spacing:0">(oben = höchste, überschreibt darunter – wie im Launcher)</small></h2>
+    <ul id="layers"></ul>
+  </div>
+
+  <div class="card">
+    <h2>Build-Log</h2>
+    <div id="log">—</div>
+  </div>
+</div>
+
+<script>
+const dropHint='ZIP-Resourcepack hierher ziehen oder klicken<br><small>wird im Ordner <code>sources/</code> abgelegt &amp; oben in die Priorität eingefügt</small>';
+async function refresh(){
+  let s; try{ const r = await fetch('/status'); if(r.status===401){ location.reload(); return; } s = await r.json(); }catch(e){ return; }
+  const builtPill = s.building ? '<span class="pill">baut…</span>'
+    : (s.built ? '<span class="pill on">ja · '+esc(s.lastBuild)+'</span>' : '<span class="pill off">nein</span>');
+  document.getElementById('built').innerHTML = builtPill;
+  document.getElementById('url').textContent = s.baseUrl || '—';
+  document.getElementById('resolved').textContent = (s.baseUrl||'—') + '/pack/<id>.zip';
+  const purl=document.getElementById('purl');
+  if(document.activeElement!==purl) purl.value = s.publicUrlCfg || '';
+  const comp=document.getElementById('comp'), val=document.getElementById('val');
+  comp.textContent='Kompression '+(s.compression?'an':'aus'); comp.className='pill '+(s.compression?'on':'off');
+  val.textContent='Testlauf '+(s.validate?'an':'aus'); val.className='pill '+(s.validate?'on':'off');
+  const pl=document.getElementById('packs'); pl.innerHTML='';
+  const packs=s.packs||[];
+  if(!packs.length) pl.innerHTML='<li style="color:var(--muted)">noch keine Packs gebaut – „Bauen + Testlauf" klicken</li>';
+  packs.forEach((p,i)=>{
+    const li=document.createElement('li'); li.style.flexDirection='column'; li.style.alignItems='stretch';
+    const badge = p.sendable ? '<span class="pill on">sendbar</span>'
+      : (p.ok ? '<span class="pill" style="color:var(--err);border-color:var(--err)">Testlauf-Fehler</span>'
+              : '<span class="pill" style="color:var(--err);border-color:var(--err)">Build-Fehler</span>');
+    const name = p.ok
+      ? '<a class="plink" href="/pack/'+encodeURIComponent(p.id)+'.zip" title="Pack herunterladen">'+esc(p.name)+'</a>'
+      : esc(p.name);
+    let html='<div style="display:flex;justify-content:space-between;gap:8px"><span><b>'+(i+1)+'.</b> '+name+' '+badge
+      +'</span><small style="color:var(--muted);text-align:right">'+esc(p.size)+' · Format '+(p.format||'—')+' · '+esc(p.sha1)+'</small></div>';
+    (p.errors||[]).forEach(e=>html+='<small style="color:var(--err)">✗ '+esc(e)+'</small>');
+    (p.warnings||[]).forEach(w=>html+='<small style="color:var(--muted)">! '+esc(w)+'</small>');
+    li.innerHTML=html; pl.appendChild(li);
+  });
+  const ul=document.getElementById('uploads');
+  ul.innerHTML = s.uploads.length ? '' : '<li style="color:var(--muted)">noch keine Uploads</li>';
+  for(const u of s.uploads){
+    const li=document.createElement('li');
+    li.innerHTML = '<span>'+esc(u)+'</span>';
+    const del=document.createElement('button'); del.className='del'; del.textContent='löschen';
+    del.onclick=async()=>{ await fetch('/upload?name='+encodeURIComponent(u),{method:'DELETE'}); refresh(); };
+    li.appendChild(del); ul.appendChild(li);
+  }
+  const ll=document.getElementById('layers'); ll.innerHTML='';
+  const layers=s.layers||[];
+  if(!layers.length) ll.innerHTML='<li style="color:var(--muted)">keine Packs – lade eins hoch oder trage eine Integration ein</li>';
+  layers.forEach((l,i)=>{
+    const li=document.createElement('li');
+    const badge = l.present ? (l.enabled?'<span class="pill on">aktiv</span>':'<span class="pill off">inaktiv</span>') : '<span class="pill" style="color:var(--err);border-color:var(--err)">fehlt</span>';
+    li.innerHTML='<span><b>'+(i+1)+'.</b> '+esc(l.name)+' '+badge+'<br><small style="color:var(--muted)">'+esc(l.type)+': '+esc(l.ref)+'</small></span>';
+    const box=document.createElement('span'); box.style.whiteSpace='nowrap';
+    const mk=(t,act,dis)=>{ const b=document.createElement('button'); b.className='lbtn'; b.textContent=t; b.disabled=!!dis;
+      b.onclick=async()=>{ await fetch('/layer?action='+act+'&ref='+encodeURIComponent(l.ref),{method:'POST'}); refresh(); }; return b; };
+    box.appendChild(mk('▲','up',i===0));
+    box.appendChild(mk('▼','down',i===layers.length-1));
+    box.appendChild(mk(l.enabled?'aus':'ein','toggle',false));
+    li.appendChild(box); ll.appendChild(li);
+  });
+  document.getElementById('log').textContent = (s.log||[]).join('\n') || '—';
+}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+document.getElementById('build').onclick = async()=>{ await fetch('/build',{method:'POST'}); setTimeout(refresh,400); };
+
+document.getElementById('saveurl').onclick = async()=>{
+  const v=document.getElementById('purl').value.trim();
+  const msg=document.getElementById('urlmsg');
+  const r=await fetch('/config?public-url='+encodeURIComponent(v),{method:'POST'});
+  const j=await r.json().catch(()=>({ok:false}));
+  msg.style.color = j.ok ? 'var(--ok)' : 'var(--err)';
+  msg.textContent = j.ok ? (v ? 'Gespeichert.' : 'Auf Auto-Erkennung zurückgesetzt.') : ('Fehler: '+(j.error||'ungültig'));
+  refresh();
+};
+document.getElementById('purl').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('saveurl').click(); });
+
+const drop=document.getElementById('drop'), file=document.getElementById('file');
+drop.onclick=()=>file.click();
+file.onchange=()=>{ if(file.files[0]) upload(file.files[0]); };
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('hot');};
+drop.ondragleave=()=>drop.classList.remove('hot');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('hot'); if(e.dataTransfer.files[0]) upload(e.dataTransfer.files[0]);};
+async function upload(f){
+  if(!f.name.toLowerCase().endsWith('.zip')){ alert('Bitte eine .zip hochladen.'); return; }
+  drop.textContent='lade '+f.name+' …';
+  let j={ok:false};
+  try{
+    const r=await fetch('/upload?name='+encodeURIComponent(f.name),{method:'POST',headers:{'Content-Type':'application/zip'},body:f});
+    j=await r.json();
+  }catch(e){ j={ok:false,error:'Upload fehlgeschlagen'}; }
+  drop.innerHTML = j.ok ? ('hochgeladen: '+esc(j.name)+' – baue neu …') : ('Fehler: '+esc(j.error||'unbekannt'));
+  if(j.ok){ await fetch('/build',{method:'POST'}); }
+  setTimeout(()=>{ drop.innerHTML=dropHint; refresh(); }, 1200);
+}
+
+refresh();
+setInterval(refresh, 3000);
+</script>
+</body>
+</html>

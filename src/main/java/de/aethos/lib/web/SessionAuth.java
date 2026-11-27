@@ -23,6 +23,8 @@ public final class SessionAuth {
 
     private final Map<String, Long> sessions = new ConcurrentHashMap<>();
 
+    private final Map<String, Long> tokens = new ConcurrentHashMap<>();
+
     public SessionAuth(final String cookieName, final String password) {
         this(cookieName, password, DEFAULT_TTL);
     }
@@ -43,14 +45,23 @@ public final class SessionAuth {
         if (!enabled || !MessageDigest.isEqual(passwordBytes, given)) {
             return null;
         }
-        final long now = System.currentTimeMillis();
-        sessions.values().removeIf(expiry -> expiry < now);
+        return session();
+    }
 
-        final byte[] raw = new byte[32];
-        RANDOM.nextBytes(raw);
-        final String token = HexFormat.of().formatHex(raw);
-        sessions.put(token, now + ttlMillis);
-        return cookieName + "=" + token + "; Path=/; HttpOnly; SameSite=Strict; Max-Age=" + ttlMillis / 1000;
+    public String issueToken(final Duration ttl) {
+        final long now = System.currentTimeMillis();
+        tokens.values().removeIf(expiry -> expiry < now);
+        final String token = random();
+        tokens.put(token, now + ttl.toMillis());
+        return token;
+    }
+
+    public String redeem(final String token) {
+        final Long expiry = token == null ? null : tokens.remove(token);
+        if (expiry == null || expiry < System.currentTimeMillis()) {
+            return null;
+        }
+        return session();
     }
 
     public boolean check(final WebRequest request) {
@@ -84,6 +95,20 @@ public final class SessionAuth {
             return false;
         }
         return true;
+    }
+
+    private static String random() {
+        final byte[] raw = new byte[32];
+        RANDOM.nextBytes(raw);
+        return HexFormat.of().formatHex(raw);
+    }
+
+    private String session() {
+        final long now = System.currentTimeMillis();
+        sessions.values().removeIf(expiry -> expiry < now);
+        final String token = random();
+        sessions.put(token, now + ttlMillis);
+        return cookieName + "=" + token + "; Path=/; HttpOnly; SameSite=Strict; Max-Age=" + ttlMillis / 1000;
     }
 
     private String token(final String header) {

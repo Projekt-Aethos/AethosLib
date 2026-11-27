@@ -8,6 +8,8 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -148,6 +150,19 @@ public final class PluginWebServer {
         final String contentType = response.contentType();
         if (contentType != null) {
             exchange.getResponseHeaders().set("Content-Type", contentType);
+        }
+        final Path file = response.file();
+        if (file != null) {
+            final long size = Files.size(file);
+            if (size == 0 || "HEAD".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(response.status(), -1);
+                return;
+            }
+            exchange.sendResponseHeaders(response.status(), size);
+            try (OutputStream out = exchange.getResponseBody()) {
+                Files.copy(file, out);
+            }
+            return;
         }
         final byte[] body = response.body();
         if (body.length == 0 || "HEAD".equals(exchange.getRequestMethod())) {
